@@ -1,0 +1,25 @@
+Portable_XH -- a portable CMSimple_XH distribution for Windows
+Copyright (C) 2012 Christoph M. Becker
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program (see license.txt).
+
+Christoph M. Becker
+Präsident-Mohr-Straße 21
+55218 Ingelheim
+mailto: cmbecker69@gmx.de
+
+
+USAGE
+-----
+Just execute Portable_XH.exe and have a look at the toolbar notification area.
