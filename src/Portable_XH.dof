@@ -52,14 +52,14 @@ UsePackages=0
 RunParams=
 HostApplication=
 [Version Info]
-IncludeVerInfo=1
+IncludeVerInfo=0
 AutoIncBuild=1
 MajorVer=0
 MinorVer=1
 Release=0
-Build=1
+Build=3
 Debug=0
-PreRelease=1
+PreRelease=0
 Special=0
 Private=0
 DLL=0
@@ -68,7 +68,7 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=
 FileDescription=A portable CMSimple_XH distribution.
-FileVersion=0.1.0.1
+FileVersion=0.1.0.3
 InternalName=
 LegalCopyright=2012 Christoph M. Becker
 LegalTrademarks=

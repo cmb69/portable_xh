@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program (see license.txt).
 
 Christoph M. Becker
-Pr√§sident-Mohr-Stra√üe 21
+Pr‰sident-Mohr-Straﬂe 21
 55218 Ingelheim
 mailto: cmbecker69@gmx.de
 
