@@ -1,0 +1,27 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+#: tfrmabout.btnok.caption
+msgid "OK"
+msgstr "OK"
+
+#: tfrmabout.caption
+msgid "About Portable_XH"
+msgstr "Über Portable_XH"
+
+#: tfrmmain.menuitem1.caption
+msgid "-"
+msgstr ""
+
+#: tfrmmain.menuitemabout.caption
+msgid "About ..."
+msgstr "Über ..."
+
+#: tfrmmain.menuitemclose.caption
+msgid "Exit"
+msgstr "Beenden"
+
+#: tfrmmain.menuitemopen.caption
+msgid "CMSimple_XH"
+msgstr "CMSimple_XH"
+
