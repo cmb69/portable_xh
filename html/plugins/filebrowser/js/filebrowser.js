@@ -1,3 +1,7 @@
+/**
+ * @version $Id: filebrowser.js 229 2012-07-30 13:31:07Z cmb69 $
+ */
+
 function confirmFileDelete(string)
 {
     return confirm(string);

@@ -1,10 +1,14 @@
 <?php
 
+/**
+ * @version $Id: adm.php 291 2012-09-20 16:08:47Z cmb69 $
+ */
+
 /* utf8-marker = äöü */
 /*
   ======================================
-  CMSimple_XH 1.5.3
-  2012-03-19
+  CMSimple_XH 1.5.5
+  2012-10-16
   based on CMSimple version 3.3 - December 31. 2009
   For changelog, downloads and information please see http://www.cmsimple-xh.com
   ======================================
@@ -31,7 +35,7 @@ function selectlist($fn, $regm, $regr) {
     if ($fd = @opendir($pth['folder'][$fn])) {
         while (($p = @readdir($fd)) == true) {
             if (preg_match($regm, $p)) {
-                $v = preg_replace($regr, "\\1", $p);
+                $v = preg_replace($regr, '$1', $p);
                 $options[$v] = ($v == $v2);
             }
         }
@@ -57,7 +61,6 @@ function selectlist($fn, $regm, $regr) {
 // Adm functionality
 
 if ($adm) {
-
     if ($validate)
         $f = 'validate';
     if ($settings)
@@ -113,6 +116,29 @@ if ($adm) {
 <li><a href="http://www.cmsimpleforum.com/">cmsimpleforum.com &raquo;</a></li>
 <li><a href="http://www.cmsimplewiki.com/">cmsimplewiki.com &raquo;</a></li>
 </ul>' . "\n" . "\n";
+
+        $temp = array('phpversion' => '4.3',
+            'extensions' => array(
+                array('date', false),
+                'pcre',
+                array('session', false),
+                array('xml', false)),
+            'writable' => array(),
+            'other' => array());
+        foreach (array('content', 'images', 'downloads', 'userfiles', 'media') as $i) {
+            $temp['writable'][] = $pth['folder'][$i];
+        }
+        foreach (
+            array('config', 'log', 'language', 'langconfig', 'content',
+                'pagedata', 'template', 'stylesheet') as $i)
+        {
+            $temp['writable'][] = $pth['file'][$i];
+        }
+        $temp['writable'] = array_unique($temp['writable']);
+        sort($temp['writable']);
+        $temp['other'][] = array(strtoupper($tx['meta']['codepage']) == 'UTF-8', true, $tx['syscheck']['encoding']);
+        $temp['other'][] = array(!get_magic_quotes_runtime(), false, $tx['syscheck']['magic_quotes']);
+        $o .= XH_systemCheck($temp);
     }
 
 // PHP Info - GE 2010-10-28
@@ -132,11 +158,11 @@ if ($adm) {
 
         if ($sl == $cf['language']['default']) {
             foreach (array('config', 'langconfig', 'language') as $i) {
-                $o .= '<li><a href="' . $sn . '?file=' . $i . amp() . 'action=array">' . ucfirst($tx['action']['edit']) . ' ' . $tx['filetype'][$i] . '</a></li>' . "\n";
+                $o .= '<li><a href="' . $sn . '?file=' . $i . '&amp;action=array">' . utf8_ucfirst($tx['action']['edit']) . ' ' . $tx['filetype'][$i] . '</a></li>' . "\n";
             }
         } else {
             foreach (array('langconfig', 'language') as $i) {
-                $o .= '<li><a href="' . $sn . '?file=' . $i . amp() . 'action=array">' . ucfirst($tx['action']['edit']) . ' ' . $tx['filetype'][$i] . '</a></li>' . "\n";
+                $o .= '<li><a href="' . $sn . '?file=' . $i . '&amp;action=array">' . utf8_ucfirst($tx['action']['edit']) . ' ' . $tx['filetype'][$i] . '</a></li>' . "\n";
             }
         }
 
@@ -144,9 +170,9 @@ if ($adm) {
 
 
         foreach (array('stylesheet', 'template') as $i)
-            $o .= '<li><a href="' . $sn . '?file=' . $i . amp() . 'action=edit">' . ucfirst($tx['action']['edit']) . ' ' . $tx['filetype'][$i] . '</a></li>' . "\n";
+            $o .= '<li><a href="' . $sn . '?file=' . $i . '&amp;action=edit">' . utf8_ucfirst($tx['action']['edit']) . ' ' . $tx['filetype'][$i] . '</a></li>' . "\n";
         foreach (array('log') as $i)
-            $o .= '<li><a href="' . $sn . '?file=' . $i . amp() . 'action=view">' . ucfirst($tx['action']['view']) . ' ' . $tx['filetype'][$i] . '</a></li>' . "\n";
+            $o .= '<li><a href="' . $sn . '?file=' . $i . '&amp;action=view">' . utf8_ucfirst($tx['action']['view']) . ' ' . $tx['filetype'][$i] . '</a></li>' . "\n";
         $o .= ''
                 //. '<li><a href="' . $sn . '?&amp;validate">' . ucfirst($tx['editmenu']['validate']) . '</a></li>' . "\n"
                 //. '<li><a href="' . $sn . '?&amp;sysinfo">' . ucfirst($tx['editmenu']['sysinfo']) . '</a></li>' . "\n"
@@ -157,89 +183,21 @@ if ($adm) {
 
         $o .= '<h4>' . $tx['settings']['backup'] . '</h4><p>' . $tx['settings']['backupexplain3'] . '</p>' . "\n" . '<ul>' . "\n";
         foreach (array('content', 'pagedata') as $i)
-            $o .= '<li>' . ucfirst($tx['filetype'][$i]) . ' <a href="' . $sn . '?file=' . $i . amp() . 'action=view">' . $tx['action']['view'] . '</a>' . ' <a href="' . $sn . '?file=' . $i . amp() . 'action=download">' . $tx['action']['download'] . '</a></li>' . "\n";
+            $o .= '<li>' . utf8_ucfirst($tx['filetype'][$i]) . ' <a href="' . $sn . '?file=' . $i . '&amp;action=view">' . $tx['action']['view'] . '</a>' . ' <a href="' . $sn . '?file=' . $i . '&amp;action=download">' . $tx['action']['download'] . '</a></li>' . "\n";
         $o .= '</ul>' . "\n" . tag('hr') . "\n" . '<p>' . $tx['settings']['backupexplain1'] . '</p>' . "\n" . '<p>' . $tx['settings']['backupexplain2'] . '</p>' . "\n" . '<ul>' . "\n";
         $fs = sortdir($pth['folder']['content']);
         foreach ($fs as $p)
-            if (preg_match("/\d{3}_content\.htm|\d{3}_pagedata\.php/", $p))
-                $o .= '<li><a href="' . $sn . '?file=' . $p . amp() . 'action=view">' . $p . '</a> (' . (round((filesize($pth['folder']['content'] . '/' . $p)) / 102.4) / 10) . ' KB)</li>' . "\n";
+            if (preg_match('/^\d{8}_\d{6}_(?:content.htm|pagedata.php)$/', $p))
+                $o .= '<li><a href="' . $sn . '?file=' . $p . '&amp;action=view">' . $p . '</a> (' . (round((filesize($pth['folder']['content'] . '/' . $p)) / 102.4) / 10) . ' KB)</li>' . "\n";
         $o .= '</ul>' . "\n";
     }
-// END modified backup-area (CMSimple_XH beta2)
-    /*
-      if ($f == 'images' || $f == 'downloads') {
-      if ($f == 'images')
-      $reg = "/\.gif$|\.jpg$|\.jpeg$|\.png$/i";
-      else
-      $reg = "/^[^\.]/i";
-      if ($action == 'delete') {
-      if (!(preg_match($reg, $GLOBALS[$f])))
-      e('wrongext', 'file', $GLOBALS[$f]);
-      else {
-      if (@unlink($pth['folder'][$f] . $GLOBALS[$f]))
-      $o .= '<p>' . ucfirst($tx['filetype']['file']) . ' ' . $GLOBALS[$f] . ' ' . $tx['result']['deleted'] . '</p>' . "\n";
-      else
-      e('cntdelete', 'file', $GLOBALS[$f]);
-      }
-      }
-      if ($action == 'upload') {
-      $name = im($f, 'name');
-      $size = im($f, 'size');
-      if (!(preg_match($reg, $name)))
-      e('wrongext', 'file', $name);
-      else if (file_exists(rp($pth['folder'][$f] . $name)))
-      e('alreadyexists', 'file', $name);
-      else if ($size > $cf[$f]['maxsize'])
-      $e .= '<li>' . ucfirst($tx['filetype']['file']) . ' ' . $name . ' ' . $tx['error']['tolarge'] . ' ' . $cf[$f]['maxsize'] . ' ' . $tx['files']['bytes'] . '</li>' . "\n";
-      if (!$e) {
-      if (@move_uploaded_file(im($f, 'tmp_name'), $pth['folder'][$f] . $name)) {
-      chmod($pth['folder'][$f] . $name, 0644);
-      $o .= '<p>' . ucfirst($tx['filetype']['file']) . ' ' . $name . ' ' . $tx['result']['uploaded'] . '</p>' . "\n";
-      }
-      else
-      e('cntsave', 'file', $name);
-      }
-      }
-      if ($cf[$f]['maxsize'] > 0)
-      $o .= '<form method="POST" action="' . $sn . '" enctype="multipart/form-data">' . "\n" . '<p>' . tag('input type="file" class="file" name="' . $f . '" size="30"') . "\n" . tag('input type="hidden" name="action" value="upload"') . "\n" . ' ' . tag('input type="hidden" name="function" value="' . $f . '"') . "\n" . tag('input type="submit" class="submit" value="' . ucfirst($tx['action']['upload']) . '"') . "\n" . '</p>' . "\n" . '</form>' . "\n";
-      $o .= '<form method="post" action=' . $sn . '>' . "\n" . '<table width="100%" cellpadding="5" cellspacing="0" border="0">' . "\n";
-      $totalsize = 0;
-      if (@is_dir($pth['folder'][$f])) {
-      $fs = sortdir($pth['folder'][$f]);
-      foreach ($fs as $p) {
-      if (preg_match($reg, $p)) {
-      $totalsize += filesize($pth['folder'][$f] . $p);
-      $o .= '<tr>' . "\n" . '<td>' . "\n" . tag('input type="radio" class="radio" name="' . $f . '" value="' . $p . '"') . "\n" . '</td>' . "\n" . '<td>';
-      if ($f == 'images')
-      $o .= '<img src="' . $pth['folder'][$f] . $p . '">' . tag('br');
-      $o .= $p . ' (' . (round((filesize($pth['folder'][$f] . $p)) / 102.4) / 10) . ' KB)';
-      if ($f == 'images') {
-      for ($i = 0; $i < $cl; $i++) {
-      $ic = preg_match_all('/<img src=["]*([^"]*?)' . '\/' . $p . '["]*(.*?)>/i', $c[$i], $matches, PREG_PATTERN_ORDER);
-      if ($ic > 0)
-      $o .= tag('br') . $tx[$f]['usedin'] . ' ' . a($i, '') . $h[$i] . '</a>';
-      }
-      }
-      $o .= '</td>' . "\n" . '</tr>' . "\n";
-      }
-      }
-      $o .= '</table>' . "\n" . tag('br') . tag('input type="hidden" name="action" value="delete"') . "\n" . tag('input type="hidden" name="function" value="' . $f . '"') . "\n";
-      if ($totalsize > 0)
-      $o .= tag('input type="submit" class="submit" value="' . ucfirst($tx['action']['delete']) . '"') . "\n";
-      $o .= "\n" . '</form>' . "\n";
-      $o .= '<p>' . $tx['files']['totalsize'] . ': ' . (round($totalsize / 102.4) / 10) . ' KB</p>' . "\n";
-      }
-      else
-      e('cntopen', 'folder', $pth['folder'][$f]);
-      }
-     */
 
     if ($f == 'file') {
-        if (preg_match("/\d{3}_content\.htm|\d{3}_pagedata\.php/", $file))
+        if (preg_match('/^\d{8}_\d{6}_(?:content.htm|pagedata.php)$/', $file))
             $pth['file'][$file] = $pth['folder']['content'] . '/' . $file;
         if ($pth['file'][$file] != '') {
             if ($action == 'view') {
-                header('Content-Type: text/plain');
+                header('Content-Type: text/plain; charset=utf-8');
                 echo rmnl(rf($pth['file'][$file]));
                 exit;
             }
@@ -274,7 +232,7 @@ if ($adm) {
                                 unset($cf['site'][$key]);
                             }
                         }
-						foreach ($txc['mailform'] as $key => $param) {
+                        foreach ($txc['mailform'] as $key => $param) {
                             if (isset($cf['mailform'][$key])) {
                                 unset($cf['mailform'][$key]);
                             }
@@ -299,9 +257,13 @@ if ($adm) {
                                 foreach ($v1 as $k2 => $v2) {
                                     if (!is_array($v2)) {
                                         initvar($k1 . '_' . $k2);
-                                        $GLOBALS[$a][$k1][$k2] = $GLOBALS[$k1 . '_' . $k2];
-                                        $GLOBALS[$a][$k1][$k2] = stsl($GLOBALS[$a][$k1][$k2]);
-                                        $text .= '$' . $a . '[\'' . $k1 . '\'][\'' . $k2 . '\']="' . preg_replace("/\"/s", "", $GLOBALS[$a][$k1][$k2]) . '";' . "\n";
+                                        $GLOBALS[$a][$k1][$k2] = stsl($GLOBALS[$k1 . '_' . $k2]);
+                                        if (($k1 == 'security' || $k1 == 'subsite' && $GLOBALS[$a][$k1][$k2] != '') && $k2 == 'password') {
+                                            if ($GLOBALS[$a][$k1][$k2] != stsl($_POST[$k1 . '_password_old'])) {
+                                                $GLOBALS[$a][$k1][$k2] = $xh_hasher->HashPassword($GLOBALS[$a][$k1][$k2]);
+                                            }
+                                        }
+                                        $text .= '$' . $a . '[\'' . $k1 . '\'][\'' . $k2 . '\']="' . addcslashes($GLOBALS[$a][$k1][$k2], "\0..\37\"\$\\") . '";' . "\n";
                                     }
                                 }
                             }
@@ -338,37 +300,40 @@ if ($adm) {
                         e('cntwriteto', $file, $pth['file'][$file]);
                 }
                 chkfile($file, true);
-                $title = ucfirst($tx['action']['edit']) . ' ' . (isset($tx['filetype'][$file]) ? $tx['filetype'][$file] : $file);
+                $title = utf8_ucfirst($tx['action']['edit']) . ' ' . (isset($tx['filetype'][$file]) ? $tx['filetype'][$file] : $file);
                 $o .= '<h1>' . $title . '</h1>' . "\n";
-				if(isset($a) && $a=='txc' && $cf['language']['default'] != $sl)
-				{
-					$o .= '<p>' . "\n" . $tx['help']['subsite'] . "\n" .'</p>' . "\n";
-					$o .= '<p class="cmsimplecore_warning" style="text-align: center;">' . "\n" . $tx['help']['langconfig'] . "\n" .'</p>' . "\n";
-				}
-				$o .= '<form action="' . $sn . (isset($plugin) ? '?' . amp() . $plugin : '') . '" method="post">';
+                if(isset($a) && $a=='txc' && $cf['language']['default'] != $sl)
+                {
+                    $o .= '<p>' . "\n" . $tx['help']['subsite'] . "\n" .'</p>' . "\n";
+                    $o .= '<p class="cmsimplecore_warning" style="text-align: center;">' . "\n" . $tx['help']['langconfig'] . "\n" .'</p>' . "\n";
+                }
+                $o .= '<form action="' . $sn . (isset($plugin) ? '?&amp;' . $plugin : '') . '" method="post">';
                 if ($form == 'array') {
-                    $o .= tag('input type="submit" class="submit" value="' . ucfirst($tx['action']['save']) . '"') . "\n";
+                    $o .= tag('input type="submit" class="submit" value="' . utf8_ucfirst($tx['action']['save']) . '"') . "\n";
                     $o .= '<table width="100%" cellpadding="1" cellspacing="0" border="0">' . "\n";
                     foreach ($GLOBALS[$a] as $k1 => $v1) {
                         if (!@$plugin || $k1 == @$plugin) {
                             if($file=='config')
-							{
-							$o .= '<tr>' . "\n" . '<td colspan="2"><h4>' . str_replace('Mailform','',ucfirst($k1)) . '</h4></td>' . "\n" . '</tr>' . "\n";
-							}
-							else
-							{
-							$o .= '<tr>' . "\n" . '<td colspan="2"><h4>' . ucfirst($k1) . '</h4></td>' . "\n" . '</tr>' . "\n";
-							}
+                            {
+                            $o .= '<tr>' . "\n" . '<td colspan="2"><h4>' . str_replace('Mailform','',ucfirst($k1)) . '</h4></td>' . "\n" . '</tr>' . "\n";
+                            }
+                            else
+                            {
+                            $o .= '<tr>' . "\n" . '<td colspan="2"><h4>' . ucfirst($k1) . '</h4></td>' . "\n" . '</tr>' . "\n";
+                            }
                             if (is_array($v1))
                                 foreach ($v1 as $k2 => $v2)
                                     if (!is_array($v2)) {
                                         $o .= '<tr>' . "\n" . '<td valign="top">';
-										if (isset($tx['help'][$k1 . '_' . $k2]) && ($a == 'cf' || $a == 'txc'))
-										$o .= '<a href="#" class="pl_tooltip">' . tag('img src = "' . $pluginloader_cfg['folder_pluginloader'] . '/css/help_icon.png" alt="" class="helpicon"') . '<span>' . $tx['help'][$k1 . '_' . $k2] . '</span></a>' . "\n";
-										$o .= "\n" . ucfirst($k2) . ':</td>' . "\n" . '<td>';
+                                        if (isset($tx['help'][$k1 . '_' . $k2]) && ($a == 'cf' || $a == 'txc'))
+                                            $o .= '<a href="#" onclick="return false" class="pl_tooltip">' . tag('img src = "' . $pluginloader_cfg['folder_pluginloader'] . '/css/help_icon.png" alt="" class="helpicon"') . '<span>' . $tx['help'][$k1 . '_' . $k2] . '</span></a>' . "\n";
+                                        $o .= "\n" . ucfirst($k2) . ':</td>' . "\n" . '<td>';
+                                        if (($k1 == 'security' || $k1 == 'subsite') && $k2 == 'password') {
+                                            $o .= tag('input type="hidden" name="' . $k1 . '_' . $k2 . '_old" value="' . $v2 . '"');
+                                        }
                                         if ($k1 . $k2 == 'securitytype') {
                                             $o .= '<select name="' . $k1 . '_' . $k2 . '">';
-                                            foreach (array('page', 'javascript', 'wwwaut') as $v) {
+                                            foreach (array('page', 'javascript') as $v) {
                                                 $o .= '<option value="' . $v . '"';
                                                 if ($v == $v2)
                                                     $o .= ' selected="selected"';
@@ -387,18 +352,18 @@ if ($adm) {
                                         
                                         else if ($a == 'cf')
                                         {
-                                            $o .= tag('input type="text" class="text" name="'.$k1.'_'.$k2.'" value="'.$v2.'" size="30"')."\n";
+                                            $o .= tag('input type="text" class="text" name="'.$k1.'_'.$k2.'" value="'.htmlspecialchars($v2, ENT_COMPAT, 'UTF-8').'" size="30"')."\n";
                                         }
 
 //new in 1.5: single line input field or textarea depending on text length
-										else if (strlen($v2) < 30)
-										{
-											$o .= '<textarea rows="2" cols="30" class="cmsimplecore_settings cmsimplecore_settings_short" name="' . $k1 . '_' . $k2 . '">' . $v2 . "</textarea>\n";
-										}
-										else
-										{
-												$o .= '<textarea rows="2" cols="30" class="cmsimplecore_settings" name="' . $k1 . '_' . $k2 . '">' . $v2 . "</textarea>\n";
-										}
+                                        else if (utf8_strlen($v2) < 30)
+                                        {
+                                            $o .= '<textarea rows="2" cols="30" class="cmsimplecore_settings cmsimplecore_settings_short" name="' . $k1 . '_' . $k2 . '">' . htmlspecialchars($v2, ENT_COMPAT, 'UTF-8') . "</textarea>\n";
+                                        }
+                                        else
+                                        {
+                                                $o .= '<textarea rows="2" cols="30" class="cmsimplecore_settings" name="' . $k1 . '_' . $k2 . '">' . htmlspecialchars($v2, ENT_COMPAT, 'UTF-8') . "</textarea>\n";
+                                        }
                                         $o .= '</td>' . "\n" . '</tr>' . "\n";
                                     }
                         }
@@ -410,7 +375,7 @@ if ($adm) {
 
                 if (isset($admin) && $admin)
                     $o .= tag('input type="hidden" name="admin" value="' . $admin . '"') . "\n";
-                $o .= tag('input type="hidden" name="file" value="' . $file . '"') . "\n" . tag('input type="hidden" name="action" value="save"') . "\n" . ' ' . tag('input type="submit" class="submit" style="margin-top:1em;" value="' . ucfirst($tx['action']['save']) . '"') . "\n" . '</form>' . "\n";
+                $o .= tag('input type="hidden" name="file" value="' . $file . '"') . "\n" . tag('input type="hidden" name="action" value="save"') . "\n" . ' ' . tag('input type="submit" class="submit" style="margin-top:1em;" value="' . utf8_ucfirst($tx['action']['save']) . '"') . "\n" . '</form>' . "\n";
             }
         }
     }
@@ -436,10 +401,14 @@ if ($adm && $f == 'save') {
 
     $c[$s] = $text;
 
-    if ($s == 0)
-        if (!preg_match("/^<h1[^>]*>.*<\/h1>/i", rmanl($c[0])) && !preg_match("/^(<p[^>]*>)?(\&nbsp;| |<br \/>)?(<\/p>)?$/i", rmanl($c[0])))
+    if ($s == 0) {
+        if (!preg_match("/^<h1[^>]*>.*<\/h1>/i", rmanl($c[0]))
+            && !preg_match("/^(<p[^>]*>)?(\&nbsp;| |<br \/>)?(<\/p>)?$/i", rmanl($c[0])))
+        {
             $c[0] = '<h1>' . $tx['toc']['missing'] . '</h1>' . "\n" . $c[0];
-    $title = ucfirst($tx['filetype']['content']);
+        }
+    }
+    $title = utf8_ucfirst($tx['filetype']['content']);
 
     if ($fh = @fopen($pth['file']['content'], "w")) {
         fwrite($fh, '<html><head><title>Content</title></head><body>' . "\n");
@@ -449,23 +418,20 @@ if ($adm && $f == 'save') {
         fwrite($fh, '</body></html>');
         fclose($fh);
 
-        //preg_match('~<h[1-3][^>]*>(.+)</h[1-3]>~isu', $text, $matches);
         preg_match('~<h[1-'.$cf['menu']['levels'].'][^>]*>(.+?)</h[1-'.$cf['menu']['levels'].']>~isu', $c[$s], $matches);
-
         if (count($matches) > 0) {
-
             $temp = explode($cf['uri']['seperator'], $selected);
-            array_splice($temp, -1, 1, uenc(rmnl(trim(strip_tags($matches[1])))));
+            array_splice($temp, -1, 1, uenc(trim(xh_rmws(strip_tags($matches[1])))));
             $su = implode($cf['uri']['seperator'], $temp);
         } else {
             $su = $u[max($s - 1, 0)];
         }
-        //  var_dump($_SERVER);
         header("Location: " . $sn . "?" . $su);
-        //rfc();
+        exit;
     }
-    else
+    else {
         e('cntwriteto', 'content', $pth['file']['content']);
+    }
     $title = '';
 }
 
@@ -484,10 +450,10 @@ if ($adm && $edit && (!$f || $f == 'save') && !$download) {
                 . tag('input type="hidden" name="selected" value="' . $u[$s] . '"')
                 . tag('input type="hidden" name="function" value="save"')
                 . '<textarea name="text" id="text" class="xh-editor" style="height: ' . $cf['editor']['height'] . 'px; width: 100%;" rows="30" cols="80">'
-                . htmlspecialchars($c[$s])
+                . htmlspecialchars($c[$s], ENT_COMPAT, 'UTF-8')
                 . '</textarea>';
         if ($cf['editor']['external'] == '' || !$editor) {
-            $o .= tag('input type="submit" value="' . ucfirst($tx['action']['save']) . '"');
+            $o .= tag('input type="submit" value="' . utf8_ucfirst($tx['action']['save']) . '"');
         }
         $o .= '
                </form>
@@ -529,7 +495,7 @@ function check_links() {
     global $c, $u, $h, $cl, $o;
     $checkedLinks = 0;
     for ($i = 0; $i < $cl; $i++) {
-        preg_match_all('/<a.*?href=["]*([^"]*)["]*.*?>(.*?)<\/a>/i', $c[$i], $pageLinks);
+        preg_match_all('/<a.*?href=["]?([^"]*)["]?.*?>(.*?)<\/a>/is', $c[$i], $pageLinks);
         if (count($pageLinks[1]) > 0) {
 
 

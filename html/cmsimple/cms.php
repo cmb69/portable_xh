@@ -1,10 +1,14 @@
 <?php
 
+/**
+ * @version $Id: cms.php 303 2012-10-11 16:16:24Z cmb69 $
+ */
+
 /* utf8-marker = äöü */
 /*
   ======================================
-  CMSimple_XH 1.5.3
-  2012-03-19
+  CMSimple_XH 1.5.5
+  2012-10-16
   based on CMSimple version 3.3 - December 31. 2009
   For changelog, downloads and information please see http://www.cmsimple-xh.com
   ======================================
@@ -46,6 +50,7 @@ $title = '';
 $o = '';
 $e = '';
 $hjs = '';
+$bjs = '';
 $onload = '';
 
 // added to make it possible to overwrite the backend plugins delivered with the core
@@ -56,24 +61,28 @@ $onload = '';
 //);
 
 //HI 2009-10-30 (CMSimple_XH 1.0rc3) added version-informations
-define('CMSIMPLE_XH_VERSION', 'CMSimple_XH 1.5.3');
-define('CMSIMPLE_XH_BUILD', 2012031901);
-define('CMSIMPLE_XH_DATE', '2012-03-19');
+define('CMSIMPLE_XH_VERSION', 'CMSimple_XH 1.5.5');
+define('CMSIMPLE_XH_BUILD', '2012101601');
+define('CMSIMPLE_XH_DATE', '2012-10-16');
 //version-informations
 
 if (preg_match('/cms.php/i', sv('PHP_SELF')))
     die('Access Denied');
+    
+if (!defined('E_DEPRECATED')) {
+    define('E_DEPRECATED', 8192);
+}
+if (!defined('E_USER_DEPRECATED')) {
+    define('E_USER_DEPRECATED', 16384);
+}
 
 $pth['file']['execute'] = './index.php';
 $pth['folder']['content'] = './content/';
 $pth['file']['content'] = $pth['folder']['content'] . 'content.htm';
 $pth['file']['pagedata'] = $pth['folder']['content'] . 'pagedata.php';
 
-if (@is_dir('./cmsimple/'))
-    $pth['folder']['base'] = './';
-else
-    $pth['folder']['base'] = './../';
-
+$pth['folder']['base'] = is_dir('./cmsimple') ? './' : '../'; 
+ 
 $pth['folder']['cmsimple'] = $pth['folder']['base'] . 'cmsimple/';
 
 $pth['file']['log'] = $pth['folder']['cmsimple'] . 'log.txt';
@@ -172,11 +181,19 @@ else
 
 $pth['folder']['plugins'] = $pth['folder']['base'] . $cf['plugins']['folder'] . '/';
 
+require_once $pth['folder']['plugins'] . 'utf8/utf8.php';
+require_once UTF8 . '/ucfirst.php';
+require_once UTF8 . '/utils/validation.php';
+
+// don't check cookies, as these might be set from non UTF-8 scripts on the domain
+// TODO: what about the variable names? what about other input (e.g. $_SERVER)?
+XH_checkValidUtf8(array($_GET, $_POST));
+
 $iis = strpos(sv('SERVER_SOFTWARE'), "IIS");
 $cgi = (php_sapi_name() == 'cgi' || php_sapi_name() == 'cgi-fcgi');
 
 $sn = preg_replace('/([^\?]*)\?.*/', '\1', sv(($iis ? 'SCRIPT_NAME' : 'REQUEST_URI')));
-foreach (array('download', 'function', 'media', 'search', 'mailform', 'sitemap', 'text', 'selected', 'login', 'logout', 'settings', 'print', 'retrieve', 'file', 'action', 'validate', 'images', 'downloads', 'edit', 'normal', 'stylesheet', 'passwd', 'userfiles', 'xhpages')as $i)
+foreach (array('download', 'function', 'media', 'search', 'mailform', 'sitemap', 'text', 'selected', 'login', 'logout', 'settings', 'print', 'file', 'action', 'validate', 'images', 'downloads', 'edit', 'normal', 'stylesheet', 'passwd', 'userfiles', 'xhpages')as $i)
     initvar($i);
 
 //by GE 2009-10-14 (CMSimple_XH 1.0rc2)
@@ -276,7 +293,7 @@ if ($f == 'sitemap') {
     $ta = array();
     $o .= '<h1>' . $title . '</h1>' . "\n";
     for ($i = 0; $i < $cl; $i++)
-        if (!hide($i) || $cf['hidden']['pages_sitemap'] == 'true')
+        if (!hide($i) || $cf['show_hidden']['pages_sitemap'] == 'true')
             $ta[] = $i;
     $o .= li($ta, 'sitemaplevel');
 }
@@ -285,7 +302,7 @@ if ($f == 'sitemap') {
 $si = -1;
 $hc = array();
 for ($i = 0; $i < $cl; $i++) {
-    if (!hide($i) || ($i == $s && $cf['hidden']['pages_toc'] == 'true'))
+    if (!hide($i) || ($i == $s && $cf['show_hidden']['pages_toc'] == 'true'))
         $hc[] = $i;
     if ($i == $s)
         $si = count($hc);
@@ -367,10 +384,14 @@ if ($title == '') {
     else if ($f != '')
         $title = ucfirst($f);
 }
-if ($retrieve) {
-    echo '<html><head>' . head() . '</head><body class="retrieve">' . $c[$s] . '</body></html>';
-    exit;
+
+if (!headers_sent($tempFile, $tempLine)) {
+    header('Content-Type: text/html; charset=' . $tx['meta']['codepage']);
+} else {
+    $temp = $tempFile . ':' . $tempLine;
+    exit(str_replace('{location}', $temp, $tx['error']['headers']));
 }
+
 if ($print) {
     if ($cf['xhtml']['endtags'] == 'true') {
         echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"',
@@ -388,7 +409,13 @@ if ($print) {
 }
 
 
-
+if (!XH_ADM && $adm) {
+    $s = -1;
+    $adm = $edit = false;
+    $o = '';
+    $f = 'login';
+    loginforms();
+}
 
 
 ob_start('final_clean_up');
@@ -409,18 +436,19 @@ if ($handle) {
 
 
 if (!include($pth['file']['template'])) {
-
-    echo '<html><head><title>' . $tx['heading']['error'] . '</title></head><body>Template nicht gefunden.(' . $pth['file']['template'] . ')</body></html>';
+    header('HTTP/1.0 500 Internal Server Error');
+    header('Content-Type: text/plain; charset=utf-8');
+    echo $tx['error']['missing'], ' ', $tx['filetype']['template'], "\n", $pth['file']['template'];
+    exit;
 }
 
 function final_clean_up($html) {
-    global $adm, $s, $o, $debugMode, $plugins, $errors, $cf;
+    global $adm, $s, $o, $debugMode, $plugins, $errors, $cf, $bjs;
 
     if ($adm === true) {
         $debugHint = '';
         $errorList = '';
         $margin = 34;
-        $style = '';
 
         if ($debugMode) {
             $debugHint .= '<div class="cmsimplecore_debug">' . "\n" . '<b>Notice:</b> Debug-Mode is enabled!' . "\n" . '</div>' . "\n";
@@ -442,22 +470,25 @@ function final_clean_up($html) {
             $errorList .= '</ul></div>';
         }
         if (isset($cf['editmenu']['scroll']) && $cf['editmenu']['scroll'] == 'true'){
-            $style = ' style="z-index: 99;"';
+            $id = ' id="editmenu_scrolling"';
             $margin = 0;
         }
         else {
-             $style =' style="position: fixed; top: 0; left: 0; width: 100%; z-index: 99;"';
-	     $html = preg_replace('~</head>~','<style type="text/css">html {margin-top: ' . $margin . 'px;}</style>' ."\n" . '$0', $html, 1);
+             $id =' id="editmenu_fixed"';
+	     $html = preg_replace('~</head>~i','<style type="text/css">html {margin-top: ' . $margin . 'px;}</style>' ."\n" . '$0', $html, 1);
 
         }
 
-        $html = preg_replace('~<body[^>]*>~',
-                            '$0' . '<div' . $style . '>' . $debugHint. admin_menu($plugins, $debugMode) . '</div>' ."\n" .  $errorList,
+        $html = preg_replace('~<body[^>]*>~i',
+                            '$0' . '<div' . $id . '>' . $debugHint. admin_menu($plugins, $debugMode) . '</div>' ."\n" .  $errorList,
                          $html, 1);
 
 
     }
-
+    
+    if (!empty($bjs)) {
+        $html = preg_replace('/(<\/body\s*>)/isu', $bjs . "\n" . '$1', $html);
+    }
 
     return $html;
 }
@@ -489,6 +520,24 @@ function sv($s) {
 function rmnl($t) {
     return preg_replace("/(\r\n|\r|\n)+/", "\n", $t);
 }
+
+/**
+ * Returns $str with all (consecutive) whitespaces replaced by a single space.
+ *
+ * @param   string $str
+ * @return  string
+ */
+function xh_rmws($str)
+{
+    $ws = '[\x09-\x0d\x20]'
+        . '|\xc2[\x85\xa0]'
+        . '|\xe1(\x9a\x80|\xa0\x8e)'
+        . '|\xe2\x80[\x80-\x8a\xa8\xa9\xaf]'
+        . '|\xe2\x81\x9f'
+        . '|\xe3\x80\x80';
+    return preg_replace('/(?:' . $ws . ')+/', ' ', $str);
+}
+
 
 function rmanl($t) {
     return preg_replace("/(\r\n|\r|\n)+/", "", $t);
@@ -539,7 +588,6 @@ function chkdl($fl) {
 }
 
 function rf($fl) {
-    $fl = @rp($fl);
     if (!file_exists($fl))
         return;
     clearstatcache();
@@ -552,7 +600,7 @@ function rf($fl) {
 
 function chkfile($fl, $writable) {
     global $pth, $tx;
-    $t = @rp($pth['file'][$fl]);
+    $t = isset($pth['file'][$fl]) ? $pth['file'][$fl] : '';
     if ($t == '')
         e('undefined', 'file', $fl);
     else if (!file_exists($t))
@@ -569,7 +617,7 @@ function e($et, $ft, $fn) {
 }
 
 function rfc() {
-    global $c, $cl, $h, $u, $l, $su, $s, $pth, $tx, $edit, $adm, $cf;
+    global $c, $cl, $h, $u, $l, $su, $s, $pth, $tx, $edit, $adm, $cf, $e;
 
     $c = array();
     $h = array();
@@ -592,7 +640,7 @@ function rfc() {
         $c[] = $page;
         preg_match('~<h([1-' . $stop . ']).*>(.*)</h~isU', $page, $temp);
         $l[] = $temp[1];
-        $temp_h[] = preg_replace('/[ \f\n\r\t\xa0]+/isu', ' ', trim(strip_tags($temp[2])));
+        $temp_h[] = trim(xh_rmws(strip_tags($temp[2])));
     }
 
     $cl = count($c);
@@ -614,7 +662,7 @@ function rfc() {
      */
 
     foreach ($temp_h as $i => $heading) {
-        $temp = trim(strip_tags($heading));
+        $temp = $heading;
         if ($temp == '') {
             $empty++;
             $temp = $tx['toc']['empty'] . ' ' . $empty;
@@ -624,6 +672,10 @@ function rfc() {
         $ancestors = array_slice($ancestors, 0, $l[$i]);
         $url = implode($cf['uri']['seperator'], $ancestors);
         $u[] = substr($url, 0, $cf['uri']['length']);
+        if ($adm && strlen($url) > $cf['uri']['length']) {
+            $e .= '<li><b>' . $tx['uri']['toolong'] . '</b>' . tag('br')
+                . '<a href="?' . $u[count($u) - 1] . '">' . $temp . '</a>' . '</li>';
+        }
     }
 
     foreach ($u as $i => $url) {
@@ -662,14 +714,14 @@ function meta($n) {
     global $cf, $print;
     $exclude = array('robots', 'keywords', 'description');
     if ($cf['meta'][$n] != '' && !($print && in_array($n, $exclude)))
-        return tag('meta name="' . $n . '" content="' . $cf['meta'][$n] . '"') . "\n";
+        return tag('meta name="' . $n . '" content="' . htmlspecialchars($cf['meta'][$n], ENT_COMPAT, 'UTF-8') . '"') . "\n";
 }
 
 function ml($i) {
     global $f, $sn, $tx;
     $t = '';
     if ($f != $i)
-        $t .= '<a href="' . $sn . '?' . amp() . $i . '">';
+        $t .= '<a href="' . $sn . '?&amp;' . $i . '">';
     $t .= $tx['menu'][$i];
     if ($f != $i)
         $t .= '</a>';
@@ -684,6 +736,8 @@ function uenc($s) {
 }
 
 function rp($p) {
+    trigger_error('Function rp() is deprecated', E_USER_DEPRECATED);
+    
     if (@realpath($p) == '')
         return $p;
     else
@@ -704,7 +758,7 @@ function sortdir($dir) {
 
 function cmscript($s, $i) {
     global $cf;
-    return preg_match(preg_replace("/\(\.\*\?\)/", $s, "/" . $cf['scripting']['regexp'] . "/is"), $i);
+    return preg_match(str_replace('(.*?)', $s, '/' . $cf['scripting']['regexp'] . '/is'), $i);
 }
 
 function hide($i) {
@@ -726,6 +780,9 @@ function tag($s) {
 
 function amp() {
     global $cf;
+    
+    trigger_error('Function amp() is deprecated', E_USER_DEPRECATED);
+    
     if ($cf['xhtml']['amp'] == 'true')
         return '&amp;';
     else
@@ -734,9 +791,11 @@ function amp() {
 
 function shead($s) {
     global $iis, $cgi, $tx, $txc, $title, $o;
-    if ($s == '401')
+    if ($s == '401') {
         header(($cgi || $iis) ? 'status: 401 Unauthorized' : 'HTTP/1.0 401 Unauthorized');
-    if ($s == '404') {
+    } elseif ($s == '403') {
+        header(($cgi || $iis) ? 'status: 403 Forbidden' : 'HTTP/1.0 403 Forbidden');
+    } elseif ($s == '404') {
 	if (function_exists('custom_404')) {
 	    custom_404();
 	} else {
@@ -831,38 +890,40 @@ function xh_debug($errno, $errstr, $errfile, $errline, $context)
 
     switch ($errno) {
     case E_USER_ERROR:
-        $errors[] = "<b>XH-ERROR:</b> [$errno] $errstr <br /> $errfile:$errline<br />\n";
+        $errtype = 'XH-ERROR';
         break;
-
     case E_USER_WARNING:
-        echo "<b>XH WARNING:</b>  $errstr <br /> $errfile: $errline<br />\n";
+        $errtype = 'XH-WARNING';
         break;
-
     case E_USER_NOTICE:
-        $errors[] = "<b>XH-NOTICE:</b> [$errno] $errstr <br />$errfile:$errline<br />\n";
+        $errtype = 'XH-NOTICE';
         break;
-
+    case E_USER_DEPRECATED:
+        $errtype = 'XH-DEPRECATED';
+        $backtrace = debug_backtrace(FALSE);
+        $errfile = $backtrace[2]['file'];
+        $errline = $backtrace[2]['line'];
+        break;
     case E_WARNING:
-         $errors[] = "<b>WARNING:</b> $errno $errstr <br />$errfile:$errline<br />\n";
-         break;
-
-
-
-
+        $errtype = 'WARNING';
+        break;
     case E_NOTICE:
-        $errors[] = "<b>NOTICE:</b> $errstr <br />$errfile:$errline<br />\n";
+        $errtype = 'NOTICE';
         break;
-
-
-    case E_ERROR:
-         $errors[] = "<b>ERROR:</b> $errstr <br />$errfile:$errline<br />\n";
-         break;
-
+    case E_DEPRECATED:
+        $errtype = 'DEPRECATED';
+        break;
     default:
-        echo "Unknown error type: [$errno] $errstr<br />$errfile:$errline<br />\n";
-        break;
+        $errtype = "Unknow error type [$errno]";
     }
-
+    
+    $errors[] = "<b>$errtype:</b> $errstr" . tag('br') . "$errfile:$errline"
+        . tag('br') . "\n";
+    
+    if ($errno === E_USER_ERROR) {
+        die($errors[count($errors) - 1]);
+    }
+    
   //  error_log($error, 3, CMS_DIR .'errors.log');
     /* Don't execute PHP internal error handler */
 
@@ -880,10 +941,12 @@ function xh_debug($errno, $errstr, $errfile, $errline, $context)
 
 function head() {
     global $title, $cf, $pth, $tx, $txc, $hjs;
-    if (isset($cf['site']['title']) && $cf['site']['title'] != '')
-        $t = $cf['site']['title'] . ' - ' . $title; // changed by LM CMSimple_XH 1.1
-    else
+    if (!empty($cf['site']['title'])) {
+        $t = htmlspecialchars($cf['site']['title'], ENT_COMPAT, 'UTF-8')
+            . " \xe2\x80\x93 " . $title;
+    } else {
         $t = $title;
+    }
     $t = '<title>' . strip_tags($t) . '</title>' . "\n";
     foreach ($cf['meta'] as $i => $k)
         $t .= meta($i);
@@ -897,12 +960,16 @@ function head() {
 
 function sitename() {
     global $txc;
-    return isset($txc['site']['title']) ? $txc['site']['title'] : ''; // changed by GE CMSimple_XH 1.2
+    return isset($txc['site']['title'])
+        ? htmlspecialchars($txc['site']['title'], ENT_NOQUOTES, 'UTF-8')
+        : '';
 }
 
-function pagename() { // changed by GE CMSimple_XH 1.2
+function pagename() {
     global $cf;
-    return isset($cf['site']['title']) ? $cf['site']['title'] : ''; // changed by LM CMSimple_XH 1.1
+    return isset($cf['site']['title'])
+        ? htmlspecialchars($cf['site']['title'], ENT_NOQUOTES, 'UTF-8')
+        : '';
 }
 
 function onload() {
@@ -910,7 +977,7 @@ function onload() {
     return ' onload="' . $onload . '"';
 }
 
-function toc($start = NULL, $end = NULL) { // changed by LM CMSimple_XH 1.1
+function toc($start = NULL, $end = NULL, $li = 'li') { // changed by LM CMSimple_XH 1.1
     global $c, $cl, $s, $l, $cf;
     if (isset($start)) {
         if (!isset($end))
@@ -925,7 +992,7 @@ function toc($start = NULL, $end = NULL) { // changed by LM CMSimple_XH 1.1
         $tl = $l[$s];
         for ($i = $s; $i > -1; $i--) {
             if ($l[$i] <= $tl && $l[$i] >= $start && $l[$i] <= $end)
-                if (!hide($i) || ($i == $s && $cf['hidden']['pages_toc'] == 'true'))
+                if (!hide($i) || ($i == $s && $cf['show_hidden']['pages_toc'] == 'true'))
                     $ta[] = $i;
             if ($l[$i] < $tl)
                 $tl = $l[$i];
@@ -943,7 +1010,7 @@ function toc($start = NULL, $end = NULL) { // changed by LM CMSimple_XH 1.1
         if ($l[$i] < $tl)
             $tl = $l[$i];
     }
-    return li($ta, $start);
+    return call_user_func($li, $ta, $start);
 }
 
 // inserted many "\n" for better structured Sourcecode - by GE 2009/06 (CMSimple_XH beta)
@@ -1019,7 +1086,12 @@ function li($ta, $st) {
 
 function searchbox() {
     global $sn, $tx;
-    return '<form action="' . $sn . '" method="post">' . "\n" . '<div id="searchbox">' . "\n" . tag('input type="text" class="text" name="search" size="12"') . "\n" . tag('input type="hidden" name="function" value="search"') . "\n" . ' ' . tag('input type="submit" class="submit" value="' . $tx['search']['button'] . '"') . "\n" . '</div>' . "\n" . '</form>' . "\n";
+    return '<form action="' . $sn . '" method="GET">' . "\n"
+        . '<div id="searchbox">' . "\n"
+        . tag('input type="text" class="text" name="search" size="12"') . "\n"
+        . tag('input type="hidden" name="function" value="search"') . "\n" . ' '
+        . tag('input type="submit" class="submit" value="' . $tx['search']['button'] . '"') . "\n"
+        . '</div>' . "\n" . '</form>' . "\n";
 }
 
 function sitemaplink() {
@@ -1028,15 +1100,15 @@ function sitemaplink() {
 
 function printlink() {
     global $f, $search, $file, $sn, $tx;
-    $t = amp() . 'print';
+    $t = '&amp;print';
     if ($f == 'search')
-        $t .= amp() . 'function=search' . amp() . 'search=' . htmlspecialchars(stsl($search));
+        $t .= '&amp;function=search&amp;search=' . htmlspecialchars(stsl($search), ENT_COMPAT, 'UTF-8');
     else if ($f == 'file')
-        $t .= amp() . 'file=' . $file;
+        $t .= '&amp;file=' . $file;
     else if ($f != '' && $f != 'save')
-        $t .= amp() . $f;
+        $t .= '&amp;' . $f;
     else if (sv('QUERY_STRING') != '')
-        $t = htmlspecialchars(sv('QUERY_STRING'), ENT_QUOTES, "UTF-8") . $t;
+        $t = htmlspecialchars(sv('QUERY_STRING'), ENT_COMPAT, "UTF-8") . $t;
     return '<a href="' . $sn . '?' . $t . '">' . $tx['menu']['print'] . '</a>';
 }
 
@@ -1050,6 +1122,8 @@ function mailformlink() {
 }
 
 function guestbooklink() {
+    trigger_error('Function guestbooklink() is deprecated', E_USER_DEPRECATED);
+    
     if (function_exists('gblink'))
         return gblink();
 }
@@ -1076,7 +1150,7 @@ function legallink() {
 
 function locator() {
     global $title, $h, $s, $f, $c, $l, $tx, $txc, $cf;
-    if (hide($s) && $cf['hidden']['path_locator'] != 'true')
+    if (hide($s) && $cf['show_hidden']['path_locator'] != 'true')
         return $h[$s];
     if ($title != '' && (!isset($h[$s]) || $h[$s] != $title))
         return $title;
@@ -1113,87 +1187,83 @@ function editmenu() {
 
 function admin_menu($plugins = array(), $debug = false)
 {
-	global $adm, $edit, $s, $u, $sn, $tx, $sl, $cf, $su;
+    global $adm, $edit, $s, $u, $sn, $tx, $sl, $cf, $su;
 
-	if ($adm)
-	{
-		$pluginMenu = '';
-		if ((bool) $plugins)
-		{
-			sort($plugins, SORT_STRING);
-			$pluginMenu .= '<li><a href="javascript:void(0);">' . ucfirst($tx['editmenu']['plugins']) . "</a>\n    <ul>";
-			foreach ($plugins as $plugin)
-			{
-				if($plugin === 'filebrowser')
-				{
-				//   continue;
-				}
-				$pluginMenu .= "\n" .
-					'     <li><a href="?' . $plugin . '&amp;normal">' . ucwords($plugin) . '</a></li>';
-			}
+    if ($adm)
+    {
+        $pluginMenu = '';
+        if ((bool) $plugins)
+        {
+            sort($plugins, SORT_STRING);
+            $pluginMenu .= '<li><a href="#" onclick="return false">' . utf8_ucfirst($tx['editmenu']['plugins']) . "</a>\n    <ul>";
+            foreach ($plugins as $plugin)
+            {
+                $pluginMenu .= "\n" .
+                    '     <li><a href="?' . $plugin . '&amp;normal">' . ucfirst($plugin) . '</a></li>';
+            }
 
-			$pluginMenu .= "\n    </ul>";
-		}
+            $pluginMenu .= "\n    </ul>";
+        }
 
 
-		$t .= "\n" . '<div id="editmenu">';
+        $t .= "\n" . '<div id="editmenu">';
 
-		$t .= "\n" . '<ul id="edit_menu">' . "\n";
+        $t .= "\n" . '<ul id="edit_menu">' . "\n";
 
-		if ($s < 0)
-		{
-			$su = $u[0];
-		}
-		$changeMode = $edit ? 'normal' : 'edit';
-		$changeText = $edit ? $tx['editmenu']['normal'] : $tx['editmenu']['edit'];
-		$t .= '<li><a href="' . $sn . '?' . $su . '&' . $changeMode . '">' . $changeText . '</a></li>' . "\n";
-		$t .= '<li><a href="' . $sn . '?&amp;normal&amp;xhpages" class="">' . ucfirst($tx['editmenu']['pagemanager']) . '</a></li>' . "\n";
-		$t .= '<li><a href="javascript:void(0);" class="">' . ucfirst($tx['editmenu']['files']) . '</a>' ."\n";
-		$t .= '    <ul>' . "\n";
-		$t .= '    <li><a href="' . $sn . '?&amp;normal&amp;images">' . ucfirst($tx['editmenu']['images']) . '</a></li>' . "\n";
-		$t .= '    <li><a href="' . $sn . '?&amp;normal&amp;downloads">' . ucfirst($tx['editmenu']['downloads']) . '</a></li>' . "\n";
-		$t .= '    <li><a href="' . $sn . '?&amp;normal&amp;media">' . ucfirst($tx['editmenu']['media']) . '</a></li>' . "\n";
-		$t .= '    <li><a href="' . $sn . '?&amp;normal&amp;userfiles">' . ucfirst($tx['editmenu']['userfiles']) . '</a></li>' . "\n";
-		$t .= '    </ul>' . "\n";
-		$t .= '</li>' ."\n";
-		$t .= '<li><a href="' . $sn . '?&amp;settings">' . ucfirst($tx['editmenu']['settings']) . '</a>' ."\n"
-					. '    <ul>' ."\n";
+        if ($s < 0)
+        {
+            $su = $u[0];
+        }
+        $changeMode = $edit ? 'normal' : 'edit';
+        $changeText = $edit ? $tx['editmenu']['normal'] : $tx['editmenu']['edit'];
+        $t .= '<li><a href="' . $sn . '?' . $su . '&' . $changeMode . '">' . $changeText . '</a></li>' . "\n";
+        $t .= '<li><a href="' . $sn . '?&amp;normal&amp;xhpages" class="">' . utf8_ucfirst($tx['editmenu']['pagemanager']) . '</a></li>' . "\n";
+        $t .= '<li><a href="#" onclick="return false" class="">' . utf8_ucfirst($tx['editmenu']['files']) . '</a>' ."\n";
+        $t .= '    <ul>' . "\n";
+        $t .= '    <li><a href="' . $sn . '?&amp;normal&amp;images">' . utf8_ucfirst($tx['editmenu']['images']) . '</a></li>' . "\n";
+        $t .= '    <li><a href="' . $sn . '?&amp;normal&amp;downloads">' . utf8_ucfirst($tx['editmenu']['downloads']) . '</a></li>' . "\n";
+        $t .= '    <li><a href="' . $sn . '?&amp;normal&amp;media">' . utf8_ucfirst($tx['editmenu']['media']) . '</a></li>' . "\n";
+        $t .= '    <li><a href="' . $sn . '?&amp;normal&amp;userfiles">' . utf8_ucfirst($tx['editmenu']['userfiles']) . '</a></li>' . "\n";
+        $t .= '    </ul>' . "\n";
+        $t .= '</li>' ."\n";
+        $t .= '<li><a href="' . $sn . '?&amp;settings">' . utf8_ucfirst($tx['editmenu']['settings']) . '</a>' ."\n"
+                    . '    <ul>' ."\n";
 
-		if($sl == $cf['language']['default'])
-		{
-			$t .='    <li><a href="?file=config&amp;action=array">' . ucfirst($tx['editmenu']['configuration']) . '</a></li>' . "\n";
-		}
+        if($sl == $cf['language']['default'])
+        {
+            $t .='    <li><a href="?file=config&amp;action=array">' . utf8_ucfirst($tx['editmenu']['configuration']) . '</a></li>' . "\n";
+        }
 
-		$t .='    <li><a href="?file=langconfig&amp;action=array">' . ucfirst($tx['editmenu']['langconfig']) . '</a></li>' . "\n"
-		. '    <li><a href="?file=language&amp;action=array">' . ucfirst($tx['editmenu']['language']) . '</a></li>' . "\n"
-		. '    <li><a href="?file=template&amp;action=edit">' . ucfirst($tx['editmenu']['template']) . '</a></li>' . "\n"
-		. '    <li><a href="?file=stylesheet&amp;action=edit">' . ucfirst($tx['editmenu']['stylesheet']) . '</a></li>' . "\n"
-		. '    <li><a href="?file=log&amp;action=view" target="_blank">' . ucfirst($tx['editmenu']['log']) . '</a></li>' . "\n"
-		. '    <li><a href="' . $sn . '?&amp;validate">' . ucfirst($tx['editmenu']['validate']) . '</a></li>' . "\n"
-		. '    <li><a href="' . $sn . '?&amp;sysinfo">' . ucfirst($tx['editmenu']['sysinfo']) . '</a></li>' . "\n"
-		. '    </ul>' . "\n"
-		. '</li>' . "\n"
-		. $pluginMenu . "\n"
-		. '</li>' . "\n";
-		$t .= '</ul>' . "\n" . '<ul id="editmenu_logout">' . "\n";
-		$t .= '<li id="edit_menu_logout"><a href="?&logout">' . ucfirst($tx['editmenu']['logout']) . '</a></li>' . "\n";
-		$t .= '</ul>' . "\n";
+        $t .='    <li><a href="?file=langconfig&amp;action=array">' . utf8_ucfirst($tx['editmenu']['langconfig']) . '</a></li>' . "\n"
+        . '    <li><a href="?file=language&amp;action=array">' . utf8_ucfirst($tx['editmenu']['language']) . '</a></li>' . "\n"
+        . '    <li><a href="?file=template&amp;action=edit">' . utf8_ucfirst($tx['editmenu']['template']) . '</a></li>' . "\n"
+        . '    <li><a href="?file=stylesheet&amp;action=edit">' . utf8_ucfirst($tx['editmenu']['stylesheet']) . '</a></li>' . "\n"
+        . '    <li><a href="?file=log&amp;action=view" target="_blank">' . utf8_ucfirst($tx['editmenu']['log']) . '</a></li>' . "\n"
+        . '    <li><a href="' . $sn . '?&amp;validate">' . utf8_ucfirst($tx['editmenu']['validate']) . '</a></li>' . "\n"
+        . '    <li><a href="' . $sn . '?&amp;sysinfo">' . utf8_ucfirst($tx['editmenu']['sysinfo']) . '</a></li>' . "\n"
+        . '    </ul>' . "\n"
+        . '</li>' . "\n"
+        . $pluginMenu . "\n"
+        . '</li>' . "\n";
+        $t .= '</ul>' . "\n" . '<ul id="editmenu_logout">' . "\n";
+        $t .= '<li id="edit_menu_logout"><a href="?&logout">' . utf8_ucfirst($tx['editmenu']['logout']) . '</a></li>' . "\n";
+        $t .= '</ul>' . "\n";
 
-		return $t . '<div style="float:none;clear:both;padding:0;margin:0;width:100%;height:0px;"></div>' . "\n" . '</div>' . "\n";
-	}
+        return $t . '<div style="float:none;clear:both;padding:0;margin:0;width:100%;height:0px;"></div>' . "\n" . '</div>' . "\n";
+    }
 }
 
 function content() {
     global $s, $o, $c, $edit, $adm, $cf;
     if (!($edit && $adm) && $s > -1) {
-    if (isset($_GET['search'])) {
-        $words = explode(',', urldecode($_GET['search']));
-        $words = array_map(create_function('$w', 'return "&".$w."(?!([^<]+)?>)&isU";'), $words);
-        $c[$s] = preg_replace($words, '<span class="highlight_search">\\0</span>', $c[$s]);
-    }
+        if (isset($_GET['search'])) {
+            $words = explode(',', htmlspecialchars(stsl($_GET['search']), ENT_COMPAT, 'UTF-8'));
+            $code = 'return "&" . preg_quote($w, "&") . "(?!([^<]+)?>)&isU";';
+            $words = array_map(create_function('$w', $code), $words);
+            $c[$s] = preg_replace($words, '<span class="highlight_search">$0</span>', $c[$s]);
+        }
         return $o . preg_replace("/" . $cf['scripting']['regexp'] . "/is", "", $c[$s]);
-    }
-    else {
+    } else {
         return $o;
     }
 }
@@ -1240,29 +1310,57 @@ function top() {
 // title-tags for flag-gifs - by GE 09-10-07 (CMSimple_XH 1.0rc2)
 
 function languagemenu() {
-	global $pth, $cf, $sl;
-	if(!file_exists('./cmsimplesubsite.htm')){  // for subsites
-		$t = '';
-		$r = array();
-		$fd = @opendir($pth['folder']['base']);
-		while (($p = @readdir($fd)) == true ) {
-			if (@is_dir($pth['folder']['base'].$p)) {
-				if (preg_match('/^[A-z]{2}$/', $p))$r[] = $p;
-			}
-		}
-		if ($fd == true)closedir($fd); if(count($r) == 0)return ''; if($cf['language']['default'] != $sl)$t .= '<a href="'.$pth['folder']['base'].'">'.tag('img src="'.$pth['folder']['flags'].$cf['language']['default'].'.gif" alt="'.$cf['language']['default'].'" title="&nbsp;'.$cf['language']['default'].'&nbsp;" class="flag"').'</a> '; $v = count($r); for($i = 0;
-		$i < $v;
-		$i++) {
-			if ($sl != $r[$i]) {
-				if (is_file($pth['folder']['flags'].'/'.$r[$i].'.gif')) {
-					$t .= '<a href="'.$pth['folder']['base'].$r[$i].'/">'.tag('img src="'.$pth['folder']['flags'].$r[$i].'.gif" alt="'.$r[$i].'" title="&nbsp;'.$r[$i].'&nbsp;" class="flag"').'</a> ';
-				} else {
-					$t .= '<a href="'.$pth['folder']['base'].$r[$i].'/">['.$r[$i].']</a> ';
-				}
-			}
-		}
-		return ''.$t.'';
-	} // for subsites
+    global $pth, $cf, $sl;
+    if(!file_exists('./cmsimplesubsite.htm')){  // for subsites
+        $t = '';
+        $r = array();
+        $fd = @opendir($pth['folder']['base']);
+        while (($p = @readdir($fd)) == true ) {
+            if (@is_dir($pth['folder']['base'].$p)) {
+                if (preg_match('/^[A-z]{2}$/', $p)
+                    && !file_exists($pth['folder']['base'] . $p . '/cmsimplesubsite.htm'))
+                {
+                    $r[] = $p;
+                }
+            }
+        }
+        if ($fd == true)closedir($fd); if(count($r) == 0)return ''; if($cf['language']['default'] != $sl)$t .= '<a href="'.$pth['folder']['base'].'">'.tag('img src="'.$pth['folder']['flags'].$cf['language']['default'].'.gif" alt="'.$cf['language']['default'].'" title="&nbsp;'.$cf['language']['default'].'&nbsp;" class="flag"').'</a> '; $v = count($r); for($i = 0;
+        $i < $v;
+        $i++) {
+            if ($sl != $r[$i]) {
+                if (is_file($pth['folder']['flags'].'/'.$r[$i].'.gif')) {
+                    $t .= '<a href="'.$pth['folder']['base'].$r[$i].'/">'.tag('img src="'.$pth['folder']['flags'].$r[$i].'.gif" alt="'.$r[$i].'" title="&nbsp;'.$r[$i].'&nbsp;" class="flag"').'</a> ';
+                } else {
+                    $t .= '<a href="'.$pth['folder']['base'].$r[$i].'/">['.$r[$i].']</a> ';
+                }
+            }
+        }
+        return ''.$t.'';
+    } // for subsites
 }
 // END modified function languagemenu() - by GE 09-06-26 (CMSimple_XH beta3)
+
+
+/**
+ * Checks $arr recursively for valid UTF-8. Otherwise it exists the script.
+ *
+ * This is useful for checking user input.
+ *
+ * @since   1.5.5
+ * 
+ * @param   array $arr
+ * @return  void
+ */
+function XH_checkValidUtf8($arr)
+{
+    foreach ($arr as $elt) {
+        if (is_array($elt)) {
+            XH_checkValidUtf8($elt);
+        } elseif (!utf8_is_valid($elt)) {
+            header('HTTP/1.0 400 Bad Request'); // TODO: use "Status:" for FastCGI?
+            exit('Malformed UTF-8 detected!');
+        }
+    }
+}
+
 ?>

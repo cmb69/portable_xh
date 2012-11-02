@@ -2,14 +2,14 @@
 /* utf8-marker = äöüß */
 /**
  * Page-Data - Module page_data_model
- * Part of the Pluginloader V.2.1.x
+ * Part of the Pluginloader of CMSimple_XH 1.5.5
  *
  * Handles the page-data-array including
  * read and write of the files.
  *
  * @author Martin Damken
  * @link http://www.zeichenkombinat.de
- * @version 1.0.02
+ * @version $Id: page_data_model.php 250 2012-08-13 10:47:40Z cmb69 $
  * @package pluginloader
  * @subpackage page_data
  */
@@ -258,14 +258,14 @@ class PL_Page_Data_Model{
 		global $pluginloader_tx, $o, $adm, $cl;
 		if(!file_exists(PL_PAGE_DATA_FILE)){
 			if($adm){
-				$o .= '<div class = "pluginerror">'.$pluginloader_tx['error']['cntopen'].PL_PAGE_DATA_FILE.'</div>';
+				e('cntopen', 'pagedata', PL_PAGE_DATA_FILE);
 			}
 			return;
 		}
 
 		if(!is_writeable(PL_PAGE_DATA_FILE)){
 			if($adm){
-				$o .= '<div class = "pluginerror">'.$pluginloader_tx['error']['cntwriteto'].PL_PAGE_DATA_FILE.'</div>';
+				e('cntwriteto', 'pagedata', PL_PAGE_DATA_FILE);
 			}
 			return;
 		}

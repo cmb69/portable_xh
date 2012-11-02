@@ -1,10 +1,14 @@
 <?php
 
+/**
+ * @version $Id: login.php 302 2012-10-11 16:05:08Z cmb69 $
+ */
+
 /* utf8-marker = äöü */
 /*
   ======================================
-  CMSimple_XH 1.5.3
-  2012-03-19
+  CMSimple_XH 1.5.5
+  2012-10-16
   based on CMSimple version 3.3 - December 31. 2009
   For changelog, downloads and information please see http://www.cmsimple-xh.com
   ======================================
@@ -23,7 +27,9 @@
 if (preg_match('/login.php/i', sv('PHP_SELF')))
     die('Access Denied');
 
-    
+require $pth['folder']['cmsimple'] . 'PasswordHash.php';
+$xh_hasher = new PasswordHash(8, true);
+
 // for subsite solution - GE 20011-02
 
 if ($txc['subsite']['password'] != "") {
@@ -49,10 +55,8 @@ function gc($s) {
 
 function logincheck() {
     global $cf;
-    if ($cf['security']['type'] == 'wwwaut')
-        return (sv('PHP_AUTH_USER') == $cf['security']['username'] && sv('PHP_AUTH_PW') == $cf['security']['password']);
-    else
-        return (gc('passwd') == $cf['security']['password']);
+    
+    return (gc('passwd') == $cf['security']['password']);
 }
 
 function writelog($m) {
@@ -70,16 +74,16 @@ function lilink() {
     global $cf, $adm, $sn, $u, $s, $tx;
     if (!$adm) {
         if ($cf['security']['type'] == 'javascript')
-            return '<form id="login" action="' . $sn . '" method="post"><div id="loginlink">' . tag('input type="hidden" name="login" value="true"') . tag('input type="hidden" name="selected" value="' . $u[$s] . '"') . tag('input type="hidden" name="passwd" id="passwd" value=""') . '</div></form><a href="javascript:login()">' . $tx['menu']['login'] . '</a>';
+            return '<form id="login" action="' . $sn . '" method="post"><div id="loginlink">' . tag('input type="hidden" name="login" value="true"') . tag('input type="hidden" name="selected" value="' . $u[$s] . '"') . tag('input type="hidden" name="passwd" id="passwd" value=""') . '</div></form><a href="#" onclick="login(); return false">' . $tx['menu']['login'] . '</a>';
         else
-            return a($s > -1 ? $s : 0, amp() . 'login') . $tx['menu']['login'] . '</a>';
+            return a($s > -1 ? $s : 0, '&amp;login') . $tx['menu']['login'] . '</a>';
     }
 }
 
 function loginforms() {
-    global $adm, $cf, $print, $retrieve, $hjs, $tx, $onload, $f, $o, $s, $sn, $u;
+    global $adm, $cf, $print, $hjs, $tx, $onload, $f, $o, $s, $sn, $u;
     // Javascript placed in head section used for javascript login
-    if (!$adm && $cf['security']['type'] == 'javascript' && !$print && !$retrieve) {
+    if (!$adm && $cf['security']['type'] == 'javascript' && !$print) {
         $hjs .= '<script type="text/javascript"><!--
 			function login(){var t=prompt("' . $tx['login']['warning'] . '","");if(t!=null&&t!=""){document.getElementById("passwd").value=t;document.getElementById("login").submit();}}
 			//-->
@@ -98,16 +102,6 @@ function loginforms() {
 // if(gc('status')!=''||$login){header('Cache-Control: no-cache');header('Pragma: no-cache');}
 // LOGIN & BACKUP
 
-if (!isset($cf['security']['username']) && $cf['security']['type'] == 'wwwaut')
-    $cf['security']['username'] = "admin";
-
-if ($cgi && $cf['security']['type'] == 'wwwaut') {
-    if (!$_SERVER['REMOTE_USER'])
-        $_SERVER['REMOTE_USER'] = $_SERVER['REDIRECT_REMOTE_USER'];
-    if ((!$_SERVER['PHP_AUTH_USER'] || !$_SERVER['PHP_AUTH_USER']) && preg_match('/^Basic.*/i', $_SERVER['REMOTE_USER']))
-        list($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']) = explode(':', base64_decode(substr($_SERVER['REMOTE_USER'], 6)));
-}
-
 $adm = (gc('status') == 'adm' && logincheck());
 
 if ($cf['security']['type'] == 'page' && $login && $passwd == '' && !$adm) {
@@ -116,42 +110,26 @@ if ($cf['security']['type'] == 'page' && $login && $passwd == '' && !$adm) {
 }
 
 if ($login && !$adm) {
-    if ($cf['security']['type'] != 'wwwaut') {
-        if ($passwd == $cf['security']['password'] && ($cf['security']['type'] == 'page' || $cf['security']['type'] == 'javascript')) {
-            setcookie('status', 'adm', 0, CMSIMPLE_ROOT);
-            setcookie('passwd', $passwd, 0, CMSIMPLE_ROOT);
-            $adm = true;
-            $edit = true;
-            writelog(date("Y-m-d H:i:s") . " from " . sv('REMOTE_ADDR') . " logged_in\n");
-        }
-        else
-            shead('401');
-    } else {
-        if (sv('PHP_AUTH_USER') == '' || sv('PHP_AUTH_PW') == '' || gc('status') == '') {
-
-            setcookie('status', 'login', 0, CMSIMPLE_ROOT);
-            header('WWW-Authenticate: Basic realm="' . $tx['login']['warning'] . '"');
-            shead('401');
-        } else {
-            if (logincheck()) {
-                setcookie('status', 'adm', 0, CMSIMPLE_ROOT);
-                $adm = true;
-                $edit = true;
-                writelog(date($tx['log']['dateformat']) . ' ' . sv('REMOTE_ADDR') . ' ' . $tx['log']['loggedin'] . "\n");
-            } else {
-                shead('401');
-            }
-        }
+    if ($xh_hasher->CheckPassword($passwd, $cf['security']['password'])
+	&& ($cf['security']['type'] == 'page' || $cf['security']['type'] == 'javascript'))
+    {
+	setcookie('status', 'adm', 0, CMSIMPLE_ROOT);
+	setcookie('passwd', $cf['security']['password'], 0, CMSIMPLE_ROOT);
+	$adm = true;
+	$edit = true;
+	writelog(date("Y-m-d H:i:s") . " from " . sv('REMOTE_ADDR') . " logged_in\n");
     }
+    else
+	shead('403');
 } else if ($logout && $adm) {
     $backupDate = date("Ymd_His");
     $fn = $backupDate . '_content.htm';
     if (@copy($pth['file']['content'], $pth['folder']['content'] . $fn)) {
-        $o .= '<p>' . ucfirst($tx['filetype']['backup']) . ' ' . $fn . ' ' . $tx['result']['created'] . '</p>';
+        $o .= '<p>' . utf8_ucfirst($tx['filetype']['backup']) . ' ' . $fn . ' ' . $tx['result']['created'] . '</p>';
         $fl = array();
         $fd = @opendir($pth['folder']['content']);
         while (($p = @readdir($fd)) == true) {
-            if (preg_match("/\d{3}\_content.htm/", $p))
+            if (preg_match('/^\d{8}_\d{6}_content.htm$/', $p))
                 $fl[] = $p;
         }
         if ($fd == true)
@@ -160,7 +138,7 @@ if ($login && !$adm) {
         $v = count($fl) - $cf['backup']['numberoffiles'];
         for ($i = 0; $i < $v; $i++) {
             if (@unlink($pth['folder']['content'] . '/' . $fl[$i]))
-                $o .= '<p>' . ucfirst($tx['filetype']['backup']) . ' ' . $fl[$i] . ' ' . $tx['result']['deleted'] . '</p>';
+                $o .= '<p>' . utf8_ucfirst($tx['filetype']['backup']) . ' ' . $fl[$i] . ' ' . $tx['result']['deleted'] . '</p>';
             else
                 e('cntdelete', 'backup', $fl[$i]);
         }
@@ -173,11 +151,11 @@ if ($login && !$adm) {
     if (file_exists($pth['folder']['content'] . 'pagedata.php')) {
         $fn = $backupDate . '_pagedata.php';
         if (@copy($pth['file']['pagedata'], $pth['folder']['content'] . $fn)) {
-            $o .= '<p>' . ucfirst($tx['filetype']['backup']) . ' ' . $fn . ' ' . $tx['result']['created'] . '</p>';
+            $o .= '<p>' . utf8_ucfirst($tx['filetype']['backup']) . ' ' . $fn . ' ' . $tx['result']['created'] . '</p>';
             $fl = array();
             $fd = @opendir($pth['folder']['content']);
             while (($p = @readdir($fd)) == true) {
-                if (preg_match("/\d{3}\_pagedata.php/", $p))
+                if (preg_match('/^\d{8}_\d{6}_pagedata.php$/', $p))
                     $fl[] = $p;
             }
             if ($fd == true)
@@ -186,7 +164,7 @@ if ($login && !$adm) {
             $v = count($fl) - $cf['backup']['numberoffiles'];
             for ($i = 0; $i < $v; $i++) {
                 if (@unlink($pth['folder']['content'] . $fl[$i]))
-                    $o .= '<p>' . ucfirst($tx['filetype']['backup']) . ' ' . $fl[$i] . ' ' . $tx['result']['deleted'] . '</p>';
+                    $o .= '<p>' . utf8_ucfirst($tx['filetype']['backup']) . ' ' . $fl[$i] . ' ' . $tx['result']['deleted'] . '</p>';
                 else
                     e('cntdelete', 'backup', $fl[$i]);
             }
@@ -204,9 +182,16 @@ if ($login && !$adm) {
     $o .= '<p class="cmsimplecore_warning" style="text-align: center; font-weight: 900; padding: 8px;">' . $tx['login']['loggedout'] . '</p>';
 }
 
+define('XH_ADM', $adm);
+
 // SETTING FUNCTIONS AS PERMITTED
 
 if ($adm) {
+    $o .= '<script type="text/javascript">/* <![CDATA[ */'
+	. 'if (document.cookie.indexOf(\'status=adm\') == -1)'
+	. ' document.write(\'<div class="cmsimplecore_warning">' . $tx['error']['nocookies'] . '</div>\')'
+	. '/* ]]> */</script>'
+	. '<noscript><div class="cmsimplecore_warning">' . $tx['error']['nojs'] . '</div></noscript>';
     if ($edit)
         setcookie('mode', 'edit', 0, CMSIMPLE_ROOT);
     if ($normal)

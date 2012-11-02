@@ -2,9 +2,7 @@
 
 /* utf8-marker = äöüß */
 /**
- * Pluginloader Version 2.1 beta 12 (V.2.1.12)
- * For the usage in CMSimple up from version V.2.6 unto V.3.2
- * (actual release) including CMSimple-XH.
+ * Pluginloader of CMSimple_XH 1.5.5
  * Handles loading of pluginloader-2.0 and -2.1 compatible plugins.
  *
  * Created after discussion at CMSimpleforum.com with:
@@ -12,11 +10,9 @@
  * 
  * @author Developer-Team at CMSimpleforum.com
  * @link http://www.cmsimpleforum.com
- * @version 2.1.11
+ * @version $Id: index.php 291 2012-09-20 16:08:47Z cmb69 $
  * @package pluginloader
  *
- * Download: http://www.cmsimplewiki.com/doku.php/pluginloader/start
- * 
  * Modified after a long discussion at CMSimple forum with Martin, mvwd, 
  * Till, johnjdoe, Holger and Gert (Mai 2009)
  * Changes:
@@ -116,54 +112,43 @@ if (!isset($hjs)) {
     $hjs = '';
 }
 
-$pluginloader_cfg['folder_down'] = '';
-
-
-// subsite - pluginloader laguage settings
-
-if(file_exists('../plugins/pluginloader/languages/'.$sl.'.php')) 
-{
-	$pluginloader_cfg['language'] = $sl;
-	$pluginloader_cfg['folder_down'] = '.';
-} 
-else 
-{
-	$pluginloader_cfg['language'] = strtolower('en');
-	$pluginloader_cfg['folder_down'] = '.';
-}
-
-if(file_exists('./plugins/pluginloader/languages/'.$sl.'.php'))
-{
-	$pluginloader_cfg['language'] = $sl;
-	$pluginloader_cfg['folder_down'] = '';
-}
-
-// END subsite - pluginloader laguage settings
-
 
 if (!isset($cf['plugins']['folder']) OR empty($cf['plugins']['folder']) OR !is_dir($cf['plugins']['folder'])) {
     $cf['plugins']['folder'] = 'plugins';
 }
 
+$pluginloader_cfg['folder_down'] = $pth['folder']['base'];
+$pluginloader_cfg['language'] = $sl;
 $pluginloader_cfg['foldername_pluginloader'] = 'pluginloader';
-$pluginloader_cfg['folder_pluginloader'] = $pluginloader_cfg['folder_down'] . './' . $cf['plugins']['folder'] . '/' . $pluginloader_cfg['foldername_pluginloader'] . '/';
+$pluginloader_cfg['folder_pluginloader'] = $pluginloader_cfg['folder_down'] . $cf['plugins']['folder'] . '/' . $pluginloader_cfg['foldername_pluginloader'] . '/';
 $pluginloader_cfg['folder_css'] = $pluginloader_cfg['folder_pluginloader'] . 'css/';
 $pluginloader_cfg['folder_languages'] = $pluginloader_cfg['folder_pluginloader'] . 'languages/';
 $pluginloader_cfg['file_css'] = $pluginloader_cfg['folder_css'] . 'stylesheet.css';
+$pluginloader_cfg['file_language'] = $pluginloader_cfg['folder_languages'] . $pluginloader_cfg['language'] . '.php';
 $pluginloader_cfg['form_namespace'] = 'PL3bbeec384_';
 
 // include Plugin Loader stylesheet and add it to CMSimple
 $hjs .= "\n" . tag('link rel="stylesheet" href="' . $pluginloader_cfg['file_css'] . '" type="text/css"') . "\n";
 
-// Use english language, if $sl or default language are not supported by the Plugin Loader
-if (empty($pluginloader_cfg['language'])) {
-    $pluginloader_cfg['language'] = 'en';
+// if pluginloader language is missing, copy default.php or en.php
+if (!file_exists($pluginloader_cfg['file_language'])) {
+    if (file_exists($pluginloader_cfg['folder_languages'] . 'default.php')) {
+        copy($pluginloader_cfg['folder_languages'] . 'default.php', $pluginloader_cfg['file_language']);
+    } elseif (file_exists($pluginloader_cfg['folder_languages'] . 'en.php')) {
+        copy($pluginloader_cfg['folder_languages'] . 'en.php', $pluginloader_cfg['file_language']);
+    }
+} 
+
+// Load default plugin language
+if (file_exists($pluginloader_cfg['folder_languages'] . 'default.php')) {
+    include $pluginloader_cfg['folder_languages'] . 'default.php';
 }
 
 // include Plugin Loader language file
-$pluginloader_cfg['file_language'] = $pluginloader_cfg['folder_languages'] . $pluginloader_cfg['language'] . '.php';
-if (!include_once($pluginloader_cfg['file_language'])) {
-    echo 'Language file for Plugin Loader not found!' . tag('br') . 'File: ' . $pluginloader_cfg['file_language'] . tag('br') . 'Current Path: ' . $_SERVER['PHP_SELF'] . tag('hr');
+if (is_readable($pluginloader_cfg['file_language'])) {
+    include $pluginloader_cfg['file_language'];
+} else {
+    e('cntopen', 'language', $pluginloader_cfg['file_language']);
 }
 
 /**
@@ -198,7 +183,7 @@ if ($adm) {
         if ($firstgetkey == $plugin) {
             $pluginloader_plugin_selectbox .= ' selected="selected"';
         }
-        $pluginloader_plugin_selectbox .= '>' . ucwords($plugin) . '</option>' . "\n";
+        $pluginloader_plugin_selectbox .= '>' . ucfirst($plugin) . '</option>' . "\n";
     }
     $pluginloader_plugin_selectbox .= '</select>' . "\n" . '</form>' . "\n";
 
@@ -541,8 +526,11 @@ function PluginPrepareConfigData($var_name='', $data=ARRAY(), $plugin='') {
  * @return string Returns the prepared data for saving.
  */
 function PluginPrepareTextData($data) {
+    trigger_error('Function PluginPrepareTextData() is deprecated', E_USER_DEPRECATED);
+    
     return (get_magic_quotes_gpc() === 1) ? stripslashes($data) : $data;
 }
+
 
 /**
  * Function PluginSaveForm()
@@ -561,15 +549,14 @@ function PluginPrepareTextData($data) {
  *
  * @return string Returns the created form.
  */
-function PluginSaveForm($form=ARRAY(), $style=ARRAY(), $data=ARRAY(), $hint=ARRAY()) {
+function PluginSaveForm($form, $style=ARRAY(), $data=ARRAY(), $hint=ARRAY()) {
     global $pluginloader_tx;
     $saveform = '';
 
-    if (!isset($form['type']) OR ($form['type'] != 'TEXT' AND $form['type'] != 'CONFIG')) {
-        $saveform .= PluginDebugger('invalid_value', debug_backtrace(), $$data, $form['type']);
-        //$saveform .= $pluginloader_tx['error']['plugin_error'].'function PluginSaveForm: \$form[\'type\']=""';
+    if ($form['type'] != 'TEXT' AND $form['type'] != 'CONFIG') {
+        trigger_error('invalid argument', E_USER_WARNING);
     } elseif ($form['type'] == 'CONFIG' AND (!is_array($data) OR count($data) == 0)) {
-        $saveform .= PluginDebugger('empty', debug_backtrace(), $$data, '');
+        trigger_error('empty', E_USER_WARNING);
     } else {
 
         $form_keys = ARRAY('action', 'caption', 'errormsg', 'method', 'value_action', 'value_admin', 'value_submit');
@@ -615,14 +602,14 @@ function PluginSaveForm($form=ARRAY(), $style=ARRAY(), $data=ARRAY(), $hint=ARRA
                 if (isset($hint['mode_donotshowvarnames']) AND $hint['mode_donotshowvarnames'] == TRUE AND isset($hint['cf_' . $key]) AND !empty($hint['cf_' . $key])) {
                     $var_name = $hint['cf_' . $key];
                 } else {
-                    $var_name = (isset($hint['cf_' . $key]) AND !empty($hint['cf_' . $key])) ? '<a href="#" class="pl_tooltip">' . tag('img src = "' . $pluginloader_cfg['folder_pluginloader'] . '/css/help_icon.png" alt="" class="helpicon"') . '<span>' . $hint['cf_' . $key] . '</span></a> ' . str_replace("_", " ", $key) . ': ' : str_replace("_", " ", $key) . ':';
+                    $var_name = (isset($hint['cf_' . $key]) AND !empty($hint['cf_' . $key])) ? '<a href="#" onclick="return false" class="pl_tooltip">' . tag('img src = "' . $pluginloader_cfg['folder_pluginloader'] . '/css/help_icon.png" alt="" class="helpicon"') . '<span>' . $hint['cf_' . $key] . '</span></a> ' . str_replace("_", " ", $key) . ': ' : str_replace("_", " ", $key) . ':';
                 }
                 $saveform .= '<tr>' . "\n" . '<td ' . $style['tdconfig'] . '>' . $var_name . '</td>' . "\n" . '<td>';
                 $style_textarea = $style['input'];
-                if (strlen($value) > 50) {
+                if (utf8_strlen($value) > 50) {
                     $style_textarea = $style['inputmax'];
                 }
-                $saveform .= '<textarea ' . $style_textarea . ' name="' . $pluginloader_cfg['form_namespace'] . $key . '" rows="1" cols="40">' . $value . '</textarea>';
+                $saveform .= '<textarea ' . $style_textarea . ' name="' . $pluginloader_cfg['form_namespace'] . $key . '" rows="1" cols="40">' . htmlspecialchars($value, ENT_NOQUOTES, 'UTF-8') . '</textarea>';
                 $saveform .= '</td>' . "\n" . '</tr>' . "\n";
             }
             $saveform .= '</table>' . "\n" . "\n";
@@ -787,7 +774,7 @@ function plugin_admin_common($action, $admin, $plugin, $hint=ARRAY()) {
         $form['action'] = $sn . '?&amp;' . $plugin;
         $form['method'] = 'POST';
         $form['value_admin'] = $admin;
-        $form['value_submit'] = ucfirst($tx['action']['save']);
+        $form['value_submit'] = utf8_ucfirst($tx['action']['save']);
         $form['caption'] = ucfirst(str_replace("_", " ", $plugin));
         $form['errormsg'] = $error_msg;
 
@@ -825,7 +812,7 @@ function plugin_admin_common($action, $admin, $plugin, $hint=ARRAY()) {
         }
         if ($action == 'plugin_textsave') {
             $text_data = $_POST[$var_name];
-            $save_data = PluginPrepareTextData($text_data);
+            $save_data = stsl($text_data);
         }
         $is_saved = PluginWriteFile($pth['file'][$admin], $save_data);
         $t .= tag('br') . '<b>' . $is_saved['msg'] . '</b>' . tag('br');
@@ -847,6 +834,9 @@ function plugin_admin_common($action, $admin, $plugin, $hint=ARRAY()) {
  */
 function PluginDebugger($error=FALSE, $caller=FALSE, $varname=FALSE, $value=FALSE) {
     global $pluginloader_tx;
+    
+    trigger_error('Function PluginDebugger() is deprecated', E_USER_DEPRECATED);
+    
     $debug = '';
     $debug .= $pluginloader_tx['error']['plugin_error'] . '';
     switch ($error) {

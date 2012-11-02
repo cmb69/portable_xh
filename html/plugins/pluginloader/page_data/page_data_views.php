@@ -2,14 +2,14 @@
 /* utf8-marker = äöüß */
 /**
  * Page-Data - Module page_data_views
- * Part of the Pluginloader V.2.1.x
+ * Part of the Pluginloader of CMSimple_XH 1.5.5
  *
  * Provides an interface for plugins to
  * handle the page_data.
  *
  * @author Martin Damken
  * @link http://www.zeichenkombinat.de
- * @version 1.0.04
+ * @version $Id: page_data_views.php 230 2012-07-30 16:34:51Z cmb69 $
  * @package pluginloader
  * @subpackage page_data
  */

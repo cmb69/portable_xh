@@ -9,7 +9,7 @@
  *
  * @author Martin Damken
  * @link http://www.zeichenkombinat.de
- * @version 1.0.02 
+ * @version $Id: meta_tags_view.php 229 2012-07-30 13:31:07Z cmb69 $
  * @package pluginloader
  * @subpackage meta_tags
  */ 

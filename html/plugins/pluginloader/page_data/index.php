@@ -2,7 +2,7 @@
 /* utf8-marker = äöüß */
 /**
  * Page-Data
- * Part of the Pluginloader V.2.1.x
+ * Part of the Pluginloader of CMSimple_XH 1.5.5
  *
  * Generates an array with an element for each
  * page, generated in CMSimple. This allows to
@@ -11,7 +11,7 @@
  *
  * @author Martin Damken
  * @link http://www.zeichenkombinat.de
- * @version 1.0.03
+ * @version $Id: index.php 248 2012-08-08 18:04:57Z cmb69 $
  * @package pluginloader
  * @subpackage page_data
  */
@@ -53,7 +53,7 @@ if ($adm) {
         /**
          * Collect the headings and pass them over to the router
          */
-        $text = preg_replace("/<h[1-" . $cf['menu']['levels'] . "][^>]*>(&nbsp;|&#160;|\xC2\xA0| )?<\/h[1-" . $cf['menu']['levels'] . "]>/isu", "", stsl($text));
+        $text = preg_replace("/<h[1-" . $cf['menu']['levels'] . "][^>]*>(&nbsp;|&#160;|\xC2\xA0| )?<\/h[1-" . $cf['menu']['levels'] . "]>/is", "", stsl($text));
         preg_match_all('/<h[1-' . $cf['menu']['levels'] . '].*>(.+)<\/h[1-' . $cf['menu']['levels'] . ']>/isU', $text, $matches);
         $pd_router->refresh_from_texteditor($matches[1], $s);
     }

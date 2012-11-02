@@ -2,14 +2,14 @@
 /* utf8-marker = äöüß */
 /**
  * Page-Data - Module page_data_router
- * Part of the Pluginloader V.2.1.x
+ * Part of the Pluginloader of CMSimple_XH 1.5.5
  *
  * Handles all the data that has to be
  * collected to generate tha page-data-array.
  *
  * @author Martin Damken
  * @link http://www.zeichenkombinat.de
- * @version 1.0.00
+ * @version $Id: page_data_router.php 254 2012-08-17 20:13:12Z cmb69 $
  * @package pluginloader
  * @subpackage page_data
  */
@@ -171,7 +171,7 @@ class PL_Page_Data_Router{
 			$new_pages = array();
 			$current_page = $this -> find_page($index);
 			foreach($headings as $key => $heading){
-				$url = preg_replace('/\s+/isu', ' ', trim(strip_tags($heading)));
+				$url = trim(xh_rmws(strip_tags($heading)));
 				$url = uenc($url);
 
 				switch ($url) {
@@ -213,7 +213,7 @@ class PL_Page_Data_Router{
 			/**
 			 * The heading may have changed, stay up to date.
 			 */
-			$url = preg_replace('/\s+/isu', ' ', trim(strip_tags($headings[0])));
+			$url = trim(xh_rmws(strip_tags($headings[0])));
 			$params['url'] = uenc($url);
 			$params['last_edit'] = time();
 			$this -> update($index, $params);
@@ -246,7 +246,7 @@ class PL_Page_Data_Router{
 				 */
 				$params = array();
 				$title = trim(strip_tags($infos[2]));
-				$url = uenc(strip_tags($title));
+				$url = uenc($title);
 				$params['url'] = $url;
 				$new_data[] = $this -> new_page($params);
 			} else{
