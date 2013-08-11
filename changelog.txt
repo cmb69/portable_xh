@@ -1,2 +1,0 @@
-Version 1alpha1 -- released 2012-03-24
-cmb	initial release
