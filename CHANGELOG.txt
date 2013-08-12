@@ -1,0 +1,10 @@
+Version 1beta1 - released 2013-08-12
+cmb     upgraded to PHP 5.4.17
+cmb     replaced Nginx webserver with PHP's built-in webserver
+cmb     replaced Portable_XH.exe with Portable_XH.bat
+cmb     added local storage of mails sent by CMSimple_XH
+cmb     streamlined documentation to README.txt
+cmb     added German LIESMICH.txt
+
+Version 1alpha1 - released 2012-03-24
+cmb	initial release
