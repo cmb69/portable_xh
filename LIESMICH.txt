@@ -36,7 +36,7 @@ Verwendung
 den Webserver und öffnet die CMSimple_XH Installation im Standardbrowser. Das
 minimierte "Portable_XH" Fenster dient als temporäres Server-Log; wenn Sie den
 Webserver stoppen wollen, dann schließen sie dieses Fenster einfach. So lange
-der Webserver läuft, können Sie <http://localhost:8888/> aufrufen, um zur
+der Webserver läuft, können Sie <http://localhost:8080/> aufrufen, um zur
 Startseite der CMSimple_XH Installation, die sich im www/ Unterordner befindet,
 zu gelangen.
 

@@ -33,7 +33,7 @@ Open Portable_XH(.bat) in the installation's top level folder. This will power
 up the webserver and open the default browser pointing at the CMSimple_XH
 installation. The minimized window "Portable_XH" serves as temporary server log;
 if you want to shut down the webserver just close the window. As long as the
-webserver is running, you can navigate to <http://localhost:8888/> to view the
+webserver is running, you can navigate to <http://localhost:8080/> to view the
 start page of the CMSimple_XH installation, which resides in the www/ subfolder.
 
 How to use CMSimple_XH is described in its Wiki
