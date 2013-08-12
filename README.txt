@@ -1,0 +1,72 @@
+Portable_XH - a portable CMSimple_XH distribution for Windows
+=============================================================
+
+Portable_XH is a portable CMSimple_XH distribution for Windows that is meant to
+run on your local machine without the need to have a webserver with PHP
+installed. It requires no installation, runs under a guest account and even from
+an USB storage medium. It doesn't allow access from other computers,
+particularly from the internet.
+
+Portable_XH is the perfect solution to have a demo of CMSimple_XH at hand, or to
+portably prepare a website without uploading it to some webspace in the first
+place.
+
+However, it is not meant to replace a local development environment. If you need
+this, you should look for XAMPP <http://www.apachefriends.org/en/xampp.html> or
+any other of the major distributions.
+
+Requirements
+------------
+
+A somewhat recent Windows operating system (Windows XP and up should do
+fine).
+
+Installation
+------------
+
+Just unzip the download to wherever you like--even to a USB storage medium.
+
+Usage
+-----
+
+Open Portable_XH(.bat) in the installation's top level folder. This will power
+up the webserver and open the default browser pointing at the CMSimple_XH
+installation. The minimized window "Portable_XH" serves as temporary server log;
+if you want to shut down the webserver just close the window. As long as the
+webserver is running, you can navigate to <http://localhost:8888/> to view the
+start page of the CMSimple_XH installation, which resides in the www/ subfolder.
+
+Email
+-----
+
+None of the emails that may be sent by CMSimple_XH or a plugin will actually
+be sent. Instead all emails are stored in the mails/ folder. If you have an
+email client installed and configured which can handle external .eml files, you
+can simply open the .eml files to view them; otherwise you'll want to import
+them into your software.
+
+License
+-------
+
+As this distribution is an aggregation of different pieces of software, the
+folders contain independent software which is licensed separately as such.
+
+/ (without subfolders)
+    Copyright (c) 2013 Christoph M. Becker
+    Licensed under MIT License <http://opensource.org/licenses/MIT>
+    Website: <http://3-magi.net/?CMSimple_XH/Portable_XH>
+
+paping/
+    Copyright (c) 2011 Mike Lovell
+    Licensed under MIT License <http://opensource.org/licenses/MIT>
+    Website: <https://code.google.com/p/paping/>
+
+php/ (incl. subfolders)
+    Copyright (c) 1997-2013 The PHP Group
+    Licensed under PHP License 3.01 <http://www.php.net/license/3_01.txt>
+    Website: <http://www.php.net/>
+
+www/ (incl. subfolders)
+    Copyright (c) 2009-2013 The CMSimple Developers
+    Licensed under GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
+    Website: <http://www.cmsimple-xh.org/>

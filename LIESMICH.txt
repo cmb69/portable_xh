@@ -1,0 +1,77 @@
+﻿Portable_XH - eine portable CMSimple_XH Distribution für Windows
+================================================================
+
+Portable_XH ist eine portable CMSimple_XH Distribution für Windows, die dazu
+gedacht ist auf Ihrem lokalem PC ausgeführt zu werden, ohne die Notwendigkeit
+einen Webserver mit PHP installiert zu haben. Es benötigt keine Installation,
+kann unter einem Gast-Konto und selbst von einem USB-Speichermedium ausgeführt
+werden. Es erlaubt keinen Zugriff von anderen Computern, besonders aus dem
+Internet.
+
+Portable_XH ist die perfekte Lösung um eine Demo von CMSimple_XH zur Hand zu
+haben, oder um portabel eine Website vorzubereiten, ohne diese zunächst auf
+einen Webspace hoch zu laden.
+
+Allerdings ist es nicht dazu gedacht eine lokale Entwicklungsumgebung zu
+ersetzen. Wenn Sie eine solche brauchen, sollten Sie sich XAMPP
+<http://www.apachefriends.org/de/xampp.html> oder eine anderen der großen
+Distributionen anschauen.
+
+Voraussetzungen
+---------------
+
+Ein einigermaßen neues Windows Betriebssystem (Windows XP und höher sollten
+funktionieren).
+
+Installation
+------------
+
+Entpacken Sie einfach den Download wohin Sie möchten -- auch auf ein
+USB-Speichermedium.
+
+Verwendung
+----------
+
+Öffnen Sie Portable_XH(.bat) im Hauptverzeichnis der Installation. Dies startet
+den Webserver und öffnet die CMSimple_XH Installation im Standardbrowser. Das
+minimierte "Portable_XH" Fenster dient als temporäres Server-Log; wenn Sie den
+Webserver stoppen wollen, dann schließen sie dieses Fenster einfach. So lange
+der Webserver läuft, können Sie <http://localhost:8888/> aufrufen, um zur
+Startseite der CMSimple_XH Installation, die sich im www/ Unterordner befindet,
+zu gelangen.
+
+E-Mail
+------
+
+Keine der E-Mails die ggf. von CMSimple_XH oder einem Plugin versendet werden,
+wird tatsächlich verschickt. Statt dessen werden alle E-Mails im mails/ Ordner
+gespeichert. Wenn Sie ein E-Mail-Programm als Standard E-Mail-Programm
+eingerichtet haben, das externe .eml Dateien öffnen kann, können Sie die .eml
+Dateien einfach öffnen, um die E-Mail einzusehen; ansonsten können sie die .eml
+Dateien in Ihr Programm importieren.
+
+Lizenz
+------
+
+Da diese Distribution eine Aggregation verschiedener Programme ist, enthalten
+die Ordner unabhängige Software, die als solche getrennt lizensiert ist.
+
+/ (ohne Unterordner)
+    Copyright (c) 2013 Christoph M. Becker
+    Lizensiert unter der MIT Lizenz <http://opensource.org/licenses/MIT>
+    Website: <http://3-magi.net/?CMSimple_XH/Portable_XH>
+
+paping/
+    Copyright (c) 2011 Mike Lovell
+    Lizensiert unter der MIT License <http://opensource.org/licenses/MIT>
+    Website: <https://code.google.com/p/paping/>
+
+php/ (inkl. Unterordnern)
+    Copyright (c) 1997-2013 The PHP Group
+    Lizensiert unter der PHP License 3.01 <http://www.php.net/license/3_01.txt>
+    Website: <http://www.php.net/>
+
+www/ (inkl. Unterordnern)
+    Copyright (c) 2009-2013 The CMSimple Developers
+    Lizensiert unter der GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
+    Website: <http://www.cmsimple-xh.org/>
