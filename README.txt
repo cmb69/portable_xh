@@ -36,6 +36,10 @@ if you want to shut down the webserver just close the window. As long as the
 webserver is running, you can navigate to <http://localhost:8888/> to view the
 start page of the CMSimple_XH installation, which resides in the www/ subfolder.
 
+How to use CMSimple_XH is described in its Wiki
+<http://www.cmsimple-xh.org/wiki/doku.php>. If you have questions feel free to
+ask in its Forum <http://cmsimpleforum.com/>.
+
 Email
 -----
 

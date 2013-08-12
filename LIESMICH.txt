@@ -40,6 +40,11 @@ der Webserver läuft, können Sie <http://localhost:8888/> aufrufen, um zur
 Startseite der CMSimple_XH Installation, die sich im www/ Unterordner befindet,
 zu gelangen.
 
+Wie CMSimple_XH verwendet wird, ist in seinem Wiki
+<http://www.cmsimple-xh.org/wiki/doku.php> beschrieben. Wenn Sie Fragen haben,
+zögern Sie nicht diese im CMSimple_XH Forum <http://cmsimpleforum.com/> zu
+stellen.
+
 E-Mail
 ------
 
