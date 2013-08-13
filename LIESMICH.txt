@@ -29,6 +29,12 @@ Installation
 Entpacken Sie einfach den Download wohin Sie möchten -- auch auf ein
 USB-Speichermedium.
 
+Einige Funktionen von CMSimple_XH und Plugins, z.B. der Link-Check, erfordern
+eine Verbindung mit dem WWW. Wenn Sie diese Funktionen nutzen möchten, dann
+müssen Sie Ihre Firewall so konfigurieren, dass ausgehende Verbindungen von
+Portable_XH\php\php.exe erlaubt werden. Normalerweise wird die Firewall danach
+fragen.
+
 Verwendung
 ----------
 

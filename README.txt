@@ -26,6 +26,11 @@ Installation
 
 Just unzip the download to wherever you like--even to a USB storage medium.
 
+Some functionality of CMSimple_XH and plugins requires to connect to the WWW,
+for instance the link check. If you want to use these features, you have to
+configure your firewall to allow outbound connections for
+Portable_XH\php\php.exe. Usually your firewall will ask for this.
+
 Usage
 -----
 
