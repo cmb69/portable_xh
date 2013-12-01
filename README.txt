@@ -65,11 +65,6 @@ folders contain independent software which is licensed separately as such.
     Licensed under MIT License <http://opensource.org/licenses/MIT>
     Website: <http://3-magi.net/?CMSimple_XH/Portable_XH>
 
-paping/
-    Copyright (c) 2011 Mike Lovell
-    Licensed under MIT License <http://opensource.org/licenses/MIT>
-    Website: <https://code.google.com/p/paping/>
-
 php/ (incl. subfolders)
     Copyright (c) 1997-2013 The PHP Group
     Licensed under PHP License 3.01 <http://www.php.net/license/3_01.txt>

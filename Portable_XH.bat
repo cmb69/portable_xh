@@ -29,5 +29,4 @@ rem THE SOFTWARE.
 rem
 
 start "Portable_XH 1beta1" /min php\php -S localhost:8080 -t www
-paping\paping -p 8080 -c 1 -t 10000 localhost
 start http://localhost:8080/
