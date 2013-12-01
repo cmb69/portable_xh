@@ -28,5 +28,7 @@ rem OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 rem THE SOFTWARE.
 rem
 
-start "Portable_XH 1beta1" /min php\php -S localhost:8080 -t www
+echo Portable_XH @PORTABLE_XH_VERSION@
+echo Compiled 2012-2013 by Christoph M. Becker ^<http://3-magi.net/^>
 start http://localhost:8080/
+php\php -S localhost:8080 -t www > NUL
