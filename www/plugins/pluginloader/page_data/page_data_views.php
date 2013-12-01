@@ -2,7 +2,7 @@
 /* utf8-marker = äöüß */
 /**
  * Page-Data - Module page_data_views
- * Part of the Pluginloader of CMSimple_XH 1.5.7
+ * Part of the Pluginloader of CMSimple_XH 1.5.9
  *
  * Provides an interface for plugins to
  * handle the page_data.

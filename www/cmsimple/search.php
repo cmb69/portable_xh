@@ -1,14 +1,14 @@
 <?php
 
 /**
- * @version $Id: search.php 390 2012-12-14 18:27:15Z cmb69 $
+ * @version $Id: search.php 808 2013-08-03 15:15:17Z cmb69 $
  */
 
 /* utf8-marker = äöü */
 /*
   ======================================
-  CMSimple_XH 1.5.7
-  2013-05-01
+  CMSimple_XH 1.5.9
+  2013-09-10
   based on CMSimple version 3.3 - December 31. 2009
   For changelog, downloads and information please see http://www.cmsimple-xh.org
   ======================================
@@ -42,7 +42,7 @@ if ($search != '') {
             //$temp = html_entity_decode($temp, ENT_QUOTES, 'utf-8');
             foreach ($words as $word) {
                 if (strpos($temp,
-			   htmlspecialchars(trim($word), ENT_NOQUOTES, 'UTF-8'))
+			   XH_hsc(trim($word)))
 		    === false)
 		{
                     $found = false;
@@ -66,7 +66,7 @@ if ($search != '') {
     }
 }
 
-$o .= '<h1>' . $tx['search']['result'] . '</h1><p>"' . htmlspecialchars($search, ENT_COMPAT, 'UTF-8') . '" ';
+$o .= '<h1>' . $tx['search']['result'] . '</h1><p>"' . XH_hsc($search) . '" ';
 
 if (count($ta) == 0) {
     $o .= $tx['search']['notfound'] . '.</p>';

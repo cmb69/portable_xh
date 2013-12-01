@@ -1,14 +1,14 @@
 <?php
 
 /**
- * @version $Id: login.php 529 2013-04-26 10:31:16Z cmb69 $
+ * @version $Id: login.php 805 2013-08-03 12:26:35Z cmb69 $
  */
 
 /* utf8-marker = äöü */
 /*
   ======================================
-  CMSimple_XH 1.5.7
-  2013-05-01
+  CMSimple_XH 1.5.9
+  2013-09-10
   based on CMSimple version 3.3 - December 31. 2009
   For changelog, downloads and information please see http://www.cmsimple-xh.org
   ======================================
@@ -101,6 +101,8 @@ function loginforms() {
 
 // if(gc('status')!=''||$login){header('Cache-Control: no-cache');header('Pragma: no-cache');}
 // LOGIN & BACKUP
+
+$passwd = stsl($passwd);
 
 $adm = (gc('status') == 'adm' && logincheck());
 

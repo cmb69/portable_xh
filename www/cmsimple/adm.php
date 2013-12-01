@@ -1,14 +1,14 @@
 <?php
 
 /**
- * @version $Id: adm.php 534 2013-04-26 12:16:06Z cmb69 $
+ * @version $Id: adm.php 932 2013-09-10 11:33:07Z cmb69 $
  */
 
 /* utf8-marker = äöü */
 /*
   ======================================
-  CMSimple_XH 1.5.7
-  2013-05-01
+  CMSimple_XH 1.5.9
+  2013-09-10
   based on CMSimple version 3.3 - December 31. 2009
   For changelog, downloads and information please see http://www.cmsimple-xh.org
   ======================================
@@ -352,17 +352,17 @@ if ($adm) {
 
                                         else if ($a == 'cf')
                                         {
-                                            $o .= tag('input type="text" class="text" name="'.$k1.'_'.$k2.'" value="'.htmlspecialchars($v2, ENT_COMPAT, 'UTF-8').'" size="30"')."\n";
+                                            $o .= tag('input type="text" class="text" name="'.$k1.'_'.$k2.'" value="'.XH_hsc($v2).'" size="30"')."\n";
                                         }
 
 //new in 1.5: single line input field or textarea depending on text length
                                         else if (utf8_strlen($v2) < 30)
                                         {
-                                            $o .= '<textarea rows="2" cols="30" class="cmsimplecore_settings cmsimplecore_settings_short" name="' . $k1 . '_' . $k2 . '">' . htmlspecialchars($v2, ENT_COMPAT, 'UTF-8') . "</textarea>\n";
+                                            $o .= '<textarea rows="2" cols="30" class="cmsimplecore_settings cmsimplecore_settings_short" name="' . $k1 . '_' . $k2 . '">' . XH_hsc($v2) . "</textarea>\n";
                                         }
                                         else
                                         {
-                                                $o .= '<textarea rows="2" cols="30" class="cmsimplecore_settings" name="' . $k1 . '_' . $k2 . '">' . htmlspecialchars($v2, ENT_COMPAT, 'UTF-8') . "</textarea>\n";
+                                                $o .= '<textarea rows="2" cols="30" class="cmsimplecore_settings" name="' . $k1 . '_' . $k2 . '">' . XH_hsc($v2) . "</textarea>\n";
                                         }
                                         $o .= '</td>' . "\n" . '</tr>' . "\n";
                                     }
@@ -371,7 +371,7 @@ if ($adm) {
                     $o .= '</table>' . "\n" . tag('input type="hidden" name="form" value="' . $form . '"') . "\n";
                 }
                 else
-                    $o .= '<textarea rows="25" cols="50" name="text" class="cmsimplecore_file_edit">' . htmlspecialchars(rf($pth['file'][$file]), ENT_NOQUOTES, 'UTF-8') . '</textarea>';
+                    $o .= '<textarea rows="25" cols="50" name="text" class="cmsimplecore_file_edit">' . XH_hsc(rf($pth['file'][$file])) . '</textarea>';
 
                 if (isset($admin) && $admin)
                     $o .= tag('input type="hidden" name="admin" value="' . $admin . '"') . "\n";
@@ -428,9 +428,7 @@ if ($adm && $f == 'save') {
         }
         header('Location: http'
             . (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? 's' : '')
-            . '://' . $_SERVER['SERVER_NAME']
-            . ($_SERVER['SERVER_PORT'] < 1024 ? '' : ':' . $_SERVER['SERVER_PORT'])
-            . preg_replace('/index.php$/', '', $_SERVER['SCRIPT_NAME'])
+            . '://' . $_SERVER['HTTP_HOST'] . preg_replace('/index.php$/', '', $sn)
             . "?" . $su, true, 303);
         exit;
     }
@@ -455,8 +453,9 @@ if ($adm && $edit && (!$f || $f == 'save') && !$download) {
                 . tag('input type="hidden" name="selected" value="' . $u[$s] . '"')
                 . tag('input type="hidden" name="function" value="save"')
                 . '<textarea name="text" id="text" class="xh-editor" style="height: ' . $cf['editor']['height'] . 'px; width: 100%;" rows="30" cols="80">'
-                . htmlspecialchars($c[$s], ENT_COMPAT, 'UTF-8')
-                . '</textarea>';
+                . XH_hsc($c[$s])
+                . '</textarea>'
+                . '<script type="text/javascript">/* <![CDATA[ */document.getElementById("text").style.height=(' . $cf['editor']['height'] . ') + "px";/* ]]> */</script>';
         if ($cf['editor']['external'] == '' || !$editor) {
             $o .= tag('input type="submit" value="' . utf8_ucfirst($tx['action']['save']) . '"');
         }

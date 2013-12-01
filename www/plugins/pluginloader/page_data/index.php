@@ -2,7 +2,7 @@
 /* utf8-marker = äöüß */
 /**
  * Page-Data
- * Part of the Pluginloader of CMSimple_XH 1.5.7
+ * Part of the Pluginloader of CMSimple_XH 1.5.9
  *
  * Generates an array with an element for each
  * page, generated in CMSimple. This allows to
@@ -11,7 +11,7 @@
  *
  * @author Martin Damken
  * @link http://www.zeichenkombinat.de
- * @version $Id: index.php 248 2012-08-08 18:04:57Z cmb69 $
+ * @version $Id: index.php 878 2013-08-19 11:13:39Z cmb69 $
  * @package pluginloader
  * @subpackage page_data
  */
@@ -33,6 +33,7 @@ if (!file_exists(PL_PAGE_DATA_FILE)) {
         fwrite($fh, '<?php' . "\n" . '$page_data_fields[] = \'url\';' . "\n" . '$page_data_fields[] = \'last_edit\';' . "\n" . '?>');
         chmod(PL_PAGE_DATA_FILE, 0666);
         fclose($fh);
+        $e .= '<li>' . $tx['filetype']['pagedata'] . ' ' . $tx['result']['created'] . '</li>';
     } else {
         e('cntwriteto', 'file', PL_PAGE_DATA_FILE);
     }

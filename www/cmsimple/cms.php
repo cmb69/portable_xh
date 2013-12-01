@@ -1,14 +1,14 @@
 <?php
 
 /**
- * @version $Id: cms.php 535 2013-04-26 12:29:37Z cmb69 $
+ * @version $Id: cms.php 933 2013-09-10 11:52:50Z cmb69 $
  */
 
 /* utf8-marker = äöü */
 /*
   ======================================
-  CMSimple_XH 1.5.7
-  2013-05-01
+  CMSimple_XH 1.5.9
+  2013-09-10
   based on CMSimple version 3.3 - December 31. 2009
   For changelog, downloads and information please see http://www.cmsimple-xh.org
   ======================================
@@ -46,6 +46,10 @@
   ======================================
  */
 
+if (ini_get('opcache.enable')) {
+    ini_set('opcache.enable', 0);
+}
+
 $title = '';
 $o = '';
 $e = '';
@@ -61,9 +65,9 @@ $onload = '';
 //);
 
 //HI 2009-10-30 (CMSimple_XH 1.0rc3) added version-informations
-define('CMSIMPLE_XH_VERSION', 'CMSimple_XH 1.5.7');
-define('CMSIMPLE_XH_BUILD', '2013050101');
-define('CMSIMPLE_XH_DATE', '2013-05-01');
+define('CMSIMPLE_XH_VERSION', 'CMSimple_XH 1.5.9');
+define('CMSIMPLE_XH_BUILD', '2013091001');
+define('CMSIMPLE_XH_DATE', '2013-09-10');
 //version-informations
 
 if (preg_match('/cms.php/i', sv('PHP_SELF')))
@@ -225,6 +229,7 @@ if ($stylesheet != '') {
     include($pth['file']['stylesheet']);
     exit;
 }
+$download = stsl($download);
 if ($download != '')
     download($pth['folder']['downloads'] . basename($download));
 
@@ -245,9 +250,9 @@ rfc(); // Here content is loaded
 
 if ($function == 'search')
     $f = 'search';
-if ($mailform || $function == 'mailform')
+if (($su == '' || $su == 'mailform') && ($mailform || $function == 'mailform'))
     $f = 'mailform';
-if ($sitemap)
+if (($su == '' || $su == 'sitemap') && $sitemap)
     $f = 'sitemap';
 if ($xhpages)
     $f = 'xhpages';
@@ -289,8 +294,13 @@ if ($cf['plugins']['folder'] != "")
 
 if ($f == 'search')
     @include($pth['file']['search']);
-if ($f == 'mailform' && $cf['mailform']['email'] != '')
-    include($pth['file']['mailform']);
+if ($f == 'mailform') {
+    if ($cf['mailform']['email'] != '') {
+        include($pth['file']['mailform']);
+    } else {
+        shead(404);
+    }
+}
 if ($f == 'sitemap') {
     $title = $tx['title'][$f];
     $ta = array();
@@ -640,6 +650,9 @@ function rfc() {
     $duplicate = 0;
 
     $content = file_get_contents($pth['file']['content']);
+    if ($content === false) {
+        die('Couldn\'t read content.htm');
+    }
     $stop = $cf['menu']['levels'];
     $split_token = '#@CMSIMPLE_SPLIT@#';
 
@@ -664,7 +677,10 @@ function rfc() {
         $h[] = trim(strip_tags($tx['toc']['newpage']));
         $u[] = uenc($h[0]);
         $l[] = 1;
-        $s = 0;
+        if ($su == $u[0]) {
+            $s = 0;
+        }
+        $cl = 1;
         return;
     }
 
@@ -727,7 +743,7 @@ function meta($n) {
     global $cf, $print;
     $exclude = array('robots', 'keywords', 'description');
     if ($cf['meta'][$n] != '' && !($print && in_array($n, $exclude)))
-        return tag('meta name="' . $n . '" content="' . htmlspecialchars($cf['meta'][$n], ENT_COMPAT, 'UTF-8') . '"') . "\n";
+        return tag('meta name="' . $n . '" content="' . XH_hsc($cf['meta'][$n]) . '"') . "\n";
 }
 
 function ml($i) {
@@ -815,7 +831,9 @@ function shead($s) {
 	    header(($cgi || $iis) ? 'status: 404 Not Found' : 'HTTP/1.0 404 Not Found');
 	}
     }
-    $title = $tx['error'][$s];
+    if ($title == '') {
+        $title = $tx['error'][$s];
+    }
     $o = '<h1>' . $title . '</h1>' . $o;
 }
 
@@ -955,7 +973,7 @@ function xh_debug($errno, $errstr, $errfile, $errline, $context)
 function head() {
     global $title, $cf, $pth, $tx, $txc, $hjs;
     if (!empty($cf['site']['title'])) {
-        $t = htmlspecialchars($cf['site']['title'], ENT_COMPAT, 'UTF-8')
+        $t = XH_hsc($cf['site']['title'])
             . " \xe2\x80\x93 " . $title;
     } else {
         $t = $title;
@@ -974,14 +992,14 @@ function head() {
 function sitename() {
     global $txc;
     return isset($txc['site']['title'])
-        ? htmlspecialchars($txc['site']['title'], ENT_NOQUOTES, 'UTF-8')
+        ? XH_hsc($txc['site']['title'])
         : '';
 }
 
 function pagename() {
     global $cf;
     return isset($cf['site']['title'])
-        ? htmlspecialchars($cf['site']['title'], ENT_NOQUOTES, 'UTF-8')
+        ? XH_hsc($cf['site']['title'])
         : '';
 }
 
@@ -1115,13 +1133,13 @@ function printlink() {
     global $f, $search, $file, $sn, $tx;
     $t = '&amp;print';
     if ($f == 'search')
-        $t .= '&amp;function=search&amp;search=' . htmlspecialchars(stsl($search), ENT_COMPAT, 'UTF-8');
+        $t .= '&amp;function=search&amp;search=' . XH_hsc(stsl($search));
     else if ($f == 'file')
         $t .= '&amp;file=' . $file;
     else if ($f != '' && $f != 'save')
         $t .= '&amp;' . $f;
     else if (sv('QUERY_STRING') != '')
-        $t = htmlspecialchars(sv('QUERY_STRING'), ENT_COMPAT, "UTF-8") . $t;
+        $t = XH_hsc(sv('QUERY_STRING')) . $t;
     return '<a href="' . $sn . '?' . $t . '">' . $tx['menu']['print'] . '</a>';
 }
 
@@ -1158,6 +1176,9 @@ function lastupdate($br = NULL, $hour = NULL) { // changed by LM CMSimple_XH 1.1
 
 function legallink() {
     global $cf, $sn; // changed by LM CMSimple_XH 1.1
+
+    trigger_error('Function ' . __FUNCTION__ . '() is deprecated', E_USER_DEPRECATED);
+
     return '<a href="' . $sn . '?' . uenc($cf['menu']['legal']) . '">' . $cf['menu']['legal'] . '</a>';
 }
 
@@ -1167,7 +1188,7 @@ function locator() {
         return $h[$s];
     if ($s == 0)
         return $h[$s];
-    elseif ($title != '' && (isset($h[$s]) && $h[$s] != $title))
+    elseif ($title != '' && (!isset($h[$s]) || $h[$s] != $title))
         $t = $title;
     elseif ($f != '')
         $t =  ucfirst($f);
@@ -1207,12 +1228,32 @@ function admin_menu($plugins = array(), $debug = false)
         $pluginMenu = '';
         if ((bool) $plugins)
         {
-            sort($plugins, SORT_STRING);
-            $pluginMenu .= '<li><a href="#" onclick="return false">' . utf8_ucfirst($tx['editmenu']['plugins']) . "</a>\n    <ul>";
+            $total = count($plugins);
+            $rows = 12;
+            $columns = ceil($total / $rows);
+            $rows = ceil($total / $columns);
+            $width = 125 * $columns;
+            $marginLeft = min($width, 250) - $width;
+            natcasesort($plugins);
+            $plugins = array_values($plugins);
+            $orderedPlugins = array();
+            for ($j = 0; $j < $rows; ++$j) {
+                for ($i = 0; $i < $total; $i += $rows) {
+                    $orderedPlugins[] = isset($plugins[$i + $j]) ? $plugins[$i + $j] : '';
+                }
+            }
+            $plugins = $orderedPlugins;
+            $pluginMenu .= '<li><a href="#" onclick="return false">' . utf8_ucfirst($tx['editmenu']['plugins'])
+                . "</a>\n    <ul style=\"width:{$width}px; margin-left:{$marginLeft}px\">";
             foreach ($plugins as $plugin)
             {
-                $pluginMenu .= "\n" .
-                    '     <li><a href="?' . $plugin . '&amp;normal">' . ucfirst($plugin) . '</a></li>';
+                if ($plugin != '') {
+                    $pluginMenu .= "\n" .
+                        '     <li><a href="?' . $plugin . '&amp;normal">' . ucfirst($plugin) . '</a></li>';
+                } else {
+                    $pluginMenu .= "\n" .
+                        '     <li class="xh_dummy"></li>';
+                }
             }
 
             $pluginMenu .= "\n    </ul>";
@@ -1270,7 +1311,7 @@ function content() {
     global $s, $o, $c, $edit, $adm, $cf;
     if (!($edit && $adm) && $s > -1) {
         if (isset($_GET['search'])) {
-            $words = explode(',', htmlspecialchars(stsl($_GET['search']), ENT_COMPAT, 'UTF-8'));
+            $words = explode(',', XH_hsc(stsl($_GET['search'])));
             $code = 'return "&" . preg_quote($w, "&") . "(?!([^<]+)?>)&isU";';
             $words = array_map(create_function('$w', $code), $words);
             $c[$s] = preg_replace($words, '<span class="highlight_search">$0</span>', $c[$s]);

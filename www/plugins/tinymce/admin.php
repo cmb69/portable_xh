@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @version $Id: admin.php 548 2013-04-30 19:04:19Z cmb69 $
+ * @version $Id: admin.php 890 2013-08-26 09:01:05Z manu37 $
  */
 
 if (!$adm) {     return; }
@@ -12,11 +12,13 @@ if ($tinymce) {
     $plugin = basename(dirname(__FILE__), "/");
     $o .= '<div class="plugintext">';
     $o .= '<div class="plugineditcaption">TinyMCE for CMSimple_XH</div>';
-    $o .= '<p>Version for CMSimple_XH 1.5.7</p>';
+    $o .= '<p>Version for CMSimple_XH 1.5.9</p>';
     $o .= '<p>TinyMCE version 3.5.8  &ndash; <a href="http://www.tinymce.com/" target="_blank">http://www.tinymce.com/</a></p>';
-    $o .= '<p>CMSimple_XH & Filebrowser integration &ndash; <a href="http://www.pixolution.ch/" target="_blank">http://www.pixolution.ch/</a></p>';
-
-
+    $o .= '<p>CMSimpe_xh & Filebrowser integration';
+    $o .= tag('br');
+    $o .= 'up to version 1.5.6 &ndash; <a href="http://www.zeichenkombinat.de/" target="_blank">Zeichenkombinat.de</a>';
+    $o .= tag('br');
+    $o .= 'from &nbsp;version 1.5.7 &ndash; <a href="http://www.pixolution.ch/" target="_blank">pixolution.ch</a></p>';
 
     $admin= isset($_POST['admin']) ? $_POST['admin'] : $admin = isset($_GET['admin']) ? $_GET['admin'] : '';
     $action= isset($_POST['action']) ? $_POST['action'] : $action = isset($_GET['action']) ? $_GET['action'] : '';

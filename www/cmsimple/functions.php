@@ -1,14 +1,14 @@
 <?php
 
 /**
- * @version $Id: functions.php 550 2013-04-30 20:31:25Z cmb69 $
+ * @version $Id: functions.php 808 2013-08-03 15:15:17Z cmb69 $
  */
 
 /* utf8-marker = äöü */
 /*
   ======================================
-  CMSimple_XH 1.5.7
-  2013-05-01
+  CMSimple_XH 1.5.9
+  2013-09-10
   based on CMSimple version 3.3 - December 31. 2009
   For changelog, downloads and information please see http://www.cmsimple-xh.org
   ======================================
@@ -380,6 +380,30 @@ function XH_isValidEmail($address)
 {
     return !preg_match('/[^\x00-\x7F]/', $address)
         && preg_match('!^[^\r\n]+@[^\s]+$!', $address);
+}
+
+/**
+ * Converts special characters to HTML entities.
+ *
+ * Same as htmlspecialchars($string, ENT_COMPAT | ENT_SUBSTITUTE, 'UTF-8'),
+ * but works for PHP < 5.4 as well.
+ *
+ * @param string $string A string.
+ *
+ * @return string
+ *
+ * @since 1.5.8
+ */
+function XH_hsc($string)
+{
+    if (!defined('ENT_SUBSTITUTE')) {
+        include_once UTF8 . '/utils/bad.php';
+        $string = utf8_bad_replace($string, "\xEF\xBF\xBD");
+        $string = htmlspecialchars($string, ENT_COMPAT, 'UTF-8');
+    } else {
+        $string = htmlspecialchars($string, ENT_COMPAT | ENT_SUBSTITUTE, 'UTF-8');
+    }
+    return $string;
 }
 
 ?>

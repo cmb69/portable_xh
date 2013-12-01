@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @version $Id: admin.php 297 2012-09-22 19:19:39Z cmb69 $
+ * @version $Id: admin.php 809 2013-08-04 11:05:56Z cmb69 $
  */
 
 /* utf-8 marker: äöü */
@@ -17,7 +17,7 @@ if ($filebrowser) {
     $plugin = basename(dirname(__FILE__), "/");
     $o = '<div class="plugintext">';
     $o .= '<div class="plugineditcaption">Filebrowser for CMSimple_xh</div>';
-    $o .= '<p>Version for CMSimple_XH 1.5.7</p>';
+    $o .= '<p>Version for CMSimple_XH 1.5.9</p>';
 
 
 
@@ -99,10 +99,10 @@ $browser->currentDirectory =  rtrim($subdir, '/') . '/';
 $browser->linkType = $f;
 $browser->setLinkParams($f);
 
-if (isset($_SERVER['CONTENT_LENGTH']) && empty($_POST)) {
-    //$browser->view->error('error_not_uploaded', utf8_ucfirst($tx['filetype']['file']));
-    $browser->view->error('error_file_too_big',
-                          array('?', ini_get('post_max_size')));
+if (!empty($_SERVER['CONTENT_LENGTH']) && empty($_POST)) {
+    $browser->view->error(
+        'error_file_too_big_php', array(ini_get('post_max_size'), 'post_max_size')
+    );
 }
 
 if (isset($_POST['deleteFile']) && isset($_POST['file'])) {

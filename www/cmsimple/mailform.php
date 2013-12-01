@@ -1,14 +1,14 @@
 <?php
 
 /**
- * @version $Id: mailform.php 550 2013-04-30 20:31:25Z cmb69 $
+ * @version $Id: mailform.php 840 2013-08-09 12:26:42Z cmb69 $
  */
 
 /* utf8-marker = äöü */
 /*
   ======================================
-  CMSimple_XH 1.5.7
-  2013-05-01
+  CMSimple_XH 1.5.9
+  2013-09-10
   based on CMSimple version 3.3 - December 31. 2009
   For changelog, downloads and information please see http://www.cmsimple-xh.org
   ======================================
@@ -97,20 +97,20 @@ if ($t == '' || $e != '')
 // fields before textarea
     $o .= '<div>' . "\n" . $tx['mailform']['sendername'].': ' . tag('br') . "\n"
        .  tag('input type="text" class="text" size="35" name="sendername" value="'
-       .  htmlspecialchars(stsl($sendername), ENT_COMPAT, 'UTF-8').'"') . "\n"
+       .  XH_hsc(stsl($sendername)).'"') . "\n"
        .  '</div>' . "\n"
        .  '<div>' . "\n" . $tx['mailform']['senderphone'].': ' . tag('br') . "\n"
-       .  tag('input type="text" class="text" size="35"name="senderphone" value="'
-       .  htmlspecialchars(stsl($senderphone), ENT_COMPAT, 'UTF-8').'"') . "\n"
+       .  tag('input type="text" class="text" size="35" name="senderphone" value="'
+       .  XH_hsc(stsl($senderphone)).'"') . "\n"
        .  '</div>' . "\n"
        .  '<div>' . "\n" .  $tx['mailform']['sender'].': ' . tag('br') . "\n"
        .  tag('input type="text" class="text" size="35" name="sender" value="'
-       .  htmlspecialchars(stsl($sender), ENT_COMPAT, 'UTF-8').'"') . "\n"
+       .  XH_hsc(stsl($sender)).'"') . "\n"
        .  '</div>' . "\n" . tag('br') . "\n";
 
 // textarea
     $o .= '<textarea rows="12" cols="40" name="mailform">' . "\n";
-    if ($mailform != 'true') $o .= htmlspecialchars(stsl($mailform), ENT_COMPAT, 'UTF-8') . "\n";
+    if ($mailform != 'true') $o .= XH_hsc(stsl($mailform)) . "\n";
     $o .= '</textarea>' . "\n";
 
 // captcha

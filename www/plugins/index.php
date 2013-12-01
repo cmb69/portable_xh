@@ -2,7 +2,7 @@
 
 /* utf8-marker = äöüß */
 /**
- * Pluginloader of CMSimple_XH 1.5.7
+ * Pluginloader of CMSimple_XH 1.5.9
  * Handles loading of pluginloader-2.0 and -2.1 compatible plugins.
  *
  * Created after discussion at CMSimpleforum.com with:
@@ -10,7 +10,7 @@
  *
  * @author Developer-Team at CMSimpleforum.com
  * @link http://www.cmsimpleforum.com
- * @version $Id: index.php 526 2013-04-25 17:35:04Z cmb69 $
+ * @version $Id: index.php 932 2013-09-10 11:33:07Z cmb69 $
  * @package pluginloader
  *
  * Modified after a long discussion at CMSimple forum with Martin, mvwd,
@@ -174,6 +174,7 @@ if ($adm) {
             }
         }
     }
+    closedir($handle);
     natcasesort($admin_plugins);
     foreach ($admin_plugins as $plugin) {
         PluginFiles($plugin);
@@ -260,7 +261,7 @@ while (FALSE !== ($plugin = readdir($handle))) {
         }
     } // if($plugin)
 } // while (FALSE !== ($plugin = readdir($handle)))
-
+closedir($handle);
 
 /**
  * Load admin functions (admin.php, if exists) of plugin
@@ -604,7 +605,7 @@ function PluginSaveForm($form, $style=ARRAY(), $data=ARRAY(), $hint=ARRAY()) {
                 if (utf8_strlen($value) > 50) {
                     $style_textarea = $style['inputmax'];
                 }
-                $saveform .= '<textarea ' . $style_textarea . ' name="' . $pluginloader_cfg['form_namespace'] . $key . '" rows="1" cols="40">' . htmlspecialchars($value, ENT_NOQUOTES, 'UTF-8') . '</textarea>';
+                $saveform .= '<textarea ' . $style_textarea . ' name="' . $pluginloader_cfg['form_namespace'] . $key . '" rows="1" cols="40">' . XH_hsc($value) . '</textarea>';
                 $saveform .= '</td>' . "\n" . '</tr>' . "\n";
             }
             $saveform .= '</table>' . "\n" . "\n";

@@ -2,21 +2,21 @@
 /* utf8-marker = äöüß */
 /**
  * Page-Data - Module page_data_model
- * Part of the Pluginloader of CMSimple_XH 1.5.7
+ * Part of the Pluginloader of CMSimple_XH 1.5.9
  *
  * Handles the page-data-array including
  * read and write of the files.
  *
  * @author Martin Damken
  * @link http://www.zeichenkombinat.de
- * @version $Id: page_data_model.php 250 2012-08-13 10:47:40Z cmb69 $
+ * @version $Id: page_data_model.php 932 2013-09-10 11:33:07Z cmb69 $
  * @package pluginloader
  * @subpackage page_data
  */
 
 /**
  * PL_Page_Data_Model
- * 
+ *
  * @access public
  */
 class PL_Page_Data_Model{
@@ -25,22 +25,56 @@ class PL_Page_Data_Model{
 
 	/**
 	 * PL_Page_Data_Model::PL_Page_Data_Model()
-	 * 
+	 *
 	 * @param mixed $h CMSimple's headings-array
 	 * @return
 	 */
 	function PL_Page_Data_Model($h){
 		$this -> headings = $h;
-		include_once(PL_PAGE_DATA_FILE);
+		if ((include_once(PL_PAGE_DATA_FILE)) === false) {
+			die('Couldn\'t read pagedata.php');
+		}
 		$this -> params = $page_data_fields;
 		$this -> data = $page_data;
 		$this -> temp_data = isset($temp_data) ? $temp_data : array();
 		$this -> read();
 	}
-	
+
+    /**
+     * Fixes the page data after reading.
+     *
+     * @return void
+     *
+     * @global int   The index of the current page.
+	 * @global array The page data of the current page.
+	 *
+	 * @access protected
+	 */
+	function fixUp()
+	{
+		global $pd_s, $pd_current;
+
+		foreach ($this->headings as $id => $value) {
+			foreach ($this->params as $param) {
+				if (!isset($this->data[$id][$param])) {
+					switch ($param) {
+					case 'url':
+						$this->data[$id][$param] = uenc(strip_tags($value));
+						break;
+					default:
+						$this->data[$id][$param] = '';
+					}
+				}
+			}
+		}
+		if (isset($pd_current)) {
+			$pd_current = $this->data[$pd_s];
+		}
+	}
+
 	/**
 	 * PL_Page_Data_Model::read()
-	 * 
+	 *
 	 * @return
 	 */
 	function read(){
@@ -66,7 +100,7 @@ class PL_Page_Data_Model{
 
 	/**
 	 * PL_Page_Data_Model::refresh()
-	 * 
+	 *
 	 * @param mixed $data
 	 * @return
 	 */
@@ -81,18 +115,18 @@ class PL_Page_Data_Model{
 
 	/**
 	 * PL_Page_Data_Model::add_param()
-	 * 
+	 *
 	 * @param mixed $field
 	 * @return
 	 */
 	function add_param($field){
 		$this -> params[] = $field;
-		$this -> save();
+		$this -> fixUp();
 	}
 
 	/**
 	 * PL_Page_Data_Model::add_tab()
-	 * 
+	 *
 	 * @param mixed $title
 	 * @param mixed $view_file
 	 * @return
@@ -103,7 +137,7 @@ class PL_Page_Data_Model{
 
 	/**
 	 * PL_Page_Data_Model::find_key()
-	 * 
+	 *
 	 * @param mixed $key
 	 * @return
 	 */
@@ -113,7 +147,7 @@ class PL_Page_Data_Model{
 
 	/**
 	 * PL_Page_Data_Model::find_field_value()
-	 * 
+	 *
 	 * @param mixed $field
 	 * @param mixed $value
 	 * @return array $results
@@ -130,7 +164,7 @@ class PL_Page_Data_Model{
 
 	/**
 	 * PL_Page_Data_Model::find_arrayfield_value()
-	 * 
+	 *
 	 * @param mixed $field
 	 * @param mixed $value
 	 * @param mixed $separator
@@ -140,7 +174,7 @@ class PL_Page_Data_Model{
 		$results = array();
 		foreach($this->data as $id => $page){
 			$array = explode($separator, $page[$field]);
-				
+
 			foreach($array as $page_data){
 				if($value == trim($page_data)){
 					$results[$id] = $page;
@@ -152,7 +186,7 @@ class PL_Page_Data_Model{
 
 	/**
 	 * PL_Page_Data_Model::find_field_value_sortkey()
-	 * 
+	 *
 	 * @param mixed $field
 	 * @param mixed $value
 	 * @param mixed $sort_key
@@ -184,7 +218,7 @@ class PL_Page_Data_Model{
 
 	/**
 	 * PL_Page_Data_Model::create()
-	 * 
+	 *
 	 * @param mixed $params
 	 * @return
 	 */
@@ -199,7 +233,7 @@ class PL_Page_Data_Model{
 
 	/**
 	 * PL_Page_Data_Model::replace()
-	 * 
+	 *
 	 * @param mixed $pages
 	 * @param mixed $index
 	 * @return
@@ -212,7 +246,7 @@ class PL_Page_Data_Model{
 
 	/**
 	 * PL_Page_Data_Model::store_temp()
-	 * 
+	 *
 	 * @param mixed $page
 	 * @return
 	 */
@@ -226,7 +260,7 @@ class PL_Page_Data_Model{
 
 	/**
 	 * PL_Page_Data_Model::delete()
-	 * 
+	 *
 	 * @param mixed $key
 	 * @return
 	 */
@@ -237,7 +271,7 @@ class PL_Page_Data_Model{
 
 	/**
 	 * PL_Page_Data_Model::update_key()
-	 * 
+	 *
 	 * @param mixed $key
 	 * @param mixed $params
 	 * @return
@@ -251,7 +285,7 @@ class PL_Page_Data_Model{
 
 	/**
 	 * PL_Page_Data_Model::save()
-	 * 
+	 *
 	 * @return
 	 */
 	function save(){
@@ -286,7 +320,7 @@ class PL_Page_Data_Model{
 
                 ksort($this->data, SORT_NUMERIC);
 		$i = 0;
-		foreach($this -> data as $key => $values){			
+		foreach($this -> data as $key => $values){
                     foreach($values as $value_key => $value){
                         $data_string .= "\$page_data[".$i."]['".$value_key."'] = '". str_replace('\"', '"', addslashes($value)) ."';\n";
                     }
