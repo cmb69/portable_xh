@@ -1,24 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- $Id: build.xml 17 2013-11-27 18:10:55Z cmb $ -->
+<!-- $Id$ -->
 
 <project name="Portable_XH" default="default">
 
     <target name="build">
         <fail unless="version" message="version is not defined!"/>
         <svnexport revision="" repositoryurl="." todir="export"/>
-<!--        <move todir="dist">
+        <move todir="dist">
             <fileset dir="export">
-                <include name="index.php"/>
-                <include name="version.nfo"/>
+                <include name="Portable_XH.bat"/>
             </fileset>
             <filterchain>
                 <replacetokens>
-                    <token key="ADVENTCALENDAR_VERSION" value="${version}"/>
+                    <token key="PORTABLE_XH_VERSION" value="${version}"/>
                 </replacetokens>
             </filterchain>
         </move>
--->        <move todir="dist">
+        <move todir="dist">
             <fileset dir="export">
                 <exclude name="portable.komodoproject"/>
                 <exclude name="build.xml"/>
@@ -26,6 +25,9 @@
             </fileset>
         </move>
         <delete dir="export"/>
+        <exec command="Bat_To_Exe_Converter -bat Portable_XH.bat -save Portable_XH.exe -icon ..\portable.ico"
+              dir="dist"/>
+        <delete file="dist/Portable_XH.bat"/>
         <zip destfile="Portable_XH-${version}.zip" basedir="dist" prefix="Portable_XH/"/>
         <delete dir="dist"/>
     </target>
