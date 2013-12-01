@@ -34,12 +34,12 @@ Portable_XH\php\php.exe. Usually your firewall will ask for this.
 Usage
 -----
 
-Open Portable_XH(.bat) in the installation's top level folder. This will power
+Open Portable_XH(.exe) in the installation's top level folder. This will power
 up the webserver and open the default browser pointing at the CMSimple_XH
-installation. The minimized window "Portable_XH" serves as temporary server log;
-if you want to shut down the webserver just close the window. As long as the
-webserver is running, you can navigate to <http://localhost:8080/> to view the
-start page of the CMSimple_XH installation, which resides in the www/ subfolder.
+installation. If you want to shut down the webserver just close the window. As
+long as the webserver is running, you can navigate to <http://localhost:8080/>
+to view the start page of the CMSimple_XH installation, which resides in the
+www/ subfolder.
 
 How to use CMSimple_XH is described in its Wiki
 <http://www.cmsimple-xh.org/wiki/doku.php>. If you have questions feel free to

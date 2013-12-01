@@ -38,11 +38,10 @@ fragen.
 Verwendung
 ----------
 
-Öffnen Sie Portable_XH(.bat) im Hauptverzeichnis der Installation. Dies startet
-den Webserver und öffnet die CMSimple_XH Installation im Standardbrowser. Das
-minimierte "Portable_XH" Fenster dient als temporäres Server-Log; wenn Sie den
-Webserver stoppen wollen, dann schließen sie dieses Fenster einfach. So lange
-der Webserver läuft, können Sie <http://localhost:8080/> aufrufen, um zur
+Öffnen Sie Portable_XH(.exe) im Hauptverzeichnis der Installation. Dies startet
+den Webserver und öffnet die CMSimple_XH Installation im Standardbrowser. Wenn
+Sie den Webserver stoppen wollen, dann schließen sie dieses Fenster einfach. So
+lange der Webserver läuft, können Sie <http://localhost:8080/> aufrufen, um zur
 Startseite der CMSimple_XH Installation, die sich im www/ Unterordner befindet,
 zu gelangen.
 
