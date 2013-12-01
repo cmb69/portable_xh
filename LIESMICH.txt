@@ -86,3 +86,10 @@ www/ (inkl. Unterordnern)
     Copyright (c) 2009-2013 The CMSimple Developers
     Lizensiert unter der GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
     Website: <http://www.cmsimple-xh.org/>
+
+Danksagung
+----------
+
+Das Anwendungs-Icon wurde von Teekatas S. aka. Raindropmemory
+<http://raindropmemory.deviantart.com/> gestaltet. Vielen Dank für die freie
+Nutzbarkeit dieses Icons.

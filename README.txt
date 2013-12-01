@@ -74,3 +74,10 @@ www/ (incl. subfolders)
     Copyright (c) 2009-2013 The CMSimple Developers
     Licensed under GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
     Website: <http://www.cmsimple-xh.org/>
+
+Credits
+-------
+
+The application icon is designed by Teekatas S. aka. Raindropmemory
+<http://raindropmemory.deviantart.com/>. Many thanks for making this icon freely
+available.
