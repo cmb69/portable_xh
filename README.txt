@@ -61,17 +61,18 @@ As this distribution is an aggregation of different pieces of software, the
 folders contain independent software which is licensed separately as such.
 
 / (without subfolders)
-    Copyright (c) 2012-2013 Christoph M. Becker
+    Copyright (c) 2012-2014 Christoph M. Becker
     Licensed under MIT License <http://opensource.org/licenses/MIT>
     Website: <http://3-magi.net/?CMSimple_XH/Portable_XH>
 
 php/ (incl. subfolders)
-    Copyright (c) 1997-2013 The PHP Group
+    Copyright (c) 1997-2014 The PHP Group
     Licensed under PHP License 3.01 <http://www.php.net/license/3_01.txt>
     Website: <http://www.php.net/>
 
 www/ (incl. subfolders)
-    Copyright (c) 2009-2013 The CMSimple_XH Developers
+    Copyright (c) 1999-2009 <http://cmsimple.org/>
+    Copyright (c) 2009-2014 The CMSimple_XH Developers
     Licensed under GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
     Website: <http://www.cmsimple-xh.org/>
 

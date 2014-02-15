@@ -5,7 +5,7 @@
  *
  * Simple router script for PHP's built-in webserver.
  *
- * Copyright 2013 Christoph M. Becker <http://3-magi.net/>
+ * Copyright 2014 Christoph M. Becker <http://3-magi.net/>
  *
  * $Id$
  *

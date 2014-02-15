@@ -5,7 +5,7 @@ rem Portable_XH 1beta1
 rem
 rem Starts the webserver and opens the browser pointing to CMSimple_XH.
 rem
-rem Copyright 2013 Christoph M. Becker <http://3-magi.net/>
+rem Copyright 2013-2014 Christoph M. Becker <http://3-magi.net/>
 rem
 rem $Id$
 rem
@@ -30,6 +30,6 @@ rem
 
 echo Portable_XH @PORTABLE_XH_VERSION@
 echo.
-echo Compiled 2012-2013 by Christoph M. Becker ^<http://3-magi.net/^>
+echo Compiled 2012-2014 by Christoph M. Becker ^<http://3-magi.net/^>
 start http://localhost:8080/
 php\php -S localhost:8080 -t www router.php > NUL
