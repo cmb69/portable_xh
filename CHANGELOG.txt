@@ -1,8 +1,8 @@
-Version 1rc1 - released 2013-12-01
+Version 1rc1 - released 2014-02-15
 cmb     replaced Portable_XH.bat with Portable_XH.exe
+cmb     updated to CMSimple_XH 1.6.1 (with a bug fix)
+cmb     updated to PHP 5.4.25
 cmb     removed paping (actually it is not necessary)
-cmb     updated to CMSimple_XH 1.5.9
-cmb     updated to PHP 5.4.22
 cmb     added application icon
 
 Version 1beta1 - released 2013-08-12
