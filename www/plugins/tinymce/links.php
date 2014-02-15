@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @version $Id: links.php 248 2012-08-08 18:04:57Z cmb69 $
+ * @version $Id: links.php 1166 2014-01-07 14:10:29Z cmb69 $
  */
 
 function get_images($directory) {
@@ -42,7 +42,7 @@ function get_internal_links($h, $u, $l, $sn, $downloads_path) {
         //$list.='["' . $spacer . substr(str_replace('"', '&quot;', $h[$i]), 0, 30) . '", "' . $sn . '?' . $u[$i] . '"],';
         $list.='["' . $spacer . addcslashes($h[$i], "\n\r\t\"\\") . '", "?' . $u[$i] . '"],';
     }
-    if (@is_dir($downloads_path)) {
+    if (is_dir($downloads_path)) {
         $list .= '["DOWNLOADS:",""],';
         $fs = sortdir($downloads_path);
         foreach ($fs as $p) {

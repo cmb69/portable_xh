@@ -1,109 +1,370 @@
 <?php
 
 /**
- * @version $Id: filebrowser_view.php 292 2012-09-21 16:24:11Z cmb69 $
+ * The file browser view class.
+ *
+ * PHP versions 4 and 5
+ *
+ * @category  CMSimple_XH
+ * @package   Filebrowser
+ * @author    Martin Damken <kontakt@zeichenkombinat.de>
+ * @author    The CMSimple_XH developers <devs@cmsimple-xh.org>
+ * @copyright 2009-2014 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
+ * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
+ * @version   SVN: $Id: Filebrowser_View.php 1198 2014-01-30 14:10:39Z cmb69 $
+ * @link      http://cmsimple-xh.org/
  */
 
-/* utf-8 marker: äöü */
-
-class XHFileBrowserView {
-
+/**
+ * The file browser view class.
+ *
+ * @category CMSimple_XH
+ * @package  Filebrowser
+ * @author   Martin Damken <kontakt@zeichenkombinat.de>
+ * @author   The CMSimple_XH developers <devs@cmsimple-xh.org>
+ * @license  http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
+ * @link     http://cmsimple-xh.org/
+ */
+class Filebrowser_View
+{
+    /**
+     * (X)HTML fragments to insert in the templates.
+     *
+     * @var array
+     *
+     * @access public
+     */
     var $partials = array();
+
+    /**
+     * Relative path of the filebrowser folder.
+     *
+     * @var string
+     *
+     * @access public
+     */
     var $browserPath = '';
+
+    /**
+     * Relative path of the CMSimple installation folder.
+     *
+     * @var string
+     *
+     * @access public
+     */
     var $basePath;
+
+    /**
+     * Relative path of the userfiles folder.
+     *
+     * @var string
+     *
+     * @access public
+     */
     var $baseDirectory;
+
+    /**
+     * The type of the files to browse ("images", "downloads", "media" or
+     * "userfiles").
+     *
+     * @var string
+     *
+     * @access public
+     */
     var $baseLink;
+
+    /**
+     * The path of the current folder relative to the type's main folder.
+     *
+     * @var string
+     *
+     * @access public
+     */
     var $currentDirectory;
+
+    /**
+     * The (partial) query string.
+     *
+     * @var string
+     *
+     * @access public
+     */
     var $linkParams;
+
+    /**
+     * ???
+     *
+     * @var string
+     *
+     * @access public
+     *
+     * @todo Document description.
+     */
     var $linkPrefix;
+
+    /**
+     * An array of folders?
+     *
+     * @var array
+     *
+     * @access public
+     */
     var $folders;
+
+    /**
+     * An array of subfolders?
+     *
+     * @var array
+     *
+     * @access public
+     */
     var $subfolders;
+
+    /**
+     * An array of files?
+     *
+     * @var array
+     *
+     * @access public
+     */
     var $files;
+
+    /**
+     * The (X)HTML content of the message area.
+     *
+     * @var string
+     *
+     * @access protected
+     */
     var $message = '';
+
+    /**
+     * The localization of the file browser.
+     *
+     * @var array
+     *
+     * @access protected
+     */
     var $lang = array();
 
-    function XHFileBrowserView() {
-        global $sl, $pth, $plugin_tx;
-        $lang = array();
-        $langFile = $pth['folder']['plugins'] . basename(dirname(dirname(__FILE__))) . '/languages/';
+    /**
+     * The CSRF token.
+     *
+     * @var string
+     *
+     * @access protected
+     */
+    var $csrfToken;
 
-        $langFile .= file_exists($langFile . $sl . '.php') ? $sl . '.php' : 'en.php';
-        include_once $langFile;
+    /**
+     * Initializes a newly created instance.
+     *
+     * @global array  The localization of the plugins.
+     *
+     * @access public
+     */
+    function Filebrowser_View()
+    {
+        global $plugin_tx;
+
         $this->lang = $plugin_tx['filebrowser'];
     }
 
-    function folderList($folders) {
-        global $tx, $plugin_tx;
-        //     $title = $this->baseLink === 'images' ? 'Bilder' : 'Downloads';
-        $title = isset($tx['title'][$this->baseLink]) ? utf8_ucfirst($tx['title'][$this->baseLink]) : ucfirst($this->baseLink . ' ' . $this->translate('folder')); // für Editorbrowser
-        $html = '
-           <ul>
-              <li class="openFolder">
-                   <a href="?' . $this->linkParams . '">' . $title . ' ' . $plugin_tx['filebrowser']['folder'] . '</a>';  // für CMSbrowser
-        $html .= '            <ul>';
-        foreach ($folders as $folder => $data) {
-            if ($data['level'] == 2) {
-                $html .= $data['linkList'];
+    /**
+     * Returns the folder list view.
+     *
+     * @param array $folders An array of folders.
+     *
+     * @return string (X)HTML.
+     *
+     * @global array The localization of the core.
+     *
+     * @access protected
+     */
+    function folderList($folders)
+    {
+        global $tx;
+
+        $title = isset($tx['title']['userfiles'])
+            ? utf8_ucfirst($tx['title']['userfiles'])
+            : ucfirst('Userfiles ' . $this->translate('folder'));
+        $html = '<ul><li class="openFolder"><a href="?'
+            . htmlspecialchars($this->linkParams, ENT_QUOTES, 'UTF-8') . '">'
+            . $title . ' ' . $this->lang['folder'] . '</a>';
+        if (!empty($folders)) {
+            $html .= '<ul>';
+            foreach ($folders as $folder => $data) {
+                if ($data['level'] == 2) {
+                    $html .= $data['linkList'];
+                }
             }
+            $html .='</ul>';
         }
-        $html .='
-                   </ul>
-                </li>
-            </ul>';
+        $html .= '</li></ul>';
         return $html;
     }
 
-    function folderLink($folder, $folders) {
-        $link = str_replace('index.php','',$_SERVER['PHP_SELF']);
+    /**
+     * ???
+     *
+     * @param string $folder  The folder name.
+     * @param array  $folders An array of folders.
+     *
+     * @return string
+     *
+     * @access public
+     *
+     * @todo What is this method for?
+     */
+    function folderLink($folder, $folders)
+    {
+        // TODO: Do we need PHP_SELF here; might allow for XSS.
+        $link = str_replace('index.php', '', $_SERVER['PHP_SELF']);
         $class = 'folder';
         if (substr($this->currentDirectory, 0, strlen($folder)) == $folder) {
             $class = 'openFolder';
         }
         $temp = explode('/', $folder);
-        $html = '<li class="' . $class . '"><a href="' . $link . '?' . $this->linkParams . '&subdir=' . $folder . '">' . end($temp) . '</a>';
+        $html = '<li class="' . $class . '"><a href="' . $link . '?'
+            . htmlspecialchars($this->linkParams, ENT_QUOTES, 'UTF-8')
+            . '&amp;subdir=' . $folder . '">' . end($temp) . '</a>';
         if (count($folders[$folder]['children']) > 0) {
             if (substr($this->currentDirectory, 0, strlen($folder)) !== $folder) {
                 $class = 'unseen';
             }
 
-            $html .= '
-                        <ul class="' . $class . '">';
+            $html .= '<ul class="' . $class . '">';
             foreach ($folders[$folder]['children'] as $child) {
                 $html .= $this->folderLink($child, $folders);
             }
-            $html .= '
-                        </ul>';
+            $html .= '</ul>';
         }
-        $html .= '
-            </li>';
+        $html .= '</li>';
         return $html;
     }
 
-    function subfolderList($folders) {
+    /**
+     * Returns the subfolder list view of the CMS browser.
+     *
+     * @param array $folders An array of folders.
+     *
+     * @return string
+     *
+     * @global object The CRSF protection object.
+     *
+     * @access protected
+     */
+    function subfolderList($folders)
+    {
+        global $_XH_csrfProtection;
 
         $html = '';
         if (is_array($folders) && count($folders) > 0) {
             $html = '<ul>';
             foreach ($folders as $folder) {
                 $name = str_replace($this->currentDirectory, '', $folder);
-                $html .= '<li class="folder">
-                              <form style="display: inline;" method="POST" action="" onsubmit="return confirmFolderDelete(\'' . $this->translate('confirm_delete', $this->basePath . $folder) . '\');">
-                                <input type="image" src="' . $this->browserPath . 'css/icons/delete.gif" alt="delete" title="delete folder" />
-                                <input type="hidden" name="deleteFolder" />
-                                <input type="hidden" name="folder" value="' . $folder . '" />
-                              </form>
-                    <a href="?' . $this->linkParams . '&subdir=' . $folder . '">' . $name . '</a></li>';
+                $html .= '<li class="folder">'
+                    . '<form style="display: inline;" method="post" action="#"'
+                    . ' onsubmit="return FILEBROWSER.confirmFolderDelete(\''
+                    . $this->translate('confirm_delete', $this->basePath . $folder)
+                    . '\');">'
+                    . tag(
+                        'input type="image" src="' . $this->browserPath
+                        . 'css/icons/delete.png" alt="delete" title="'
+                        . $this->translate('delete_folder') . '"'
+                    )
+                    . tag('input type="hidden" name="deleteFolder"')
+                    . tag(
+                        'input type="hidden" name="folder" value="' . $folder . '"'
+                    )
+                    . $_XH_csrfProtection->tokenInput()
+                    . '</form>'
+                    . '<a href="?' . $this->linkParams . '&amp;subdir=' . $folder
+                    . '">' . $name . '</a></li>';
             }
             $html .= '</ul>';
         }
         return $html;
     }
 
-    function fileList($files) {
-        global $tx;
-        
+    /**
+     * Returns the subfolder list view of the editor browser.
+     *
+     * @param array $folders An array of folders.
+     *
+     * @return string
+     *
+     * @access protected
+     */
+    function subfolderListForEditor($folders)
+    {
+        $html = '';
+        if (is_array($folders) && count($folders) > 0) {
+            $html = '<ul>';
+            foreach ($folders as $folder) {
+                $name = str_replace($this->currentDirectory, '', $folder);
+                $html .= '<li class="folder">'
+                    . '<form style="display: inline;" method="post" action="#"'
+                    . ' onsubmit="return FILEBROWSER.confirmFolderDelete(\''
+                    . $this->translate('confirm_delete', $this->basePath . $folder)
+                    . '\');">'
+                    . '<input type="image" src="' . $this->browserPath
+                    . 'css/icons/delete.png" alt="delete" title="'
+                    . $this->translate('delete_folder') . '" />'
+                    . '<input type="hidden" name="deleteFolder" />'
+                    . '<input type="hidden" name="folder" value="' . $folder
+                    . '" />'
+                    . '</form>'
+                    . '<a href="?' . $this->linkParams . '&amp;subdir=' . $folder
+                    . '">' . $name . '</a></li>';
+            }
+            $html .= '</ul>';
+        }
+        return $html;
+    }
+
+    /**
+     * Returns whether a file is an image file.
+     *
+     * @param string $filename A file name.
+     *
+     * @return bool
+     *
+     * @access protected
+     */
+    function isImageFile($filename)
+    {
+        if (class_exists('finfo')) {
+            $finfo = new finfo(FILEINFO_MIME);
+            $mimeType = $finfo->file($filename);
+            return strpos($mimeType, 'image/') === 0;
+        } else {
+            $ext = pathinfo($filename, PATHINFO_EXTENSION);
+            $exts = array('gif', 'jpg', 'jpeg', 'png', 'bmp', 'tiff', 'ico');
+            return in_array(strtolower($ext), $exts);
+        }
+    }
+
+    /**
+     * Returns the file list view for the CMS browser.
+     *
+     * @param array $files An array of files.
+     *
+     * @return string
+     *
+     * @global array  The localization of the core.
+     * @global object The CRSF protection object.
+     *
+     * @access protected
+     */
+    function fileList($files)
+    {
+        global $tx, $_XH_csrfProtection;
+
+        if (empty($files)) {
+            return '';
+        }
         $html = '<ul>';
-        $i = 0;
         $class = 'even';
         $fb = $_SESSION['xh_browser']; // FIXME: the view shouldn't know the model
         $imgs = $fb->usedImages();
@@ -112,53 +373,89 @@ class XHFileBrowserView {
             $base = substr($base, 2);
         }
         foreach ($files as $file) {
-            if ($class == 'odd') {
-                $class = 'even';
-            } else {
-                $class = 'odd';
-            }
-            $html .= '
-                <li style="white-space:nowrap;" class="' . $class . '">
-                    <form style="display: inline;" method="POST" action="" onsubmit="return confirmFileDelete(\'' . $this->translate('confirm_delete', $this->currentDirectory . $file) . '\');">
-                        <input type="image" src="' . $this->browserPath . 'css/icons/delete.gif" alt="delete" title="delete file" />
-                        <input type="hidden" name="deleteFile" />
-                        <input type="hidden" name="file" value="' . $file . '" />
-                    </form>
-                    <form method="POST" style="display:none;" action="" id="rename_' . $i . '">
-                        <input type="text" size="25" name="renameFile" value="' . $file . '" onmouseout="hideRenameForm(\'' . $i . '\');"/>
-                        <input type="hidden" name="oldName" value="' . $file . '" />
-                    </form>
-                     <a style="position:relative" class="xhfbfile" href="#" onclick="return false" id="file_' . $i . '" ondblclick="showRenameForm(\'' . $i . '\', \'' . $this->translate('prompt_rename', $file) . '\');">' . $file;
+            $class = $class == 'odd' ? 'even' : 'odd';
+            $html .= '<li style="white-space:nowrap;" class="' . $class . '">'
+                . '<form style="display: inline;" method="post" action="#"'
+                . ' onsubmit="return FILEBROWSER.confirmFileDelete(\''
+                . $this->translate('confirm_delete', $this->currentDirectory . $file)
+                . '\');">'
+                . tag(
+                    'input type="image" src="' . $this->browserPath
+                    . 'css/icons/delete.png" alt="delete" title="'
+                    . $this->translate('delete_file')
+                    . '" style="width: 16px; height: 16px"'
+                )
+                . tag('input type="hidden" name="deleteFile"')
+                . tag(
+                    'input type="hidden" name="filebrowser_file" value="'
+                    . $file . '"'
+                )
+                . $_XH_csrfProtection->tokenInput()
+                . '</form>'
+                . '<form method="post" style="display:inline;" action="#"'
+                . ' onsubmit="return FILEBROWSER.promptNewName(this, \''
+                . $this->translate('prompt_rename', $file) . '\');"'
+                . '>'
+                . tag(
+                    'input type="hidden" name="renameFile" value="'
+                    . $file . '"'
+                )
+                . tag('input type="hidden" name="oldName" value="' . $file . '"')
+                . tag(
+                    'input type="image" src="' . $this->browserPath
+                    . 'css/icons/rename.png"' . ' alt="'
+                    . $this->translate('rename_file') . '" title="'
+                    . $this->translate('rename_file')
+                    . '" style="width: 16px; height: 16px"'
+                )
+                . $_XH_csrfProtection->tokenInput()
+                . '</form>'
+                . '<a style="position:relative" class="xhfbfile" href="'
+                . $this->currentDirectory . $file . '" target="_blank">' . $file;
 
             $ffn = $base . $fb->currentDirectory . $file;
             $usage = array_key_exists($ffn, $imgs)
-                ? '<strong>' . $tx['images']['usedin'] . ':</strong>'
+                ? '<strong>' . $this->translate('image_usedin') . '</strong>'
                     . tag('br') . implode(tag('br'), $imgs[$ffn])
                 : '';
 
-            if (is_array(@getimagesize($this->basePath . $this->currentDirectory . $file))) {
-                $image = getimagesize($this->basePath . $this->currentDirectory . $file);
-                $width = $image[0];
-                $height = $image[1];
+            $path = $this->basePath . $this->currentDirectory . $file;
+            if ($this->isImageFile($path) && ($image = getimagesize($path))) {
+                list($width, $height) = $image;
                 if ($width > 100) {
                     $ratio = $width / $height;
                     $width = 100;
                     $height = $width / $ratio;
                 }
-                $html .= '<span style="position: relative;  z-index: 4; ">
-                    <span style="font-weight: normal; border: none;">' . $image[0] . ' x ' . $image[1] . ' px</span><br />
-                    <img src="' . $this->basePath . $this->currentDirectory . $file . '" width="' . $width . 'px" height="' . $height . '" />' . tag('br') . $usage . '</span>';
+                $html .= '<span style="position: relative;  z-index: 4; ">'
+                    . '<span style="font-weight: normal; border: none;">'
+                    . $image[0] . ' x ' . $image[1] . ' px</span>' . tag('br')
+                    . tag(
+                        'img src="' . $path . '" width="' . $width . '" height="'
+                        . $height . '" alt="' . $file . '"'
+                    ) . tag('br') . $usage . '</span>';
             }
-            $html .= '</a> (' . round(filesize($this->basePath . $this->currentDirectory . $file) / 1024, 1) . ' kb) 
-            </li>';
-            $i++;
+            $size = round(filesize($path) / 1024, 1);
+            $html .= '</a> (' . $size . ' kb)</li>';
         }
         $html .= '</ul>';
         return $html;
     }
 
-    function fileListForEditor($files) {
-
+    /**
+     * Returns the file list view for the editor browser.
+     *
+     * @param array $files An array of files.
+     *
+     * @return string
+     *
+     * @access protected
+     */
+    function fileListForEditor($files)
+    {
+        if (empty($files)) {
+            return '';
+        }
         $html = '<ul>';
         $dir = $this->basePath . $this->currentDirectory;
         $is_image = (int) (strpos($this->linkParams, 'type=images') === 0);
@@ -166,76 +463,189 @@ class XHFileBrowserView {
         foreach ($files as $file) {
             $class = $class == 'odd' ? 'even' : 'odd';
 
-
-            $html .= '
-                <li class="' . $class . '">';
+            $html .= '<li class="' . $class . '">';
             $prefix = $this->linkPrefix;
 
             if ($prefix != '?&amp;download=') {
-                $prefix .= str_replace(array('../', './'), '', $this->currentDirectory);
+                $prefix .= str_replace(
+                    array('../', './'), '', $this->currentDirectory
+                );
             }
-            //     $html .= '<a href="#" class="xhfbfile" onclick="window.setLink(\''.$prefix.  $file.'\'); return false;">'.$file;
-            $html .= '<a href="#" class="xhfbfile" onclick="window.setLink(\'' . $prefix . $file . '\',' . $is_image . '); return false;">' . $file;
+            $html .= '<span class="xhfbfile" onclick="window.setLink(\''
+                . $prefix . $file . '\',' . $is_image . ');">'
+                . $file;
 
-            if (strpos($this->linkParams, 'type=images') !== false && getimagesize($dir . $file)) {
-                $image = getimagesize($dir . $file);
-                $width = $image[0];
-                $height = $image[1];
+            $path = $dir . $file;
+            if (strpos($this->linkParams, 'type=images') !== false
+                && $this->isImageFile($path) && ($image = getimagesize($path))
+            ) {
+                list($width, $height) = $image;
                 if ($width > 150) {
                     $ratio = $width / $height;
                     $width = 150;
                     $height = $width / $ratio;
                 }
-
-                $html .= '<span style="position: relative; z-index: 4;">
-                    <span style="font-weight: normal; border: none;">' . $image[0] . ' x ' . $image[1] . ' px</span><br />
-                    <img src="' . $this->basePath . $this->currentDirectory . $file . '" width="' . $width . 'px" height="' . $height . '" /></span>';
+                $src = $this->basePath . $this->currentDirectory . $file;
+                $html .= <<<HTM
+<span style="position: relative; z-index: 4;">
+<span style="font-weight: normal; border: none;">$image[0] x $image[1] px</span>
+<br /><img src="$src" width="$width" height="$height" alt="$file"/></span>
+HTM;
             }
-            $html .= '</a> (' . round(filesize($dir . $file) / 1024, 1) . ' kb)
-            </li>';
+            $html .= '</span> (' . round(filesize($path) / 1024, 1)
+                . ' kb)</li>';
         }
         $html .= '</ul>';
         return $html;
     }
 
-    function loadTemplate($template) {
+    /**
+     * Returns a CSRF token and stores it in the session.
+     *
+     * @return string
+     *
+     * @access protected
+     */
+    function getCSRFToken()
+    {
+        if (!isset($this->token)) {
+            $this->token = md5(uniqid(rand()));
+            $_SESSION['filebrowser_csrf_token'] = $this->token;
+        }
+        return $this->token;
+    }
+
+    /**
+     * Checks the submitted CSRF token against the one stored in the session.
+     * Exits the script with 403, if that failed.
+     *
+     * @return void
+     *
+     * @access public
+     */
+    function checkCSRFToken()
+    {
+        $key = 'filebrowser_csrf_token';
+        $submittedToken = isset($_POST[$key]) ? $_POST[$key] : '';
+        $ok = isset($_SESSION[$key]) && $_SESSION[$key] === $_POST[$key];
+        if (!$ok) {
+            header('HTTP/1.0 403 Forbidden');
+            echo 'Invalid CSRF token!';
+            // the following should be exit/die, but that would break unit tests
+            trigger_error('Invalid CSRF token!', E_USER_ERROR);
+        }
+    }
+
+    /**
+     * Returns an instantiated template.
+     *
+     * @param string $template A template file name.
+     *
+     * @return string (X)HTML.
+     *
+     * @access public
+     */
+    function loadTemplate($template)
+    {
         if (file_exists($template)) {
             ob_start();
-            global $tx;
             include $template;
         }
         $html = ob_get_clean();
         $this->partials['folders'] = $this->folderList($this->folders);
-        $this->partials['subfolders'] = $this->subFolderList($this->subfolders);
         if (basename($template) == 'cmsbrowser.html') {
+            $this->partials['subfolders']
+                = $this->subfolderList($this->subfolders);
             $this->partials['files'] = $this->fileList($this->files);
-        }
-        if (basename($template) == 'editorbrowser.html') {
+        } elseif (basename($template) == 'editorbrowser.html') {
+            $this->partials['subfolders']
+                = $this->subfolderListForEditor($this->subfolders);
             $this->partials['files'] = $this->fileListForEditor($this->files);
         }
         $this->partials['message'] = $this->message;
         foreach ($this->partials as $placeholder => $value) {
-            $html = str_replace('%' . strtoupper($placeholder) . '%', $value, $html);
+            $html = str_replace(
+                '%' . strtoupper($placeholder) . '%', $value, $html
+            );
         }
         $this->message = '';
         return $html;
     }
 
-    function error($message ='', $args = null) {
-        global $tx;
-        $this->message .= '<p style="width: auto;" class="cmsimplecore_warning">' . $this->translate($message, $args) . '</p>';
+    /**
+     * Appends a localized error message to the message area of the view.
+     *
+     * @param string $message A message key.
+     * @param array  $args    Arguments.
+     *
+     * @return void
+     *
+     * @access public
+     */
+    function error($message ='', $args = null)
+    {
+        $this->message .= '<p class="xh_fail">'
+            . $this->translate($message, $args) . '</p>';
     }
 
-    function success($message, $args = null) {
-        global $tx;
-        $this->message .= '<p style="width: auto;">' . $this->translate($message, $args) . '</p>';
+    /**
+     * Appends a localized success message to the message area of the view.
+     *
+     * @param string $message A message key.
+     * @param array  $args    The arguments.
+     *
+     * @return void
+     *
+     * @access public
+     */
+    function success($message, $args = null)
+    {
+        $this->message .= '<p class="xh_success">'
+            . $this->translate($message, $args) . '</p>';
     }
 
-    function message($message) {
+    /**
+     * Appends a localized info message to the message area of the view.
+     *
+     * @param string $message A message key.
+     * @param array  $args    The arguments.
+     *
+     * @return void
+     *
+     * @access public
+     */
+    function info($message, $args = null)
+    {
+        $this->message .= '<p class="xh_info">'
+            . $this->translate($message, $args) . '</p>';
+    }
+
+    /**
+     * Appends a message to the message area of the view.
+     *
+     * @param string $message A message.
+     *
+     * @return void
+     *
+     * @access public
+     */
+    function message($message)
+    {
         $this->message .= '<p style="width: auto;">' . $message . '</p>';
     }
 
-    function translate($string = '', $args = null) {
+    /**
+     * Returns a localized message.
+     *
+     * @param string $string A message key.
+     * @param mixed  $args   A single argument or an array of arguments.
+     *
+     * @return string
+     *
+     * @access public
+     */
+    function translate($string = '', $args = null)
+    {
         if (strlen($string) === 0) {
             return '';
         }
@@ -245,12 +655,8 @@ class XHFileBrowserView {
         } else {
             $html = $this->lang[$string];
         }
-//
         if (is_array($args)) {
-
             array_unshift($args, $html);
-
-
             return call_user_func_array('sprintf', $args);
         }
         if (is_string($args)) {
@@ -259,5 +665,6 @@ class XHFileBrowserView {
         }
         return $html;
     }
-
 }
+
+?>

@@ -1,10 +1,9 @@
 <?php
 
 /**
- * @version $Id: script.php 237 2012-08-05 12:08:30Z cmb69 $
+ * @version $Id: script.php 1166 2014-01-07 14:10:29Z cmb69 $
  */
 
-/* utf-8 marker: äöü */
 $script = '
 <script type="text/javascript" src="./../tinymce/tiny_mce/tiny_mce_popup.js">
 </script>
@@ -12,12 +11,12 @@ $script = '
 <script language="javascript" type="text/javascript">
 
 var FileBrowserDialogue = {
-    
+
     init : function () {
         // Nothing to do
     },
 
-   
+
     submit : function (url) {
         var URL = url;
         var win = tinyMCEPopup.getWindowArg("window");
