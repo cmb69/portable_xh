@@ -29,6 +29,7 @@ rem THE SOFTWARE.
 rem
 
 echo Portable_XH @PORTABLE_XH_VERSION@
+echo.
 echo Compiled 2012-2013 by Christoph M. Becker ^<http://3-magi.net/^>
 start http://localhost:8080/
-php\php -S localhost:8080 -t www > NUL
+php\php -S localhost:8080 -t www router.php > NUL
