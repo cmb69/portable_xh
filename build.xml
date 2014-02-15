@@ -22,6 +22,7 @@
                 <exclude name="portable.komodoproject"/>
                 <exclude name="build.xml"/>
                 <exclude name="portable.ico"/>
+                <exclude name="TODO"/>
             </fileset>
         </move>
         <delete dir="export"/>
