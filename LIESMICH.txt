@@ -82,6 +82,14 @@ www/ (inkl. Unterordnern)
     Lizensiert unter der GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
     Website: <http://www.cmsimple-xh.org/>
 
+Beschränkungen
+--------------
+
+Manche Browser (z.B. Opera 12.16) können aus welchen Gründen auch immer
+möglicherweise <http://localhost:8080/> nicht anzeigen. Sie können das
+vermutlich aber umgehen, wenn Sie <http://[::1]:8080/> oder
+<http://127.0.0.1:8080/> manuell aufrufen.
+
 Danksagung
 ----------
 

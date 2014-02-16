@@ -76,6 +76,14 @@ www/ (incl. subfolders)
     Licensed under GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
     Website: <http://www.cmsimple-xh.org/>
 
+Limitations
+-----------
+
+Some browsers (e.g. Opera 12.16) may not be able to navigate to
+<http://localhost:8080/> for whatever reasons.  You most likely can get around
+this issue by navigating to <http://[::1]:8080/> or <http://127.0.0.1:8080/>
+manually.
+
 Credits
 -------
 
