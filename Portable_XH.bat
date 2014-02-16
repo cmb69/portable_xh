@@ -28,8 +28,5 @@ rem OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 rem THE SOFTWARE.
 rem
 
-echo Portable_XH @PORTABLE_XH_VERSION@
-echo.
-echo Compiled 2012-2014 by Christoph M. Becker ^<http://3-magi.net/^>
 start http://localhost:8080/
-php\php -S localhost:8080 -t www router.php > NUL
+start "Portable_XH @PORTABLE_XH_VERSION@" php\php -S localhost:8080 -t www router.php

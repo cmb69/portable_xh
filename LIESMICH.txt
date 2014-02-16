@@ -38,7 +38,7 @@ fragen.
 Verwendung
 ----------
 
-Öffnen Sie Portable_XH(.exe) im Hauptverzeichnis der Installation. Dies startet
+Öffnen Sie Portable_XH(.bat) im Hauptverzeichnis der Installation. Dies startet
 den Webserver und öffnet die CMSimple_XH Installation im Standardbrowser. Wenn
 Sie den Webserver stoppen wollen, dann schließen sie dieses Fenster einfach. So
 lange der Webserver läuft, können Sie <http://localhost:8080/> aufrufen, um zur

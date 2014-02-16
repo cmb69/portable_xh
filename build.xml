@@ -26,9 +26,6 @@
             </fileset>
         </move>
         <delete dir="export"/>
-        <exec command="Bat_To_Exe_Converter -bat Portable_XH.bat -save Portable_XH.exe -icon ..\portable.ico"
-              dir="dist" checkreturn="true"/>
-        <delete file="dist/Portable_XH.bat"/>
         <zip destfile="Portable_XH-${version}.zip" basedir="dist" prefix="Portable_XH/"/>
         <delete dir="dist"/>
     </target>
