@@ -1,17 +1,22 @@
+Version 1rc2 - released 2014-02-16
+* fixed bug, where webserver may hang after some navigations (reported by stoa)
+* re-added dedicated php.ini
+* disabled CMSimple_XH check for access protection of files
+
 Version 1rc1 - released 2014-02-15
-cmb     replaced Portable_XH.bat with Portable_XH.exe
-cmb     updated to CMSimple_XH 1.6.1 (with a bug fix)
-cmb     updated to PHP 5.4.25
-cmb     removed paping (actually it is not necessary)
-cmb     added application icon
+* replaced Portable_XH.bat with Portable_XH.exe
+* updated to CMSimple_XH 1.6.1 (with a bug fix)
+* updated to PHP 5.4.25
+* removed paping (actually it is not necessary)
+* added application icon
 
 Version 1beta1 - released 2013-08-12
-cmb     upgraded to PHP 5.4.17
-cmb     replaced Nginx webserver with PHP's built-in webserver
-cmb     replaced Portable_XH.exe with Portable_XH.bat
-cmb     added local storage of mails sent by CMSimple_XH
-cmb     streamlined documentation to README.txt
-cmb     added German LIESMICH.txt
+* upgraded to PHP 5.4.17
+* replaced Nginx webserver with PHP's built-in webserver
+* replaced Portable_XH.exe with Portable_XH.bat
+* added local storage of mails sent by CMSimple_XH
+* streamlined documentation to README.txt
+* added German LIESMICH.txt
 
 Version 1alpha1 - released 2012-03-24
-cmb	initial release
+* initial release
