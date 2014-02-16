@@ -257,12 +257,12 @@ HTML;
     }
     $checks['writable'] = array_unique($checks['writable']);
     sort($checks['writable']);
-    foreach (array($pth['file']['config'], $pth['file']['content']) as $file) {
-        $checks['other'][] = array(
-            XH_isAccessProtected($file), false,
-            sprintf($tx['syscheck']['access_protected'], $file)
-        );
-    }
+    //foreach (array($pth['file']['config'], $pth['file']['content']) as $file) {
+    //    $checks['other'][] = array(
+    //        XH_isAccessProtected($file), false,
+    //        sprintf($tx['syscheck']['access_protected'], $file)
+    //    );
+    //}
     if ($tx['locale']['all'] == '') {
         $checks['other'][] = array(true, false, $tx['syscheck']['locale_default']);
     } else {
