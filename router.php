@@ -28,6 +28,20 @@
  * THE SOFTWARE.
  */
 
+/**
+ * Returns whether the requested path points to a directory, but the trailing
+ * slash is missing.
+ *
+ * @param string $path A path.
+ *
+ * @return bool
+ */
+function isDirWithoutTrailingSlash($path)
+{
+    $filename = "./www$path";
+    return is_dir($filename) && !preg_match('/\/$/', $filename);
+}
+
 /*
  * Work around a bug in the webserver (<https://bugs.php.net/bug.php?id=66711>).
  */
@@ -35,6 +49,14 @@ if ($_SERVER['PHP_SELF'] == '/index.php/') {
     $_SERVER['PHP_SELF'] = '/index.php';
 }
 
-return false;
+/*
+ * Adds a trailing slash to request URLs if appropriate.
+ */
+$parts = parse_url($_SERVER['REQUEST_URI']);
+if (isDirWithoutTrailingSlash($parts['path'])) {
+    header("Location: http://localhost:8080$parts[path]/");
+} else {
+    return false;
+}
 
 ?>
