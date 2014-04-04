@@ -43,10 +43,10 @@ function isDirWithoutTrailingSlash($path)
 }
 
 /*
- * Work around a bug in the webserver (<https://bugs.php.net/bug.php?id=66711>).
+ * Works around a bug in the webserver (<https://bugs.php.net/bug.php?id=66711>).
  */
-if ($_SERVER['PHP_SELF'] == '/index.php/') {
-    $_SERVER['PHP_SELF'] = '/index.php';
+if (preg_match('/\/index\.(php|html)\/$/', $_SERVER['PHP_SELF'])) {
+    $_SERVER['PHP_SELF'] = substr($_SERVER['PHP_SELF'], 0, -1);
 }
 
 /*
