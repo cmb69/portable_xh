@@ -1,3 +1,11 @@
+Version 1rc3 - released 2014-04-04
+* fixed bug, where subfolders of the webroot could not been accessed without
+  trailing slash (reported by deeseecee)
+* generalized workaround for PHP_SELF bug
+* updated to PHP 5.4.27
+* added menu for easy navigation to different CMSimple_XH installations
+  (suggested by svasti)
+
 Version 1rc2 - released 2014-02-16
 * fixed bug, where webserver may hang after some navigations (reported by stoa)
 * re-added dedicated php.ini
