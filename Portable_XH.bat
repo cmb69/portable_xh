@@ -1,9 +1,9 @@
 @echo off
 
 rem
-rem Portable_XH 1beta1
+rem Portable_XH
 rem
-rem Starts the webserver and opens the browser pointing to CMSimple_XH.
+rem Starts the webserver and opens the default browser pointing to the webroot.
 rem
 rem Copyright 2013-2014 Christoph M. Becker <http://3-magi.net/>
 rem
