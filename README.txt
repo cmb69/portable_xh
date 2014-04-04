@@ -45,6 +45,14 @@ How to use CMSimple_XH is described in its Wiki
 <http://www.cmsimple-xh.org/wiki/doku.php>. If you have questions feel free to
 ask in its Forum <http://cmsimpleforum.com/>.
 
+Multiple CMSimple_XH Installations
+----------------------------------
+
+You can have multiple CMSimple_XH installations in a single Portable_XH the same
+way as on any webserver, i.e. in different subfolders of the webroot. If the
+webroot contains neither an index.php nor an index.html, Portable_XH will
+display a menu of all immediate subfolders for easy navigation when started.
+
 Email
 -----
 

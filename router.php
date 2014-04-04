@@ -29,6 +29,26 @@
  */
 
 /**
+ * Returns an array of direct subfolders of the webroot.
+ *
+ * @return array
+ */
+function subfolders()
+{
+    $result = array();
+    $dir = opendir('./www');
+    if ($dir) {
+        while (($entry = readdir($dir)) !== false) {
+            if ($entry[0] != '.' && is_dir("./www/$entry")) {
+                $result[] = $entry;
+            }
+        }
+    }
+    natcasesort($result);
+    return $result;
+}
+
+/**
  * Returns whether the requested path points to a directory, but the trailing
  * slash is missing.
  *
@@ -42,11 +62,33 @@ function isDirWithoutTrailingSlash($path)
     return is_dir($filename) && !preg_match('/\/$/', $filename);
 }
 
+/**
+ * Returns whether the webroot is requested, but there's neither index.php nor
+ * index.html.
+ *
+ * @return bool
+ */
+function isRootRequestedButIndexIsMissing()
+{
+    return $_SERVER['REQUEST_URI'] == '/'
+        && !is_file('./www/index.php')
+        && !is_file('./www.index.html');
+}
+
 /*
  * Works around a bug in the webserver (<https://bugs.php.net/bug.php?id=66711>).
  */
 if (preg_match('/\/index\.(php|html)\/$/', $_SERVER['PHP_SELF'])) {
     $_SERVER['PHP_SELF'] = substr($_SERVER['PHP_SELF'], 0, -1);
+}
+
+/*
+ * Delivers a menu page, if the webroot is requested and there is neither
+ * index.php nor index.html.
+ */
+if (isRootRequestedButIndexIsMissing()) {
+    include './menu.php';
+    exit;
 }
 
 /*
