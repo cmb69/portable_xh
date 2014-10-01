@@ -21,7 +21,10 @@ Voraussetzungen
 ---------------
 
 Ein einigermaßen neues Windows Betriebssystem (Windows XP und höher sollten
-funktionieren).
+funktionieren) auf dem das Visual C++ Redistributable for Visual Studio 2008 SP1
+x86 (<http://www.microsoft.com/en-us/download/details.aspx?id=5582>) bzw. x64
+(<http://www.microsoft.com/en-us/download/details.aspx?id=15336>) installiert
+ist.
 
 Installation
 ------------

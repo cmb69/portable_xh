@@ -18,8 +18,10 @@ any other of the major distributions.
 Requirements
 ------------
 
-A somewhat recent Windows operating system (Windows XP and up should do
-fine).
+A somewhat recent Windows operating system (Windows XP and up should do fine)
+with the Visual C++ Redistributable for Visual Studio 2008 SP1 x86
+(<http://www.microsoft.com/en-us/download/details.aspx?id=5582>) resp. x64
+(<http://www.microsoft.com/en-us/download/details.aspx?id=15336>) installed.
 
 Installation
 ------------
