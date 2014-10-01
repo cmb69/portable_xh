@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @version $Id: editorbrowser.html 1166 2014-01-07 14:10:29Z cmb69 $
+ * @version $Id: editorbrowser.html 1304 2014-05-22 12:08:22Z cmb69 $
  */
 
 ?>
@@ -22,7 +22,6 @@
     <body>
         <div id="xhFilebrowserMenu">
         %MESSAGE%
-            <!--   <b><?php echo $tx['filetype']['folder']; ?>:</b> <?php echo $this->currentDirectory; ?> -->
             <button type="button" onclick="FILEBROWSER.togglexhfbForm('xhfbCreateDir');"><?php echo $this->translate('create_folder'); ?></button>
             <button type="button" onclick="FILEBROWSER.togglexhfbForm('xhfbUploadFile');"><?php echo $this->translate('upload_file'); ?></button>
             <fieldset id="xhfbUploadFile" class="xhfbform">

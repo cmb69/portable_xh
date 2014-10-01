@@ -7,7 +7,7 @@
  * @author    The CMSimple_XH developers <devs@cmsimple-xh.org>
  * @copyright 2011-2014 The CMSimple_XH developers (http://cmsimple-xh.org/?The_Team)
  * @license   GNU GPLv3 (http://www.gnu.org/licenses/gpl-3.0.en.html)
- * @version   $Id: filebrowser.js 1198 2014-01-30 14:10:39Z cmb69 $
+ * @version   $Id: filebrowser.js 1201 2014-01-30 16:47:38Z cmb69 $
  */
 var FILEBROWSER = {}
 

@@ -12,15 +12,15 @@
  * @copyright 1999-2009 <http://cmsimple.org/>
  * @copyright 2009-2014 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @version   SVN: $Id: functions.php 1200 2014-01-30 15:24:49Z cmb69 $
+ * @version   SVN: $Id: functions.php 1396 2014-09-28 22:48:26Z cmb69 $
  * @link      http://cmsimple-xh.org/
  */
 
 
 /*
   ======================================
-  CMSimple_XH 1.6.1
-  2014-01-30
+  CMSimple_XH 1.6.4
+  2014-09-29
   based on CMSimple version 3.3 - December 31. 2009
   For changelog, downloads and information please see http://www.cmsimple-xh.org/
   ======================================
@@ -157,11 +157,7 @@ function l($n)
  */
 function evaluate_cmsimple_scripting($__text, $__compat = true)
 {
-    global $output;
-    foreach ($GLOBALS as $__name => $__dummy) {
-        $$__name = &$GLOBALS[$__name];
-    }
-
+    extract($GLOBALS, EXTR_REFS);
     $__scope_before = null; // just that it exists
     $__scripts = array();
     preg_match_all('~#CMSimple (.*?)#~is', $__text, $__scripts);
@@ -286,7 +282,7 @@ function XH_evaluateSinglePluginCall($___expression)
  * Note that the behavior of negative values for <var>$offset</var>
  * and <var>$length</var> is not defined.
  *
- * @param string &$string     The string to manipulate.
+ * @param string $string      The string to manipulate.
  * @param int    $offset      Offset of the string where to start the replacement.
  * @param int    $length      The number of characters to be replaced.
  * @param string $replacement The string to replace the removed characters.
@@ -557,18 +553,12 @@ function initvar($name)
 /**
  * Returns the value of a $_SERVER key.
  *
- * Has fallback to $HTTP_SERVER_VARS for PHP < 4.1.0. ;-)
- *
  * @param string $s The key.
  *
  * @return string
  */
 function sv($s)
 {
-    if (!isset($_SERVER)) {
-        global $_SERVER;
-        $_SERVER = $GLOBALS['HTTP_SERVER_VARS'];
-    }
     if (isset($_SERVER[$s])) {
         return $_SERVER[$s];
     } else {
@@ -867,6 +857,7 @@ function rfc()
  * @global array The paths of system files and folders.
  * @global array The configuration of the core.
  * @global bool  Whether edit mode is active.
+ * @global int   The index of the first published page.
  *
  * @return array
  *
@@ -874,7 +865,7 @@ function rfc()
  */
 function XH_readContents($language = null)
 {
-    global $pth, $cf, $edit;
+    global $pth, $cf, $edit, $_XH_firstPublishedPage;
 
     if (isset($language)) {
         $contentFolder = $pth['folder']['base'] . 'content/' . $language . '/';
@@ -961,9 +952,15 @@ function XH_readContents($language = null)
     );
 
     // remove unpublished pages
+    if (!isset($language)) {
+        $_XH_firstPublishedPage = 0;
+    }
     if (!($edit && XH_ADM)) {
         foreach ($c as $i => $text) {
             if (cmscript('remove', $text)) {
+                if (!isset($language) && $_XH_firstPublishedPage == $i) {
+                    $_XH_firstPublishedPage = ($i < count($c) - 1) ? $i + 1 : -1;
+                }
                 $c[$i] = '#CMSimple hide# #CMSimple shead(404);#';
             }
         }
@@ -977,6 +974,50 @@ function XH_readContents($language = null)
         'pages' => $c,
         'pd_router' => $pd_router
     );
+}
+
+/**
+ * Finds the index of the previous page.
+ *
+ * @return int
+ *
+ * @global int   The index of the current page.
+ * @global int   The number of pages.
+ *
+ * @since 1.6.3
+ */
+function XH_findPreviousPage()
+{
+    global $s, $cl;
+
+    for ($i = $s - 1; $i > -1; $i--) {
+        if (!hide($i)) {
+            return $i;
+        }
+    }
+    return false;
+}
+
+/**
+ * Finds the index of the next page.
+ *
+ * @return int
+ *
+ * @global int The index of the current page.
+ * @global int The number of pages.
+ *
+ * @since 1.6.3
+ */
+function XH_findNextPage()
+{
+    global $s, $cl;
+
+    for ($i = $s + 1; $i < $cl; $i++) {
+        if (!hide($i)) {
+            return $i;
+        }
+    }
+    return false;
 }
 
 /**
@@ -1094,14 +1135,18 @@ function uenc($s)
  *
  * @return string
  *
+ * @global array The configuration of the core.
+ *
  * @see uenc()
  *
  * @since 1.6
  */
 function XH_uenc($s, $search, $replace)
 {
+    global $cf;
+
     $s = str_replace($search, $replace, $s);
-    return str_replace('+', '_', urlencode($s));
+    return str_replace('+', $cf['uri']['word_separator'], urlencode($s));
 }
 
 /**
@@ -1400,7 +1445,7 @@ function XH_debug($errno, $errstr, $errfile, $errline, $context)
 
 /**
  * Checks <var>$arr</var> recursively for valid UTF-8.
- * Otherwise it exists the script.
+ * Otherwise it exits the script.
  *
  * Useful for checking user input.
  *
@@ -1452,7 +1497,6 @@ function XH_createLanguageFile($dst)
  *
  * @param string $plugin The name of the plugin.
  *
- * @global array  The configuration of the core.
  * @global array  The paths of system files and folders.
  * @global string The active language.
  *
@@ -1462,7 +1506,7 @@ function XH_createLanguageFile($dst)
  */
 function pluginFiles($plugin)
 {
-    global $cf, $pth, $sl;
+    global $pth, $sl;
     static $helpFiles = array();
 
     $folders = array(
@@ -1606,18 +1650,12 @@ function XH_plugins($admin = false)
 /**
  * Returns the value of a cookie, or <var>null</var> if the cookie doesn't exist.
  *
- * Has fallback to $HTTP_COOKIE_VARS for PHP < 4.1.0. ;-)
- *
  * @param string $s The name of the cookie.
  *
  * @return string
  */
 function gc($s)
 {
-    if (!isset($_COOKIE)) {
-        global $_COOKIE;
-        $_COOKIE = $GLOBALS['HTTP_COOKIE_VARS'];
-    }
     if (isset($_COOKIE[$s])) {
         return $_COOKIE[$s];
     }
@@ -1696,10 +1734,10 @@ function XH_logMessage($type, $module, $category, $description)
     $ok = false;
     $stream = fopen($pth['file']['log'], 'a');
     if ($stream) {
-        if (flock($stream, LOCK_EX)) {
+        if (XH_lockFile($stream, LOCK_EX)) {
             $ok = fwrite($stream, $message . PHP_EOL) !== false;
             fflush($stream);
-            flock($stream, LOCK_UN);
+            XH_lockFile($stream, LOCK_UN);
         }
         fclose($stream);
     }
@@ -1809,9 +1847,9 @@ function XH_readFile($filename)
     $contents = false;
     $stream = fopen($filename, 'rb');
     if ($stream) {
-        if (flock($stream, LOCK_SH)) {
+        if (XH_lockFile($stream, LOCK_SH)) {
             $contents = XH_getStreamContents($stream);
-            flock($stream, LOCK_UN);
+            XH_lockFile($stream, LOCK_UN);
         }
         fclose($stream);
     }
@@ -1836,12 +1874,12 @@ function XH_writeFile($filename, $contents)
     // we can't use "r+b" as it will fail if the file does not already exist
     $stream = fopen($filename, 'a+b');
     if ($stream) {
-        if (flock($stream, LOCK_EX)) {
+        if (XH_lockFile($stream, LOCK_EX)) {
             fseek($stream, 0);
             ftruncate($stream, 0);
             $res = fwrite($stream, $contents);
             fflush($stream);
-            flock($stream, LOCK_UN);
+            XH_lockFile($stream, LOCK_UN);
         }
         fclose($stream);
     }
@@ -1989,56 +2027,28 @@ function XH_message($type, $message)
 }
 
 /**
- * Creates a backup of the contents file. Surplus old backups will be deleted.
- * Returns an appropriate message.
+ * Creates backups of all content files.
  *
- * @return string The (X)HTML.
+ * Surplus old backups will be deleted. Returns an appropriate message.
+ *
+ * @return string (X)HTML.
  *
  * @global array The paths of system files and folders.
- * @global array The configuration of the core.
- * @global array The localization of the core.
  *
  * @since 1.6
  */
 function XH_backup()
 {
-    global $pth, $cf, $tx;
+    global $pth;
 
-    $o = '';
-    $date = date("Ymd_His");
-    $fn = $date . '_content.htm';
-    if (empty($cf['backup']['numberoffiles'])
-        || copy($pth['file']['content'], $pth['folder']['content'] . $fn)
-    ) {
-        if (!empty($cf['backup']['numberoffiles'])) {
-            $message = utf8_ucfirst($tx['filetype']['backup']) . ' ' . $fn
-                . ' ' . $tx['result']['created'];
-            $o .= XH_message('info', $message);
-        }
-        $fl = array();
-        if ($fd = opendir($pth['folder']['content'])) {
-            while (($p = readdir($fd)) == true) {
-                if (XH_isContentBackup($p)) {
-                    $fl[] = $p;
-                }
-            }
-            closedir($fd);
-        }
-        sort($fl);
-        $v = count($fl) - $cf['backup']['numberoffiles'];
-        for ($i = 0; $i < $v; $i++) {
-            if (unlink($pth['folder']['content'] . $fl[$i])) {
-                $message = utf8_ucfirst($tx['filetype']['backup'])
-                    . ' ' . $fl[$i] . ' ' . $tx['result']['deleted'];
-                $o .= XH_message('info', $message);
-            } else {
-                e('cntdelete', 'backup', $fl[$i]);
-            }
-        }
-    } else {
-        e('cntsave', 'backup', $fn);
+    include_once $pth['folder']['classes'] . 'Backup.php';
+    $languages = XH_secondLanguages();
+    $folders = array($pth['folder']['base'] . 'content/');
+    foreach ($languages as $language) {
+        $folders[] = $pth['folder']['base'] . 'content/' . $language . '/';
     }
-    return $o;
+    $backup = new XH_Backup($folders);
+    return $backup->execute();
 }
 
 /**
@@ -2159,7 +2169,7 @@ function XH_helpIcon($tooltip)
 function XH_isContentBackup($filename, $regularOnly = true)
 {
     $suffix = $regularOnly ? 'content' : '[^.]+';
-    return preg_match('/^\d{8}_\d{6}_' . $suffix . '.htm$/', $filename);
+    return (bool) preg_match('/^\d{8}_\d{6}_' . $suffix . '.htm$/', $filename);
 }
 
 /**
@@ -2237,7 +2247,7 @@ function XH_secondLanguages()
         $langs = array();
         if ($dir = opendir($pth['folder']['base'])) {
             while (($entry = readdir($dir)) !== false) {
-                if (XH_isLanguageFolder($entry)) {
+                if ($entry[0] != '.' && XH_isLanguageFolder($entry)) {
                     $langs[] = $entry;
                 }
             }
@@ -2247,7 +2257,6 @@ function XH_secondLanguages()
     }
     return $langs;
 }
-
 /**
  * Returns whether a path refers to a CMSimple index.php.
  *
@@ -2296,10 +2305,10 @@ function XH_isInternalPath($path)
  */
 function XH_isInternalUrl($urlParts)
 {
-    $ok = !isset(
-        $urlParts['scheme'], $urlParts['host'], $urlParts['port'],
-        $urlParts['user'], $urlParts['pass']
-    );
+    $ok = true;
+    foreach (array('scheme', 'host', 'port', 'user', 'pass') as $key) {
+        $ok = $ok && !isset($urlParts[$key]);
+    }
     $ok = $ok
         && (!isset($urlParts['path']) || XH_isInternalPath($urlParts['path']));
     return $ok;
@@ -2464,10 +2473,13 @@ function XH_hsc($string)
  */
 function XH_mailform()
 {
-    global $pth;
+    global $pth, $cf;
+
+    if ($cf['mailform']['email'] == '') {
+        return false;
+    }
 
     include_once $pth['folder']['classes'] . 'Mailform.php';
-
     $mailform = new XH_Mailform(true);
     return $mailform->process();
 }
@@ -2489,9 +2501,9 @@ function XH_includeVar($_filename, $_varname)
     $_res = false;
     $_stream = fopen($_filename, 'r');
     if ($_stream) {
-        if (flock($_stream, LOCK_SH)) {
+        if (XH_lockFile($_stream, LOCK_SH)) {
             $_res = include $_filename;
-            flock($_stream, LOCK_UN);
+            XH_lockFile($_stream, LOCK_UN);
         }
         fclose($_stream);
     }
@@ -2568,9 +2580,10 @@ function XH_readConfiguration($plugin = false, $language = false)
         $$varname = array();
     }
     if (is_readable($filename)) {
+        $var = XH_includeVar($filename, $varname);
         $$varname = XH_unionOf2DArrays(
-            (array) XH_includeVar($filename, $varname),
-            (array) $$varname
+            is_array($var) ? $var : array(),
+            is_array($$varname) ? $$varname : array()
         );
     }
     return $$varname;
@@ -2623,6 +2636,183 @@ function XH_renameFile($oldname, $newname)
         unlink($newname);
     }
     return rename($oldname, $newname);
+}
+
+/**
+ * Exits the running script.
+ *
+ * Simple wrapper for exit for testing purposes.
+ *
+ * @return void
+ *
+ * @since 1.6.2
+ */
+function XH_exit()
+{
+    exit;
+}
+
+/**
+ * Returns the root (= installation) folder of the system.
+ *
+ * @return string
+ *
+ * @global string The script name.
+ * @global string The current language.
+ *
+ * @since 1.6.2
+ */
+function XH_getRootFolder()
+{
+    global $sn, $sl;
+
+    return preg_replace(
+        '/\/' . preg_quote($sl, '/') . '\/$/',
+        '/',
+        preg_replace('/\/index\.php$/', '/', $sn)
+    );
+}
+
+/**
+ * Registers the type of a plugin resp. returns the registered plugins of a
+ * certain type.
+ *
+ * @param string $type   A plugin type ('editor', 'filebrowser', 'pagemanager',
+ *                       'editmenu').
+ * @param string $plugin A plugin name or <var>null</var>.
+ *
+ * @return mixed
+ *
+ * @staticvar array The registered plugins.
+ *
+ * @since 1.6.2
+ */
+function XH_registerPluginType($type, $plugin = null)
+{
+    static $plugins = array();
+
+    if (isset($plugin)) {
+        $plugins[$type][] = $plugin;
+    } else {
+        if (isset($plugins[$type])) {
+            $result = $plugins[$type];
+            natcasesort($result);
+            return array_values($result);
+        } else {
+            return array();
+        }
+    }
+}
+
+/**
+ * Returns the names of the registered editor plugins.
+ *
+ * @return array
+ *
+ * @since 1.6.2
+ */
+function XH_registeredEditorPlugins()
+{
+    return XH_registerPluginType('editor');
+}
+
+/**
+ * Returns the names of the registered filebrowser plugins.
+ *
+ * @return array
+ *
+ * @since 1.6.2
+ */
+function XH_registeredFilebrowserPlugins()
+{
+    return XH_registerPluginType('filebrowser');
+}
+
+/**
+ * Returns the names of the registered pagemanager plugins.
+ *
+ * @return array
+ *
+ * @since 1.6.2
+ */
+function XH_registeredPagemanagerPlugins()
+{
+    return XH_registerPluginType('pagemanager');
+}
+
+/**
+ * Returns the names of the registered editmenu plugins.
+ *
+ * @return array
+ *
+ * @since 1.6.2
+ */
+function XH_registeredEditmenuPlugins()
+{
+    return XH_registerPluginType('editmenu');
+}
+
+/**
+ * Handles the shutdown of the script.
+ *
+ * <ul>
+ * <li>Unsets erroneously set password in session (backdoor mitigation).</li>
+ * <li>Displays a message if a fatal error occurred.</li>
+ * </ul>
+ *
+ * @return void
+ *
+ * @global array The localization of the core.
+ *
+ * @since 1.6.3
+ */
+function XH_onShutdown()
+{
+    global $tx;
+
+    if (!XH_ADM && isset($_SESSION['xh_password'][CMSIMPLE_ROOT])) {
+        unset($_SESSION['xh_password'][CMSIMPLE_ROOT]);
+    }
+
+    $lastError = error_get_last();
+    if (in_array($lastError['type'], array(E_ERROR, E_PARSE))) {
+        echo $tx['error']['fatal'];
+    }
+}
+
+/**
+ * Returns a timestamp formatted according to <var>$tx[lastupdate][dateformat]</var>.
+ *
+ * @param int $timestamp A UNIX timestamp.
+ *
+ * @return string
+ *
+ * @global array The localization of the core.
+ *
+ * @since 1.6.3
+ */
+function XH_formatDate($timestamp)
+{
+    global $tx;
+
+    return date($tx['lastupdate']['dateformat'], $timestamp);
+}
+
+/**
+ * Implements portable advisory file locking.
+ *
+ * For now it is just a simple wrapper around {@link flock flock()}.
+ *
+ * @param resource $handle    A file handle.
+ * @param int      $operation A lock operation (use LOCK_SH, LOCK_EX or LOCK_UN).
+ *
+ * @return bool
+ *
+ * @since 1.6.3
+ */
+function XH_lockFile($handle, $operation)
+{
+    return flock($handle, $operation);
 }
 
 ?>

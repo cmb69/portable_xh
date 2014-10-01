@@ -11,7 +11,7 @@
  * @author    The CMSimple_XH developers <devs@cmsimple-xh.org>
  * @copyright 2012-2014 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @version   SVN: $Id: JSON.php 1198 2014-01-30 14:10:39Z cmb69 $
+ * @version   SVN: $Id: JSON.php 1396 2014-09-28 22:48:26Z cmb69 $
  * @link      http://cmsimple-xh.org/
  */
 
@@ -203,7 +203,6 @@ class XH_JSON
 
     /**
      * Returns UTF-8 chars for JSON unicode escape sequence.
-     * Ignores BOM and illegal surrogates.
      *
      * @param array $matches Matches from the previous preg_match().
      *
@@ -213,17 +212,25 @@ class XH_JSON
      */
     function unescape($matches)
     {
-        $n = hexdec($matches[1]);
+        if (isset($matches[3])) {
+            $n = hexdec($matches[3]);
+        } else {
+            $n = hexdec($matches[1]);
+            $n2 = hexdec($matches[2]);
+        }
         if ($n >= 0 && $n <= 0x007f) {
             return chr($n);
         } elseif ($n <= 0x07ff) {
             return chr(0xc0 | ($n >> 6))
                 . chr(0x80 | ($n & 0x003f));
-        } elseif ($n == 0xfeff) {
-            return ''; // skip BOM
-        } elseif ($n >= 0xd800 && $n <= 0xdfff) {
-            // TODO: what to do here?
-            return '';
+        } elseif ($n >= 0xD800 && $n <= 0xDBFF) {
+            $high = $n - 0xD800;
+            $low = $n2 - 0xDC00;
+            $codePoint = 0x010000 + (($high << 10) | $low);
+            return chr(0xF0 | ($codePoint >> 18))
+                . chr(0x80 | (($codePoint >> 12) & 0x3f))
+                . chr(0x80 | (($codePoint >> 6) & 0x3f))
+                . chr(0x80 | ($codePoint & 0x3f));
         } else {
             return chr(0xe0 | ($n >> 12))
                 . chr(0x80 | (($n >> 6) & 0x003f))
@@ -240,7 +247,6 @@ class XH_JSON
      */
     function getSym()
     {
-         // TODO: handle all UTF-8 whitespace
         $this->str = preg_replace('/^\s*/', '', $this->str);
         if (empty($this->str)) {
             $this->sym = XH_JSON_EOS;
@@ -261,7 +267,9 @@ class XH_JSON
                 . 'u[0-9a-fA-F]{4}))*)/';
             preg_match($pattern, $this->str, $m);
             $m[1] = preg_replace_callback(
-                '/\\\\u([0-9a-fA-F]{4})/', array($this, 'unescape'), $m[1]
+                '/\\\\u([dD][89abAB][0-9a-fA-F]{2})\\\\u([dD][c-fC-F][0-9a-fA-F]{2})'
+                . '|\\\\u([0-9a-fA-F]{4})/',
+                array($this, 'unescape'), $m[1]
             );
             $this->value = stripcslashes($m[1]);
             $this->str = substr($this->str, strlen($m[0]) + 1);
@@ -344,7 +352,7 @@ class XH_JSON
      *
      * <samp>object -> LBRACE [ pair { COMMA pair ] RBRACE</samp>
      *
-     * @param object &$res The parsed object.
+     * @param object $res The parsed object.
      *
      * @return void
      *
@@ -371,8 +379,8 @@ class XH_JSON
      *
      * <samp>pair -> STRING COLON value</samp>
      *
-     * @param string &$key The parsed key.
-     * @param mixed  &$val The parsed value.
+     * @param string $key The parsed key.
+     * @param mixed  $val The parsed value.
      *
      * @return void
      *
@@ -391,7 +399,7 @@ class XH_JSON
      *
      * <samp>array -> LBRACK [ value { COMMA value } ] RBRACK</samp>
      *
-     * @param array &$res The parsed array.
+     * @param array $res The parsed array.
      *
      * @return void
      *
@@ -418,7 +426,7 @@ class XH_JSON
      *
      * <samp>value -> STRING | NUMBER | object | array | TRUE | FALSE | NULL</samp>
      *
-     * @param mixed &$res The parsed value.
+     * @param mixed $res The parsed value.
      *
      * @return void
      *

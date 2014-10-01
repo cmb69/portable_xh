@@ -14,7 +14,7 @@
  * @author    The CMSimple_XH developers <devs@cmsimple-xh.org>
  * @copyright 2009-2014 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @version   SVN: $Id: Pageparams_view.php 1198 2014-01-30 14:10:39Z cmb69 $
+ * @version   SVN: $Id: Pageparams_view.php 1379 2014-09-21 19:47:28Z cmb69 $
  * @link      http://cmsimple-xh.org/
  */
 
@@ -378,7 +378,7 @@ function Pageparams_view($page)
     $view .= Pageparams_lastEditRadiogroup($page['show_last_edit']);
     if ($page['last_edit'] !== '') {
         $view .= "\n\t\t" . '&nbsp;&nbsp;(' . $lang['last_edit'] . ' '
-            . date($tx['lastupdate']['dateformat'], $page['last_edit']) . ')';
+            . XH_formatDate($page['last_edit']) . ')';
     }
     $view .= "\n\t" . tag('hr');
 

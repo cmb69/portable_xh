@@ -11,7 +11,7 @@
  * @copyright 1999-2009 <http://cmsimple.org/>
  * @copyright 2009-2014 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @version   SVN: $Id: PageDataView.php 1198 2014-01-30 14:10:39Z cmb69 $
+ * @version   SVN: $Id: PageDataView.php 1396 2014-09-28 22:48:26Z cmb69 $
  * @link      http://cmsimple-xh.org/
  */
 
@@ -104,13 +104,14 @@ class XH_PageDataView
      *
      * @return string (X)HTML.
      *
-     * @global array The paths of system files and folders.
+     * @global array             The paths of system files and folders.
+     * @global XH_CSRFProtection The CSRF protector.
      *
      * @access protected
      */
     function view($filename)
     {
-        global $pth;
+        global $pth, $_XH_csrfProtection;
 
         list($function, $dummy) = explode('.', basename($filename), 2);
         // TODO: use something more appropriate than an anchor
@@ -120,7 +121,11 @@ class XH_PageDataView
             . ' onclick="XH.toggleTab(\'' . $function . '\');">&nbsp;</a>';
         if (file_exists($filename)) {
             include_once $filename;
-            $o .= $function($this->page);
+            $o .= preg_replace(
+                '/<(?:input|button)[^>]+name="save_page_data"/',
+                $_XH_csrfProtection->tokenInput() . '$0',
+                $function($this->page)
+            );
         } else {
             // TODO: i18n; or probably better: use $e/e()
             $o .= "Could not find " . $filename;

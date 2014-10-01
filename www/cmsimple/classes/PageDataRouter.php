@@ -11,7 +11,7 @@
  * @copyright 1999-2009 <http://cmsimple.org/>
  * @copyright 2009-2014 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @version   SVN: $Id: PageDataRouter.php 1198 2014-01-30 14:10:39Z cmb69 $
+ * @version   SVN: $Id: PageDataRouter.php 1379 2014-09-21 19:47:28Z cmb69 $
  * @link      http://cmsimple-xh.org/
  */
 
@@ -459,6 +459,7 @@ class XH_PageDataRouter
      * @global string
      * @global string
      * @global string
+     * @global int    The index of the first published page.
      *
      * @return string  The (X)HTML.
      *
@@ -466,13 +467,13 @@ class XH_PageDataRouter
      */
     function create_tabs($s)
     {
-        global $edit, $f, $o, $su;
+        global $edit, $f, $o, $su, $_XH_firstPublishedPage;
 
         if (is_array($this->model->tabs)
             && count($this->model->tabs) > 0 && $edit
         ) {
             if ($s == -1 && !$f && $o == '' && $su == '') { // Argh! :(
-                $pd_s = 0;
+                $pd_s = $_XH_firstPublishedPage;
             } else {
                 $pd_s = $s;
             }

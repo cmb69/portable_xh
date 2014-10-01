@@ -11,108 +11,110 @@
  * @author    The CMSimple_XH developers <devs@cmsimple-xh.org>
  * @copyright 2009-2014 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @version   SVN: $Id: admin.php 1198 2014-01-30 14:10:39Z cmb69 $
+ * @version   SVN: $Id: admin.php 1379 2014-09-21 19:47:28Z cmb69 $
  * @link      http://cmsimple-xh.org/
  */
 
-if (!XH_ADM || $cf['filebrowser']['external']) {
-    return true;
+/*
+ * Prevent direct access.
+ */
+if (!defined('CMSIMPLE_XH_VERSION')) {
+    header('HTTP/1.0 403 Forbidden');
+    exit;
 }
 
-initvar('filebrowser');
-
-if ($filebrowser) {
-
-    initvar('admin');
-    initvar('action');
-
+if (XH_wantsPluginAdministration('filebrowser')) {
     $o .= print_plugin_admin('off');
 
     $o .= '<div class="plugintext">'
-        . '<div class="plugineditcaption">Filebrowser for CMSimple_XH 1.6.1'
+        . '<div class="plugineditcaption">Filebrowser for CMSimple_XH 1.6.4'
         . '</div>' . tag('hr');
 
-    !$admin &&
+    if (!$admin) {
         $admin = 'plugin_config';
-    !$action &&
+    }
+    if (!$action) {
         $action = 'plugin_edit';
+    }
 
     $o .= plugin_admin_common($action, $admin, $plugin)
         . '</div>';
     return;
 }
 
-if (!($images || $downloads || $userfiles || $media)) {
-    return true;
-}
+if (!$cf['filebrowser']['external']
+    && ($images || $downloads || $userfiles || $media)
+) {
+    if ($images) {
+        $f = 'images';
+    }
+    if ($downloads) {
+        $f = 'downloads';
+    }
+    if ($userfiles) {
+        $f = 'userfiles';
+    }
+    if ($media) {
+        $f = 'media';
+    }
 
-if ($images) {
-    $f = 'images';
-}
-if ($downloads) {
-    $f = 'downloads';
-}
-if ($userfiles) {
-    $f = 'userfiles';
-}
-if ($media) {
-    $f = 'media';
-}
+    $browser = $_SESSION['xh_browser'];
 
-$browser = $_SESSION['xh_browser'];
+    /**
+     * The path of the filebrowser plugin folder.
+     */
+    define('XHFB_PATH', $pth['folder']['plugins'] . 'filebrowser/');
 
-/**
- * The path of the filebrowser plugin folder.
- */
-define('XHFB_PATH', $pth['folder']['plugins'] . 'filebrowser/');
+    $hjs .= '<script type="text/javascript" src="' . XHFB_PATH
+        . 'js/filebrowser.js"></script>';
 
-$hjs .= '<script type="text/javascript" src="' . XHFB_PATH . 'js/filebrowser.js">'
-    . '</script>';
+    $subdir = isset($_GET['subdir'])
+        ? str_replace(array('..', '.'), '', $_GET['subdir'])
+        : ltrim($pth['folder'][$f], './');
 
-$subdir = isset($_GET['subdir'])
-    ? str_replace(array('..', '.'), '', $_GET['subdir'])
-    : ltrim($pth['folder'][$f], './');
+    $browser->baseDirectory = ltrim($pth['folder']['userfiles'], './');
+    if (strpos($subdir, $browser->baseDirectory) !== 0) {
+        $subdir = $browser->baseDirectory;
+    }
 
-$browser->baseDirectory = ltrim($pth['folder']['userfiles'], './');
-if (strpos($subdir, $browser->baseDirectory) !== 0) {
-    $subdir = $browser->baseDirectory;
+    $browser->currentDirectory =  rtrim($subdir, '/') . '/';
+    $browser->linkType = $f;
+    $browser->setLinkParams($f);
+    $browser->determineCurrentType();
+
+    if (!empty($_SERVER['CONTENT_LENGTH']) && empty($_POST)) {
+        $browser->view->error(
+            'error_file_too_big_php',
+            array(ini_get('post_max_size'), 'post_max_size')
+        );
+    }
+    if (isset($_POST['deleteFile']) && isset($_POST['filebrowser_file'])) {
+        $_XH_csrfProtection->check();
+        $browser->deleteFile($_POST['filebrowser_file']);
+    }
+    if (isset($_POST['deleteFolder']) && isset($_POST['folder'])) {
+        $_XH_csrfProtection->check();
+        $browser->deleteFolder($_POST['folder']);
+    }
+    if (isset($_POST['upload'])) {
+        $_XH_csrfProtection->check();
+        $browser->uploadFile();
+    }
+    if (isset($_POST['createFolder'])) {
+        $_XH_csrfProtection->check();
+        $browser->createFolder();
+    }
+    if (isset($_POST['renameFile'])) {
+        $_XH_csrfProtection->check();
+        $browser->renameFile();
+    }
+
+    $browser->readDirectory();
+
+    $o .= $browser->render('cmsbrowser');
+
+    $f = 'filebrowser';
+    $images = $downloads = $userfiles = $media = false;
 }
-
-$browser->currentDirectory =  rtrim($subdir, '/') . '/';
-$browser->linkType = $f;
-$browser->setLinkParams($f);
-
-if (!empty($_SERVER['CONTENT_LENGTH']) && empty($_POST)) {
-    $browser->view->error(
-        'error_file_too_big_php', array(ini_get('post_max_size'), 'post_max_size')
-    );
-}
-if (isset($_POST['deleteFile']) && isset($_POST['filebrowser_file'])) {
-    $_XH_csrfProtection->check();
-    $browser->deleteFile($_POST['filebrowser_file']);
-}
-if (isset($_POST['deleteFolder']) && isset($_POST['folder'])) {
-    $_XH_csrfProtection->check();
-    $browser->deleteFolder($_POST['folder']);
-}
-if (isset($_POST['upload'])) {
-    $_XH_csrfProtection->check();
-    $browser->uploadFile();
-}
-if (isset($_POST['createFolder'])) {
-    $_XH_csrfProtection->check();
-    $browser->createFolder();
-}
-if (isset($_POST['renameFile'])) {
-    $_XH_csrfProtection->check();
-    $browser->renameFile();
-}
-
-$browser->readDirectory();
-
-$o .= $browser->render('cmsbrowser');
-
-$f = 'filebrowser';
-$images = $downloads = $userfiles = $media = false;
 
 ?>

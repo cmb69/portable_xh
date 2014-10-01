@@ -14,7 +14,7 @@
  * @author    The CMSimple_XH developers <devs@cmsimple-xh.org>
  * @copyright 2009-2014 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @version   SVN: $Id: index.php 1198 2014-01-30 14:10:39Z cmb69 $
+ * @version   SVN: $Id: index.php 1304 2014-05-22 12:08:22Z cmb69 $
  * @link      http://cmsimple-xh.org/
  */
 
@@ -55,10 +55,10 @@ if ($pd_current['title']) {
     $cf['site']['title'] = $pd_current['title'];
 }
 if ($pd_current['description']) {
-    $cf['meta']['description'] = $pd_current['description'];
+    $tx['meta']['description'] = $pd_current['description'];
 }
 if ($pd_current['keywords']) {
-    $cf['meta']['keywords'] = $pd_current['keywords'];
+    $tx['meta']['keywords'] = $pd_current['keywords'];
 }
 if ($pd_current['robots']) {
     $cf['meta']['robots'] = $pd_current['robots'];

@@ -10,7 +10,7 @@
  * @author    The CMSimple_XH developers <devs@cmsimple-xh.org>
  * @copyright 2013-2014 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @version   SVN: $Id: Pages.php 1198 2014-01-30 14:10:39Z cmb69 $
+ * @version   SVN: $Id: Pages.php 1304 2014-05-22 12:08:22Z cmb69 $
  * @link      http://cmsimple-xh.org/
  */
 
@@ -238,6 +238,30 @@ class XH_Pages
             }
         }
         return null;
+    }
+
+    /**
+     * Returns the page indexes of all ancestors of a certain page.
+     *
+     * The order of the result is unspecified.
+     *
+     * @param int  $pageIndex    A page index.
+     * @param bool $ignoreHidden Whether hidden pages should be ignored.
+     *
+     * @return array
+     */
+    function getAncestorsOf($pageIndex, $ignoreHidden = true)
+    {
+        $result = array();
+        while (true) {
+            $parent = $this->parent($pageIndex, $ignoreHidden);
+            if ($parent === null) {
+                break;
+            }
+            $result[] = $parent;
+            $pageIndex = $parent;
+        }
+        return $result;
     }
 
     /**
