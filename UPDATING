@@ -2,3 +2,10 @@ CMSimple_XH
 -----------
 
 * fix XH_isAccessProtected() for the single threaded webserver
+
+PHP
+---
+
+* rename php.ini-production to php.ini
+* set date.timezone to GMT
+* enable gd2, intl, mbstring
