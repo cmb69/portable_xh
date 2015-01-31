@@ -47,6 +47,9 @@ lange der Webserver läuft, können Sie <http://localhost:8080/> aufrufen, um zu
 Startseite der CMSimple_XH Installation, die sich im www/ Unterordner befindet,
 zu gelangen.
 
+Sie können sich über den login Link am Ende der Seite anmelden. Das
+voreingestellte Passwort ist "test".
+
 Wie CMSimple_XH verwendet wird, ist in seinem Wiki
 <http://www.cmsimple-xh.org/wiki/doku.php> beschrieben. Wenn Sie Fragen haben,
 zögern Sie nicht diese im CMSimple_XH Forum <http://cmsimpleforum.com/> zu

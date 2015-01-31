@@ -43,6 +43,9 @@ long as the webserver is running, you can navigate to <http://localhost:8080/>
 to view the start page of the CMSimple_XH installation, which resides in the
 www/ subfolder.
 
+You can log in via the login link at the bottom of the page. The default
+password is "test".
+
 How to use CMSimple_XH is described in its Wiki
 <http://www.cmsimple-xh.org/wiki/doku.php>. If you have questions feel free to
 ask in its Forum <http://cmsimpleforum.com/>.
