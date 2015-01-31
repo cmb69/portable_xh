@@ -5,7 +5,7 @@
  *
  * Replacement for sendmail to store emails as .eml files.
  *
- * Copyright 2013-2014 Christoph M. Becker <http://3-magi.net/>
+ * Copyright 2013-2015 Christoph M. Becker <http://3-magi.net/>
  *
  * $Id$
  *

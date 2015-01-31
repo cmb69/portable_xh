@@ -5,7 +5,7 @@ rem Portable_XH
 rem
 rem Starts the webserver and opens the default browser pointing to the webroot.
 rem
-rem Copyright 2013-2014 Christoph M. Becker <http://3-magi.net/>
+rem Copyright 2013-2015 Christoph M. Becker <http://3-magi.net/>
 rem
 rem $Id$
 rem
