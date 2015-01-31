@@ -9,18 +9,18 @@
  * @package   XH
  * @author    Peter Harteg <peter@harteg.dk>
  * @author    The CMSimple_XH developers <devs@cmsimple-xh.org>
- * @copyright 1999-2009 <http://cmsimple.org/>
- * @copyright 2009-2014 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
+ * @copyright 1999-2009 Peter Harteg
+ * @copyright 2009-2015 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @version   SVN: $Id: Search.php 1379 2014-09-21 19:47:28Z cmb69 $
+ * @version   SVN: $Id: Search.php 1444 2015-01-09 14:46:56Z cmb69 $
  * @link      http://cmsimple-xh.org/
  */
 
 
 /*
   ======================================
-  CMSimple_XH 1.6.4
-  2014-09-29
+  CMSimple_XH 1.6.5
+  2015-01-25
   based on CMSimple version 3.3 - December 31. 2009
   For changelog, downloads and information please see http://www.cmsimple-xh.com
   ======================================
@@ -70,6 +70,8 @@ class XH_Search
      * Constructs an instance.
      *
      * @param string $searchString String The search string.
+     *
+     * @return void
      */
     function XH_Search($searchString)
     {
@@ -123,7 +125,7 @@ class XH_Search
         foreach ($c as $i => $content) {
             if (!hide($i) || $cf['show_hidden']['pages_search'] == 'true') {
                 $found  = true;
-                $content = $this->prepareContent($content);
+                $content = $this->prepareContent($content, $i);
                 foreach ($words as $word) {
                     if (utf8_stripos($content, $word) === false) {
                         $found = false;
@@ -141,15 +143,20 @@ class XH_Search
     /**
      * Prepares content to be searched.
      *
-     * @param string $content A content.
+     * @param string $content   A content.
+     * @param string $pageIndex A page index.
      *
      * @return string
      *
      * @access protected
      */
-    function prepareContent($content)
+    function prepareContent($content, $pageIndex)
     {
+        global $s;
+
+        $s = $pageIndex;
         $content = strip_tags(evaluate_plugincall($content));
+        $s = -1;
         if (method_exists('Normalizer', 'normalize')) {
             $content = Normalizer::normalize($content);
         }

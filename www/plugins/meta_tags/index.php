@@ -12,9 +12,9 @@
  * @package   Metatags
  * @author    Martin Damken <kontakt@zeichenkombinat.de>
  * @author    The CMSimple_XH developers <devs@cmsimple-xh.org>
- * @copyright 2009-2014 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
+ * @copyright 2009-2015 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @version   SVN: $Id: index.php 1304 2014-05-22 12:08:22Z cmb69 $
+ * @version   SVN: $Id: index.php 1470 2015-01-19 23:52:07Z cmb69 $
  * @link      http://cmsimple-xh.org/
  */
 
@@ -53,6 +53,7 @@ $pd_router->add_tab(
  */
 if ($pd_current['title']) {
     $cf['site']['title'] = $pd_current['title'];
+    $cf['title']['format'] = "{SITE}";
 }
 if ($pd_current['description']) {
     $tx['meta']['description'] = $pd_current['description'];

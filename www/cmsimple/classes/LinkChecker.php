@@ -9,10 +9,10 @@
  * @package   XH
  * @author    Peter Harteg <peter@harteg.dk>
  * @author    The CMSimple_XH developers <devs@cmsimple-xh.org>
- * @copyright 1999-2009 <http://cmsimple.org/>
- * @copyright 2009-2014 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
+ * @copyright 1999-2009 Peter Harteg
+ * @copyright 2009-2015 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @version   SVN: $Id: LinkChecker.php 1201 2014-01-30 16:47:38Z cmb69 $
+ * @version   SVN: $Id: LinkChecker.php 1478 2015-01-25 17:29:19Z cmb69 $
  * @link      http://cmsimple-xh.org/
  */
 
@@ -200,7 +200,7 @@ class XH_LinkChecker
         global $c, $u, $cl, $pth, $cf;
 
         if (isset($test['path']) && !isset($test['query'])) {
-            $filename = $test['path'];
+            $filename = urldecode($test['path']);
             if (is_file($filename) && is_readable($filename)) {
                 return '200';
             }

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @version $Id: init.php 1379 2014-09-21 19:47:28Z cmb69 $
+ * @version $Id: init.php 1373 2014-09-20 11:03:12Z cmb69 $
  */
 
 // utf-8-marker: äöüß

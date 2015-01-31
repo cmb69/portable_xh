@@ -9,10 +9,10 @@
  * @package   XH
  * @author    Peter Harteg <peter@harteg.dk>
  * @author    The CMSimple_XH developers <devs@cmsimple-xh.org>
- * @copyright 1999-2009 <http://cmsimple.org/>
- * @copyright 2009-2014 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
+ * @copyright 1999-2009 Peter Harteg
+ * @copyright 2009-2015 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @version   SVN: $Id: PluginMenu.php 1396 2014-09-28 22:48:26Z cmb69 $
+ * @version   SVN: $Id: PluginMenu.php 1444 2015-01-09 14:46:56Z cmb69 $
  * @link      http://cmsimple-xh.org/
  */
 
