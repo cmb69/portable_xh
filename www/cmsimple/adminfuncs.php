@@ -179,6 +179,10 @@ function XH_absoluteUrlPath($path)
  */
 function XH_isAccessProtected($path)
 {
+    // Portable_XH can't do this check, but as it is not accessible from
+    // outside, we simply report that everything is okay
+    return true;
+
     global $sn;
 
     $host = $_SERVER['HTTP_HOST'];
