@@ -1,0 +1,4 @@
+CMSimple_XH
+-----------
+
+* fix XH_isAccessProtected() for the single threaded webserver

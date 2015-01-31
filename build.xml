@@ -23,6 +23,7 @@
                 <exclude name="build.xml"/>
                 <exclude name="portable.ico"/>
                 <exclude name="TODO"/>
+                <exclude name="UPDATING"/>
             </fileset>
         </move>
         <delete dir="export"/>
