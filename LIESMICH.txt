@@ -21,7 +21,7 @@ Voraussetzungen
 ---------------
 
 Windows Vista SP 2 oder höher, auf dem das Visual C++ Redistributable für Visual
-Studio 2012[1] installiert ist.
+Studio 2012[1] installiert ist (es wird immer die x86 Version benötigt!)
 
 [1] <http://www.microsoft.com/de-de/download/details.aspx?id=30679>
 

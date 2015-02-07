@@ -19,7 +19,7 @@ Requirements
 ------------
 
 Windows Vista SP 2 or higher, with the Visual C++ Redistributable for Visual
-Studio 2012[1] installed.
+Studio 2012[1] installed (you always need the x86 version!)
 
 [1] <http://www.microsoft.com/en-us/download/details.aspx?id=30679>
 
