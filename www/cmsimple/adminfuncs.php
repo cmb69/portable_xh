@@ -12,7 +12,7 @@
  * @copyright 1999-2009 Peter Harteg
  * @copyright 2009-2015 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @version   SVN: $Id: adminfuncs.php 1474 2015-01-24 13:59:21Z cmb69 $
+ * @version   SVN: $Id: adminfuncs.php 1479 2015-01-25 20:05:20Z cmb69 $
  * @link      http://cmsimple-xh.org/
  */
 

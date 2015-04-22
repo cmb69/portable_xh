@@ -14,7 +14,7 @@
  * @author    The CMSimple_XH developers <devs@cmsimple-xh.org>
  * @copyright 2009-2015 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @version   SVN: $Id: Metatags_view.php 1459 2015-01-17 14:29:31Z cmb69 $
+ * @version   SVN: $Id: Metatags_view.php 1508 2015-03-12 22:58:06Z cmb69 $
  * @link      http://cmsimple-xh.org/
  */
 
@@ -39,9 +39,6 @@
 function Metatags_view($page)
 {
     global $sn, $su, $plugin_tx, $pth, $onload, $bjs;
-
-    $func = create_function('&$data', '$data=str_replace("\"", "&quot;", $data);');
-    array_walk($page, $func);
 
     $lang = $plugin_tx['meta_tags'];
 

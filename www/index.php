@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @version $Id: index.php 1430 2014-12-31 14:51:59Z tn03 $
+ * @version $Id: index.php 1479 2015-01-25 20:05:20Z cmb69 $
  */
 
 /* utf8-marker = äöüß */

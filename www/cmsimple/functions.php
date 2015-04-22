@@ -12,15 +12,15 @@
  * @copyright 1999-2009 Peter Harteg
  * @copyright 2009-2015 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @version   SVN: $Id: functions.php 1462 2015-01-18 21:31:12Z cmb69 $
+ * @version   SVN: $Id: functions.php 1510 2015-03-14 18:14:58Z cmb69 $
  * @link      http://cmsimple-xh.org/
  */
 
 
 /*
   ======================================
-  CMSimple_XH 1.6.5
-  2015-01-25
+  CMSimple_XH 1.6.6
+  2015-03-15
   based on CMSimple version 3.3 - December 31. 2009
   For changelog, downloads and information please see http://www.cmsimple-xh.org/
   ======================================
@@ -279,7 +279,28 @@ function XH_evaluateSinglePluginCall($___expression)
     foreach ($GLOBALS as $___var => $___value) {
         $$___var = $GLOBALS[$___var];
     }
-    return eval('return ' . $___expression . ';');
+    return preg_replace_callback(
+        '/#(CMSimple .*?)#/is', 'XH_escapeCMSimpleScripting',
+        eval('return ' . $___expression . ';')
+    );
+}
+
+/**
+ * Escapes CMSimple scripting returned from a plugin call.
+ *
+ * @param array $matches An array of matches.
+ *
+ * @return string
+ *
+ * @since 1.6.6
+ */
+function XH_escapeCMSimpleScripting($matches)
+{
+    trigger_error(
+        'CMSimple scripting not allowed in return value of plugin call',
+        E_USER_WARNING
+    );
+    return "#\xE2\x80\x8B{$matches[1]}#";
 }
 
 /**
@@ -1642,6 +1663,8 @@ function preCallPlugins($pageIndex = -1)
  * @since 1.6
  *
  * @todo Might be optimized to set $admPlugins only when necessary.
+ * @todo with PHP 5.4.0 replace array_values()
+ *       by sort($plugins, SORT_NATURAL | SORT_FLAG_CASE)
  */
 function XH_plugins($admin = false)
 {
@@ -1670,7 +1693,9 @@ function XH_plugins($admin = false)
             closedir($dh);
         }
         natcasesort($plugins);
+        $plugins = array_values($plugins);
         natcasesort($admPlugins);
+        $admPlugins = array_values($admPlugins);
     }
     return $admin ? $admPlugins : $plugins;
 }
@@ -2672,13 +2697,15 @@ function XH_renameFile($oldname, $newname)
  *
  * Simple wrapper for exit for testing purposes.
  *
+ * @param mixed $status A status message or code.
+ *
  * @return void
  *
  * @since 1.6.2
  */
-function XH_exit()
+function XH_exit($status = 0)
 {
-    exit;
+    exit($status);
 }
 
 /**

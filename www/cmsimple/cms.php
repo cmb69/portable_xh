@@ -12,14 +12,14 @@
  * @copyright 1999-2009 Peter Harteg
  * @copyright 2009-2015 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @version   SVN: $Id: cms.php 1457 2015-01-17 11:19:23Z cmb69 $
+ * @version   SVN: $Id: cms.php 1502 2015-03-08 00:52:55Z cmb69 $
  * @link      http://cmsimple-xh.org/
  */
 
 /*
   ======================================
-  CMSimple_XH 1.6.5, 2015012501
-  2015-01-25
+  CMSimple_XH 1.6.6, 2015031501
+  2015-03-15
   based on CMSimple version 3.3 - December 31. 2009
   For changelog, downloads and information please see http://www.cmsimple-xh.org/
   ======================================
@@ -207,15 +207,15 @@ $j = null;
 /**
  * The version in textual representation, e.g. CMSimple_XH 1.6
  */
-define('CMSIMPLE_XH_VERSION', 'CMSimple_XH 1.6.5');
+define('CMSIMPLE_XH_VERSION', 'CMSimple_XH 1.6.6');
 /**
  * The build number as integer: YYYYMMDDBB
  */
-define('CMSIMPLE_XH_BUILD', '2015012501');
+define('CMSIMPLE_XH_BUILD', '2015031501');
 /**
  * The release date in ISO 8601 format: YYYY-MM-DD
  */
-define('CMSIMPLE_XH_DATE', '2015-01-25');
+define('CMSIMPLE_XH_DATE', '2015-03-15');
 
 if (!defined('E_STRICT')) {
     /**
@@ -1374,6 +1374,7 @@ $_XH_controller->verifyAdm();
 
 ob_start('XH_finalCleanUp');
 
+$i = false;
 $temp = fopen($pth['file']['template'], 'r');
 if ($temp) {
     if (XH_lockFile($temp, LOCK_SH)) {

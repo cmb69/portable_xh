@@ -12,15 +12,15 @@
  * @copyright 1999-2009 Peter Harteg
  * @copyright 2009-2015 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @version   SVN: $Id: Search.php 1444 2015-01-09 14:46:56Z cmb69 $
+ * @version   SVN: $Id: Search.php 1479 2015-01-25 20:05:20Z cmb69 $
  * @link      http://cmsimple-xh.org/
  */
 
 
 /*
   ======================================
-  CMSimple_XH 1.6.5
-  2015-01-25
+  CMSimple_XH 1.6.6
+  2015-03-15
   based on CMSimple version 3.3 - December 31. 2009
   For changelog, downloads and information please see http://www.cmsimple-xh.com
   ======================================
