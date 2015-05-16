@@ -7,7 +7,7 @@ PHP
 ---
 
 * rename php.ini-production to php.ini
-* date.timezone = GMT
+* date.timezone = UTC
 * extension_dir = "ext"
 * enable gd2, intl, mbstring
 * zend_extension = php_opcache.dll
