@@ -10,5 +10,6 @@ PHP
 * date.timezone = GMT
 * extension_dir = "ext"
 * enable gd2, intl, mbstring
-* zend_extension=php_opcache.dll
-* opcache.enable=1
+* zend_extension = php_opcache.dll
+* opcache.enable = 1
+* sendmail_path = ..\php\php.exe ..\storemail.php
