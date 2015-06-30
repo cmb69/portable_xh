@@ -12,7 +12,7 @@
  * @copyright 1999-2009 Peter Harteg
  * @copyright 2009-2015 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @version   SVN: $Id: adminfuncs.php 1479 2015-01-25 20:05:20Z cmb69 $
+ * @version   SVN: $Id: adminfuncs.php 1646 2015-06-15 18:08:56Z cmb69 $
  * @link      http://cmsimple-xh.org/
  */
 
@@ -189,7 +189,8 @@ function XH_isAccessProtected($path)
     $stream = fsockopen($host, $_SERVER['SERVER_PORT'], $errno, $errstr, 5);
     if ($stream) {
         stream_set_timeout($stream, 5);
-        $request = "HEAD  $sn$path HTTP/1.1\r\nHost: $host\r\n"
+        $root = preg_replace('/index\.php$/', '', $sn);
+        $request = "HEAD  {$root}{$path} HTTP/1.1\r\nHost: $host\r\n"
             . "User-Agent: CMSimple_XH\r\n\r\n";
         fwrite($stream, $request);
         $response = fread($stream, 12);
@@ -204,8 +205,9 @@ function XH_isAccessProtected($path)
 /**
  * Returns the system information view.
  *
- * @global array The paths of system files and folders.
- * @global array The localization of the core.
+ * @global array  The paths of system files and folders.
+ * @global array  The localization of the core.
+ * @global string The script name.
  *
  * @return string The (X)HTML.
  *
@@ -213,7 +215,7 @@ function XH_isAccessProtected($path)
  */
 function XH_sysinfo()
 {
-    global $pth, $tx;
+    global $pth, $tx, $sn;
 
     $o = '<p><b>' . $tx['sysinfo']['version'] . '</b></p>' . "\n";
     $o .= '<ul>' . "\n" . '<li>' . CMSIMPLE_XH_VERSION . '&nbsp;&nbsp;Released: '
@@ -236,7 +238,7 @@ function XH_sysinfo()
         . '</ul>' . "\n\n";
     $o .= '<p><b>' . $tx['sysinfo']['php_version'] . '</b></p>' . "\n"
         . '<ul>' . "\n" . '<li>' . phpversion() . '</li>' . "\n"
-        . '<li><a href="./?&phpinfo" target="blank"><b>'
+        . '<li><a href="' . $sn . '?&phpinfo" target="blank"><b>'
         . $tx['sysinfo']['phpinfo_link'] . '</b></a> &nbsp; '
         . $tx['sysinfo']['phpinfo_hint'] . '</li>' . "\n" . '</ul>' . "\n" . "\n";
 
@@ -310,6 +312,9 @@ HTML;
     $checks['other'][] = array(
         strpos(ob_get_contents(), "\xEF\xBB\xBF") !== 0,
         false, $tx['syscheck']['bom']
+    );
+    $checks['other'][] = array(
+        function_exists('fsockopen'), false, $tx['syscheck']['fsockopen']
     );
     $o .= XH_systemCheck($checks);
     return $o;

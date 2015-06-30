@@ -12,7 +12,7 @@
  * @copyright 1999-2009 Peter Harteg
  * @copyright 2009-2015 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @version   SVN: $Id: Mailform.php 1479 2015-01-25 20:05:20Z cmb69 $
+ * @version   SVN: $Id: Mailform.php 1636 2015-06-15 16:36:08Z cmb69 $
  * @link      http://cmsimple-xh.org/
  */
 
@@ -445,7 +445,9 @@ class XH_Mailform
                 ? idn_to_ascii($domain, 0, INTL_IDNA_VARIANT_UTS46)
                 : idn_to_ascii($domain);
         }
-        if (gethostbyname($domain) == $domain) {
+        if ($domain
+            && (strlen($domain) > 255 || gethostbyname($domain) == $domain)
+        ) {
             return false;
         }
         return true;

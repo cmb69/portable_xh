@@ -11,7 +11,7 @@
  * @copyright	1999-2009 Peter Harteg
  * @copyright	2009-2012 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license	http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @version	CMSimple_XH 1.6.6, 2015031501
+ * @version	CMSimple_XH 1.6.7, 2015063001
  * @version $Id: admin.php 1479 2015-01-25 20:05:20Z cmb69 $
  * @link	http://cmsimple-xh.org/
  * @since      File available since Release 1.6.0
@@ -78,7 +78,7 @@ if ($tinymce) {
         $tinymce_version = '<script type="text/javascript">document.write(tinymce.majorVersion + " (revision " + tinymce.minorVersion + ")");</script>';
     
         $o .= '<h1>TinyMCE for CMSimple_XH</h1>';
-        $o .= '<p>Version for CMSimple_XH 1.6.6</p>';
+        $o .= '<p>Version for CMSimple_XH 1.6.7</p>';
         $o .= '<p>TinyMCE version '. $tinymce_version . ' &ndash; <a href="http://www.tinymce.com/" target="_blank">http://www.tinymce.com/</a>';
         $o .= tag('br');
         $o .= 'Available language packs: cs, da, de, en, et, fr, it, nl, pl, ru, sk tw, zh.</p>';

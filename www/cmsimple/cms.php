@@ -18,8 +18,8 @@
 
 /*
   ======================================
-  CMSimple_XH 1.6.6, 2015031501
-  2015-03-15
+  CMSimple_XH 1.6.7, 2015063001
+  2015-06-30
   based on CMSimple version 3.3 - December 31. 2009
   For changelog, downloads and information please see http://www.cmsimple-xh.org/
   ======================================
@@ -207,15 +207,15 @@ $j = null;
 /**
  * The version in textual representation, e.g. CMSimple_XH 1.6
  */
-define('CMSIMPLE_XH_VERSION', 'CMSimple_XH 1.6.6');
+define('CMSIMPLE_XH_VERSION', 'CMSimple_XH 1.6.7');
 /**
  * The build number as integer: YYYYMMDDBB
  */
-define('CMSIMPLE_XH_BUILD', '2015031501');
+define('CMSIMPLE_XH_BUILD', '2015063001');
 /**
  * The release date in ISO 8601 format: YYYY-MM-DD
  */
-define('CMSIMPLE_XH_DATE', '2015-03-15');
+define('CMSIMPLE_XH_DATE', '2015-06-30');
 
 if (!defined('E_STRICT')) {
     /**

@@ -6,7 +6,7 @@
  * @author    The CMSimple_XH developers <devs@cmsimple-xh.org>
  * @copyright 2009-2015 The CMSimple_XH developers (http://cmsimple-xh.org/?The_Team)
  * @license   GNU GPLv3 (http://www.gnu.org/licenses/gpl-3.0.en.html)
- * @version   $Id: admin.js 1479 2015-01-25 20:05:20Z cmb69 $
+ * @version   $Id: admin.js 1654 2015-06-16 00:39:11Z cmb69 $
  * @since     1.6
  */
 var XH = {};
@@ -522,6 +522,15 @@ XH.initQuickSubmit();
 (function () {
     var form, description, indicator;
 
+    function undoPasswordAutocompletion() {
+        var inputs = document.getElementsByName(
+            "PL3bbeec384_security_password_OLD"
+        );
+        if (inputs) {
+            inputs[0].value = "";
+        }
+    }
+
     form = document.getElementById("xh_config_form");
     if (form) {
         description = form.elements.PL3bbeec384_meta_description;
@@ -529,5 +538,11 @@ XH.initQuickSubmit();
         if (description && indicator) {
             XH.displayTextLength(description, indicator);
         }
+    }
+
+    if (typeof window.addEventListener !== "undefined") {
+        window.addEventListener("load", undoPasswordAutocompletion, false);
+    } else if (typeof window.attachEvent !== "undefined") {
+        window.attachEvent("onload", undoPasswordAutocompletion);
     }
 }());

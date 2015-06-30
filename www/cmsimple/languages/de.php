@@ -12,6 +12,9 @@ $tx['template']['text1']="Text 1 für entsprechend vorbereitete Templates";
 $tx['template']['text2']="Text 2 für entsprechend vorbereitete Templates";
 $tx['template']['text3']="Text 3 für entsprechend vorbereitete Templates";
 
+$tx['urichar']['new']="ae|oe|ue|ss|Ae|Oe|Ue";
+$tx['urichar']['org']="ä|ö|ü|ß|Ä|Ö|Ü";
+
 $tx['action']['backup']="sichern";
 $tx['action']['cancel']="Abbrechen";
 $tx['action']['delete']="löschen";
@@ -260,6 +263,7 @@ $tx['syscheck']['bom']="Ohne <a href=\"http://www.cmsimple-xh.org/wiki/doku.php/
 $tx['syscheck']['encoding']="UTF-8-Kodierung eingestellt";
 $tx['syscheck']['extension']="Erweiterung '%s' geladen";
 $tx['syscheck']['fail']="Fehler";
+$tx['syscheck']['fsockopen']="Funktion fsockopen verfügbar";
 $tx['syscheck']['locale_available']="Locale '%s' verfügbar";
 $tx['syscheck']['locale_default']="Standard-Locale aktiv";
 $tx['syscheck']['magic_quotes']="'Magic quotes runtime' aus";
@@ -304,9 +308,6 @@ $tx['toc']['missing']="FEHLENDE ÜBERSCHRIFT";
 $tx['toc']['newpage']="NEUE SEITE";
 
 $tx['uri']['toolong']="Gemäß Einstellungen&rarr;CMS&rarr;Uri&rarr;Length ist die URL zu lang:";
-
-$tx['urichar']['new']="";
-$tx['urichar']['org']="";
 
 $tx['validate']['extfail']="EXTERNE VERLINKUNG SCHEITERTE";
 $tx['validate']['extok']="EXTERNE VERLINKUNG OK";

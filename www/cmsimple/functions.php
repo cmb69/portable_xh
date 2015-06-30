@@ -12,15 +12,15 @@
  * @copyright 1999-2009 Peter Harteg
  * @copyright 2009-2015 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @version   SVN: $Id: functions.php 1510 2015-03-14 18:14:58Z cmb69 $
+ * @version   SVN: $Id: functions.php 1652 2015-06-16 00:23:02Z cmb69 $
  * @link      http://cmsimple-xh.org/
  */
 
 
 /*
   ======================================
-  CMSimple_XH 1.6.6
-  2015-03-15
+  CMSimple_XH 1.6.7
+  2015-06-30
   based on CMSimple version 3.3 - December 31. 2009
   For changelog, downloads and information please see http://www.cmsimple-xh.org/
   ======================================
@@ -229,7 +229,7 @@ function evaluate_plugincall($text)
 
     $message = '<span class="xh_fail">' . $tx['error']['plugincall']
         . '</span>';
-    $re = '/{{{(?:[^:]+:)?([a-z_0-9]+)\s*\(?(.*?)\)?;?}}}/iu';
+    $re = '/{{{(?:PLUGIN:)?([a-z_0-9]+)\s*\(?(.*?)\)?;?}}}/iu';
     preg_match_all($re, $text, $calls, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
     $results = array();
     foreach ($calls as $call) {
@@ -2884,10 +2884,14 @@ function XH_lockFile($handle, $operation)
  */
 function XH_highlightSearchWords($words, $text)
 {
+    $words = array_unique($words);
     usort($words, create_function('$a, $b', 'return strlen($b) - strlen($a);'));
     $patterns = array();
     foreach ($words as $word) {
-        $patterns[] = '/' . preg_quote($word, '/') . '(?![^<]*>)/isuU';
+        $word = trim($word);
+        if ($word != '') {
+            $patterns[] = '/' . preg_quote($word, '/') . '(?![^<]*>)/isuU';
+        }
     }
     return preg_replace($patterns, '<span class="xh_find">$0</span>', $text);
 }
