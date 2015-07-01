@@ -3,6 +3,13 @@ CMSimple_XH
 
 * fix XH_isAccessProtected() for the single threaded webserver
 
+Building PHP
+------------
+
+configure --disable-all --disable-zts --enable-cli --enable-session --enable-json --with-gd --enable-mbstring --with-iconv --with-libxml --with-simplexml --with-xml
+
+php.ini might not be necessary.
+
 PHP
 ---
 
