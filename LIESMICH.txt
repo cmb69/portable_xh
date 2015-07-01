@@ -20,10 +20,10 @@ Distributionen anschauen.
 Voraussetzungen
 ---------------
 
-Windows Vista SP 2 oder höher, auf dem das Visual C++ Redistributable für Visual
-Studio 2012[1] installiert ist (es wird immer die x86 Version benötigt!)
+64bit Windows Vista SP 2 oder höher, auf dem das Visual C++ Redistributable für
+Visual Studio 2015 RC[1] installiert ist.
 
-[1] <http://www.microsoft.com/de-de/download/details.aspx?id=30679>
+[1] <https://www.microsoft.com/de-de/download/details.aspx?id=46881>
 
 Installation
 ------------

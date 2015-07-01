@@ -18,10 +18,10 @@ any other of the major distributions.
 Requirements
 ------------
 
-Windows Vista SP 2 or higher, with the Visual C++ Redistributable for Visual
-Studio 2012[1] installed (you always need the x86 version!)
+64bit Windows Vista SP 2 or higher, with the Visual C++ Redistributable for
+Visual Studio 2015 RC[1] installed.
 
-[1] <http://www.microsoft.com/en-us/download/details.aspx?id=30679>
+[1] <https://www.microsoft.com/en-us/download/details.aspx?id=46881>
 
 Installation
 ------------
