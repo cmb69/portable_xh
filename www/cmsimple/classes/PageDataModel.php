@@ -3,7 +3,7 @@
 /**
  * The page data model.
  *
- * PHP versions 4 and 5
+ * PHP version 5
  *
  * @category  CMSimple_XH
  * @package   XH
@@ -12,9 +12,11 @@
  * @copyright 1999-2009 Peter Harteg
  * @copyright 2009-2015 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @version   SVN: $Id: PageDataModel.php 1479 2015-01-25 20:05:20Z cmb69 $
+ * @version   SVN: $Id: PageDataModel.php 1553 2015-04-21 20:30:40Z cmb69 $
  * @link      http://cmsimple-xh.org/
  */
+
+namespace XH;
 
 /**
  * Handles the page-data-array including reading and writing of the files.
@@ -28,23 +30,21 @@
  *
  * @access public
  */
-class XH_PageDataModel
+class PageDataModel
 {
     /**
      * The page headings (a copy of $h).
      *
      * @var array
-     *
-     * @access protected
      */
-    var $headings;
+    protected $headings;
 
     /**
      * The list of page data fields.
      *
      * @var array
      *
-     * @access protected
+     * @todo Declare visibility.
      */
     var $params;
 
@@ -53,7 +53,7 @@ class XH_PageDataModel
      *
      * @var array
      *
-     * @access protected
+     * @todo Declare visibility.
      */
     var $data;
 
@@ -62,7 +62,7 @@ class XH_PageDataModel
      *
      * @var array
      *
-     * @access protected
+     * @todo Declare visibility.
      */
     var $temp_data;
 
@@ -70,10 +70,8 @@ class XH_PageDataModel
      * The filenames of the views of page data tabs.
      *
      * @var array
-     *
-     * @access protected
      */
-    var $tabs;
+    public $tabs;
 
     /**
      * Constructs an instance.
@@ -82,13 +80,10 @@ class XH_PageDataModel
      * @param array $pageDataFields The page data fields.
      * @param array $tempData       The most recently deleted page data.
      * @param array $pageData       The page data.
-     *
-     * @return void
-     *
-     * @access public
      */
-    function XH_PageDataModel($h, $pageDataFields, $tempData, $pageData)
-    {
+    public function __construct(
+        array $h, array $pageDataFields, array $tempData, array $pageData
+    ) {
         $this->headings = $h;
         $this->params = !empty($pageDataFields)
             ? $pageDataFields
@@ -105,7 +100,7 @@ class XH_PageDataModel
      *
      * @since 1.6
      */
-    function storedFields()
+    public function storedFields()
     {
         $fields = $this->params;
         $fields = array_merge($fields, array_keys($this->temp_data));
@@ -123,10 +118,8 @@ class XH_PageDataModel
      *
      * @global int   The index of the current page.
      * @global array The page data of the current page.
-     *
-     * @access protected
      */
-    function fixUp()
+    protected function fixUp()
     {
         global $pd_s, $pd_current;
 
@@ -154,10 +147,8 @@ class XH_PageDataModel
      * @param array $data The new page data.
      *
      * @return bool Whether the page data have been refreshed.
-     *
-     * @access public
      */
-    function refresh($data = null)
+    public function refresh(array $data = null)
     {
         if (isset($data)) {
             $this->data = $data;
@@ -172,10 +163,8 @@ class XH_PageDataModel
      * @param string $field The page data field to add.
      *
      * @return void
-     *
-     * @access public
      */
-    function addParam($field)
+    public function addParam($field)
     {
         $this->params[] = $field;
         $this->fixUp();
@@ -187,14 +176,12 @@ class XH_PageDataModel
      * @param string $field A page data field to remove.
      *
      * @return void
-     *
-     * @access public
      */
-    function removeParam($field)
+    public function removeParam($field)
     {
         $n = array_search($field, $this->params);
         array_splice($this->params, $n, 1);
-        foreach ($this->headings as $id => $value) {
+        foreach (array_keys($this->headings) as $id) {
             unset($this->data[$id][$field]);
         }
         unset($this->temp_data[$field]);
@@ -205,14 +192,13 @@ class XH_PageDataModel
      *
      * @param string $title     The title of the tab.
      * @param string $view_file The filename of the view.
+     * @param string $cssClass  A CSS class name.
      *
      * @return void
-     *
-     * @access public
      */
-    function addTab($title, $view_file)
+    public function addTab($title, $view_file, $cssClass = null)
     {
-        $this->tabs[$title] = $view_file;
+        $this->tabs[$title] = array($view_file, $cssClass);
     }
 
     /**
@@ -221,10 +207,8 @@ class XH_PageDataModel
      * @param int $key The index of the page.
      *
      * @return array
-     *
-     * @access public
      */
-    function findKey($key)
+    public function findKey($key)
     {
         return $key >= 0 && $key < count($this->data)
             ? $this->data[$key] : null;
@@ -237,10 +221,8 @@ class XH_PageDataModel
      * @param mixed  $value The value to look for.
      *
      * @return array
-     *
-     * @access public
      */
-    function findFieldValue($field, $value)
+    public function findFieldValue($field, $value)
     {
         $results = array();
         foreach ($this->data as $id => $page) {
@@ -261,10 +243,8 @@ class XH_PageDataModel
      * @param string $separator The list item separator.
      *
      * @return array
-     *
-     * @access public
      */
-    function findArrayfieldValue($field, $value, $separator)
+    public function findArrayfieldValue($field, $value, $separator)
     {
         $results = array();
         foreach ($this->data as $id => $page) {
@@ -290,10 +270,8 @@ class XH_PageDataModel
      * @param string $sep      The list item separator.
      *
      * @return array
-     *
-     * @access public
      */
-    function findFieldValueSortkey($field, $value, $sortKey, $sortFlag, $sep)
+    public function findFieldValueSortkey($field, $value, $sortKey, $sortFlag, $sep)
     {
         if ($sep) {
             $results = $this->findArrayfieldValue($field, $value, $sep);
@@ -316,17 +294,14 @@ class XH_PageDataModel
         return $results;
     }
 
-
     /**
      * Returns the page data for a new page, without actually creating the page.
      *
      * @param array $params Default page data.
      *
      * @return array
-     *
-     * @access public
      */
-    function create($params = array())
+    public function create(array $params = array())
     {
         $clean = array();
         foreach ($this->params as $field) {
@@ -343,11 +318,9 @@ class XH_PageDataModel
      *
      * @return void
      *
-     * @access public
-     *
      * @since 1.6
      */
-    function appendPage($params)
+    public function appendPage(array $params)
     {
         $this->data[] = $params;
     }
@@ -359,15 +332,12 @@ class XH_PageDataModel
      * @param int   $index The index of the page.
      *
      * @return bool
-     *
-     * @access public
      */
-    function replace($pages, $index)
+    public function replace(array $pages, $index)
     {
         array_splice($this->data, $index, 1, $pages);
         return $this->save();
     }
-
 
     /**
      * Stores page data in the recycle bin.
@@ -375,10 +345,8 @@ class XH_PageDataModel
      * @param array $page The page data.
      *
      * @return void
-     *
-     * @access protected
      */
-    function storeTemp($page)
+    public function storeTemp(array $page)
     {
         foreach ($page as $field => $value) {
             if (in_array($field, $this -> params)) {
@@ -393,10 +361,8 @@ class XH_PageDataModel
      * @param int $key The index of the page.
      *
      * @return bool
-     *
-     * @access public
      */
-    function delete($key)
+    public function delete($key)
     {
         array_splice($this->data, $key, 1);
         return $this->save();
@@ -409,10 +375,8 @@ class XH_PageDataModel
      * @param array $params The dictionary of fields to update.
      *
      * @return bool
-     *
-     * @access public
      */
-    function updateKey($key, $params)
+    public function updateKey($key, array $params)
     {
         foreach ($params as $field => $value) {
             $this->data[$key][$field] = $value;
@@ -427,7 +391,7 @@ class XH_PageDataModel
      *
      * @access public
      */
-    function save()
+    protected function save()
     {
         return XH_saveContents();
     }

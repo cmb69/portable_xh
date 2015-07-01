@@ -3,7 +3,7 @@
 /**
  * Handling of the content backups.
  *
- * PHP versions 4 and 5
+ * PHP version 5
  *
  * @category  CMSimple_XH
  * @package   XH
@@ -12,9 +12,11 @@
  * @copyright 1999-2009 Peter Harteg
  * @copyright 2009-2015 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @version   SVN: $Id: Backup.php 1479 2015-01-25 20:05:20Z cmb69 $
+ * @version   SVN: $Id: Backup.php 1550 2015-04-21 20:12:31Z cmb69 $
  * @link      http://cmsimple-xh.org/
  */
+
+namespace XH;
 
 /**
  * Handling of the content backups.
@@ -27,46 +29,44 @@
  * @link     http://cmsimple-xh.org/
  * @since    1.6.2
  */
-class XH_Backup
+class Backup
 {
     /**
      * The paths of the content folders.
      *
      * @var array
      */
-    var $_contentFolders;
+    private $_contentFolders;
 
     /**
      * The path of the content folder.
      *
      * @var string
      */
-    var $_contentFolder;
+    private $_contentFolder;
 
     /**
      * The path of the content file.
      *
      * @var string
      */
-    var $_contentFile;
+    private $_contentFile;
 
     /**
      * The maximum number of backups to keep.
      *
      * @var int
      */
-    var $_maxBackups;
+    private $_maxBackups;
 
     /**
      * Initializes a new instance.
      *
      * @param array $contentFolders An array of foldernames.
      *
-     * @return void
-     *
      * @global array The configuration of the core.
      */
-    function XH_Backup($contentFolders)
+    public function __construct(array $contentFolders)
     {
         global $cf;
 
@@ -77,9 +77,9 @@ class XH_Backup
     /**
      * Executes the backup process.
      *
-     * @return string (X)HTML.
+     * @return string HTML
      */
-    function execute()
+    public function execute()
     {
         $result = '';
         foreach ($this->_contentFolders as $folder) {
@@ -93,9 +93,9 @@ class XH_Backup
      *
      * @param string $folder A foldername.
      *
-     * @return string (X)HTML.
+     * @return string HTML
      */
-    function backupSingleFolder($folder)
+    public function backupSingleFolder($folder)
     {
         $result = '';
         $this->_contentFolder = $folder;
@@ -120,7 +120,7 @@ class XH_Backup
      *
      * @return array
      */
-    function _findBackups()
+    private function _findBackups()
     {
         $result = array();
         if ($dir = opendir($this->_contentFolder)) {
@@ -140,7 +140,7 @@ class XH_Backup
      *
      * @return bool
      */
-    function _needsBackup()
+    private function _needsBackup()
     {
         if ($this->_maxBackups <= 0) {
             return false;
@@ -160,7 +160,7 @@ class XH_Backup
      *
      * @return string
      */
-    function _latestBackup()
+    private function _latestBackup()
     {
         $backups = $this->_findBackups();
         if (!empty($backups)) {
@@ -177,7 +177,7 @@ class XH_Backup
      *
      * @return bool
      */
-    function _backupFile($basename)
+    private function _backupFile($basename)
     {
         return copy($this->_contentFile, $this->_contentFolder . $basename);
     }
@@ -187,7 +187,7 @@ class XH_Backup
      *
      * @return array A map of filenames => deletion success.
      */
-    function _deleteSurplusBackups()
+    private function _deleteSurplusBackups()
     {
         $result = array();
         $basenames = $this->_findBackups();
@@ -204,11 +204,11 @@ class XH_Backup
      *
      * @param string $filename A filename.
      *
-     * @return string (X)HTML.
+     * @return string HTML
      *
      * @global array The localization of the core.
      */
-    function _renderCreationInfo($filename)
+    private function _renderCreationInfo($filename)
     {
         global $tx;
 
@@ -225,9 +225,9 @@ class XH_Backup
      *
      * @param array $deletions A map of filenames => deletion success.
      *
-     * @return string (X)HTML.
+     * @return string HTML
      */
-    function _renderDeletionResults($deletions)
+    private function _renderDeletionResults(array $deletions)
     {
         $results = '';
         foreach ($deletions as $filename => $deleted) {
@@ -245,11 +245,11 @@ class XH_Backup
      *
      * @param string $filename A filename.
      *
-     * @return string (X)HTML.
+     * @return string HTML
      *
      * @global array The localization of the core.
      */
-    function _renderDeletionInfo($filename)
+    private function _renderDeletionInfo($filename)
     {
         global $tx;
 

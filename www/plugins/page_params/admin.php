@@ -6,7 +6,7 @@
  * Admin-interface for configuring the plugin
  * via the standard-functions of pluginloader.
  *
- * PHP versions 4 and 5
+ * PHP version 5
  *
  * @category  CMSimple_XH
  * @package   Pageparams
@@ -15,7 +15,7 @@
  * @author    The CMSimple_XH developers <devs@cmsimple-xh.org>
  * @copyright 2009-2015 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @version   SVN: $Id: admin.php 1479 2015-01-25 20:05:20Z cmb69 $
+ * @version   SVN: $Id: admin.php 1526 2015-03-23 14:19:09Z cmb69 $
  * @link      http://cmsimple-xh.org/
  */
 
@@ -38,7 +38,7 @@ if (XH_wantsPluginAdministration('page_params')) {
     if ($admin == '') {
         $o .= "\n" . '<div class="plugintext"><div class="plugineditcaption">'
             . utf8_ucfirst(str_replace('_', ' ', $plugin)) . '</div></div>'
-            . tag('br');
+            . '<br>';
     }
     $o .= plugin_admin_common($action, $admin, $plugin);
 }

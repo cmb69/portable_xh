@@ -4,9 +4,9 @@
  * Meta-Tags - main index.php
  *
  * Stores meta-tags (description, keywords, title and robots) per page.
- * index.php is called by pluginloader and returns (X)HTML META ELEMENTS to template.
+ * index.php is called by pluginloader and returns HTML META ELEMENTS to template.
  *
- * PHP versions 4 and 5
+ * PHP version 5
  *
  * @category  CMSimple_XH
  * @package   Metatags
@@ -14,13 +14,9 @@
  * @author    The CMSimple_XH developers <devs@cmsimple-xh.org>
  * @copyright 2009-2015 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @version   SVN: $Id: index.php 1479 2015-01-25 20:05:20Z cmb69 $
+ * @version   SVN: $Id: index.php 1597 2015-05-05 14:12:27Z cmb69 $
  * @link      http://cmsimple-xh.org/
  */
-
-
-/* utf8-marker = äöüß */
-
 
 /*
  * Check if PLUGINLOADER is calling and die if not.

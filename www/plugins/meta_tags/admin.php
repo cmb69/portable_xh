@@ -6,7 +6,7 @@
  * Admin-interface for configuring the plugin
  * via the standard-functions of pluginloader.
  *
- * PHP versions 4 and 5
+ * PHP version 5
  *
  * @category  CMSimple_XH
  * @package   Metatags
@@ -14,11 +14,9 @@
  * @author    The CMSimple_XH developers <devs@cmsimple-xh.org>
  * @copyright 2009-2015 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @version   SVN: $Id: admin.php 1479 2015-01-25 20:05:20Z cmb69 $
+ * @version   SVN: $Id: admin.php 1597 2015-05-05 14:12:27Z cmb69 $
  * @link      http://cmsimple-xh.org/
  */
-
-/* utf8-marker = äöüß */
 
 /*
  * Check if PLUGINLOADER is calling and die if not.
@@ -38,7 +36,7 @@ if (XH_wantsPluginAdministration('meta_tags')) {
     $o .= print_plugin_admin('off');
     if ($admin == '') {
         $o .= "\n" . '<div class="plugintext"><div class="plugineditcaption">'
-            . ucfirst(str_replace('_', ' ', $plugin)) . '</div></div>' . tag('br');
+            . ucfirst(str_replace('_', ' ', $plugin)) . '</div></div>' . '<br>';
     }
     $o .= plugin_admin_common($action, $admin, $plugin);
 }

@@ -15,6 +15,8 @@ $tx['template']['text3']="Text 3 for templates requiring this text";
 $tx['urichar']['new']="";
 $tx['urichar']['org']="";
 
+$tx['action']['advanced_hide']="Less &hellip;";
+$tx['action']['advanced_show']="More &hellip;";
 $tx['action']['backup']="backup";
 $tx['action']['cancel']="Cancel";
 $tx['action']['delete']="delete";
@@ -122,11 +124,11 @@ $tx['help']['security_email']="The email address for the password forgotten func
 $tx['help']['security_frame_options']="Whether pages of your site are allowed to be displayed in frames: \"DENY\" means never, \"SAMEORIGIN\" means only on pages from the same domain. Leave empty to allow framing, what is, however, not recommended for security reasons.";
 $tx['help']['site_template']="Default template of the site";
 $tx['help']['site_timezone']="Usually no entry necessary. Starting from PHP 5.1.0  a <a href=\"http://www.php.net/manual/en/timezones.php\">time zone</a> can be entered to override your server's setting (see http://www.php.net/manual/en/timezones.php).";
+$tx['help']['site_compat']="Whether the website needs functions that have been removed in CMSimple_XH 1.7.";
 $tx['help']['title_format']="The way the title of a page of your site (&lt;title&gt;) is shown in the tab of your browser.";
 $tx['help']['uri_seperator']="The character which separates names of pages and sub pages in the URL.";
 $tx['help']['uri_word_separator']="The character which separates words in the URL.";
 $tx['help']['uri_length']="The URLs of the pages will be truncated at this length. This might change in a future release, so it's best to use shorter page headings (e.g. by using Page&rarr;Alternative heading).";
-$tx['help']['xhtml_endtags']="Check this, if you want XHTML-output. The required endslashes in standalone tags will be created automatically.";
 
 $tx['help']['folders_userfiles']="The base folder of all userfiles.";
 $tx['help']['folders_downloads']="A subfolder of userfiles.";
@@ -266,6 +268,7 @@ $tx['syscheck']['fsockopen']="Function fsockopen available";
 $tx['syscheck']['locale_available']="Locale '%s' available";
 $tx['syscheck']['locale_default']="Default locale in use";
 $tx['syscheck']['magic_quotes']="Magic quotes runtime off";
+$tx['syscheck']['password']="Non-default password set";
 $tx['syscheck']['phpversion']="PHP version ≥ %s";
 $tx['syscheck']['success']="OK";
 $tx['syscheck']['timezone']="Time zone valid";
@@ -315,7 +318,5 @@ $tx['validate']['intfilok']="INTERNAL LINK TO FILE OK";
 $tx['validate']['intok']="INTERNAL LINK OK";
 $tx['validate']['mailto']="MAILTO LINK";
 $tx['validate']['notxt']="NO TEXT IN LINK";
-
-$tx['utf-8']['marker']="äöü";
 
 ?>

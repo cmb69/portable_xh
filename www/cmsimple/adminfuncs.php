@@ -3,7 +3,7 @@
 /**
  * Admin only functions.
  *
- * PHP versions 4 and 5
+ * PHP version 5
  *
  * @category  CMSimple_XH
  * @package   XH
@@ -12,7 +12,7 @@
  * @copyright 1999-2009 Peter Harteg
  * @copyright 2009-2015 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @version   SVN: $Id: adminfuncs.php 1646 2015-06-15 18:08:56Z cmb69 $
+ * @version   SVN: $Id: adminfuncs.php 1642 2015-06-15 17:36:02Z cmb69 $
  * @link      http://cmsimple-xh.org/
  */
 
@@ -57,13 +57,13 @@ function XH_pluginVersion($plugin)
  * @global array The paths of system files and folders.
  * @global array The localization of the core.
  *
- * @return string The (X)HTML.
+ * @return string HTML
  *
  * @link http://www.cmsimple-xh.org/wiki/doku.php/plugin_interfaces#system_check
  *
  * @since 1.5.4
  */
-function XH_systemCheck($data)
+function XH_systemCheck(array $data)
 {
     global $pth, $tx;
 
@@ -71,10 +71,8 @@ function XH_systemCheck($data)
 
     foreach (array('success', 'warning', 'fail') as $img) {
         $txt = $stx[$img];
-        $imgs[$img] = tag(
-            'img src="' . $pth['folder']['corestyle'] . $img . '.png" alt="'
-            . $txt . '" title="' . $txt . '" width="16" height="16"'
-        );
+        $imgs[$img] = '<img src="' . $pth['folder']['corestyle'] . $img . '.png"'
+            . ' alt="' . $txt . '" title="' . $txt . '" width="16" height="16">';
     }
 
     $o = "<h4>$stx[title]</h4>\n<ul id=\"xh_system_check\">\n";
@@ -173,8 +171,6 @@ function XH_absoluteUrlPath($path)
  *
  * @return bool
  *
- * @global string The script name.
- *
  * @since 1.6.1
  */
 function XH_isAccessProtected($path)
@@ -183,39 +179,36 @@ function XH_isAccessProtected($path)
     // outside, we simply report that everything is okay
     return true;
 
-    global $sn;
-
-    $host = $_SERVER['HTTP_HOST'];
-    $stream = fsockopen($host, $_SERVER['SERVER_PORT'], $errno, $errstr, 5);
-    if ($stream) {
-        stream_set_timeout($stream, 5);
-        $root = preg_replace('/index\.php$/', '', $sn);
-        $request = "HEAD  {$root}{$path} HTTP/1.1\r\nHost: $host\r\n"
-            . "User-Agent: CMSimple_XH\r\n\r\n";
-        fwrite($stream, $request);
-        $response = fread($stream, 12);
-        fclose($stream);
-        $status = substr($response, 9);
-        return $status[0] == '4' || $status[0] == '5';
-    } else {
-        return false;
+    $url = preg_replace('/index\.php$/', '', CMSIMPLE_URL) . $path;
+    $defaultContext = stream_context_set_default(
+        array('http' => array('method' => 'HEAD'))
+    );
+    $headers = get_headers($url);
+    stream_context_set_default(stream_context_get_params($defaultContext));
+    if ($headers) {
+        if (preg_match('/^HTTP\S*\s+4/', $headers[0])) {
+            return true;
+        }
     }
+    return false;
 }
 
 /**
  * Returns the system information view.
  *
- * @global array  The paths of system files and folders.
- * @global array  The localization of the core.
+ * @global array           The paths of system files and folders.
+ * @global array           The configuration of the core.
+ * @global array           The localization of the core.
+ * @global XH\PasswordHash The password hasher.
  * @global string The script name.
  *
- * @return string The (X)HTML.
+ * @return string HTML
  *
  * @since 1.6
  */
 function XH_sysinfo()
 {
-    global $pth, $tx, $sn;
+    global $pth, $cf, $tx, $xh_hasher, $sn;
 
     $o = '<p><b>' . $tx['sysinfo']['version'] . '</b></p>' . "\n";
     $o .= '<ul>' . "\n" . '<li>' . CMSIMPLE_XH_VERSION . '&nbsp;&nbsp;Released: '
@@ -254,8 +247,10 @@ function XH_sysinfo()
 HTML;
 
     $checks = array(
-        'phpversion' => '4.3.10',
+        'phpversion' => '5.3',
         'extensions' => array(
+            'json',
+            'mbstring',
             'pcre',
             array('session', false),
             array('xml', false)
@@ -293,8 +288,7 @@ HTML;
         );
     }
     $checks['other'][] = array(
-        !function_exists('date_default_timezone_get')
-        || date_default_timezone_get() !== 'UTC',
+        date_default_timezone_get() !== 'UTC',
         false, $tx['syscheck']['timezone']
     );
     $checks['other'][] = array(
@@ -314,6 +308,10 @@ HTML;
         false, $tx['syscheck']['bom']
     );
     $checks['other'][] = array(
+        !$xh_hasher->checkPassword('test', $cf['security']['password']),
+        false, $tx['syscheck']['password']
+    );
+    $checks['other'][] = array(
         function_exists('fsockopen'), false, $tx['syscheck']['fsockopen']
     );
     $o .= XH_systemCheck($checks);
@@ -324,7 +322,7 @@ HTML;
 /**
  * Returns the general settings view.
  *
- * @return string The (X)HTML.
+ * @return string HTML
  *
  * @global string The script name.
  * @global array  The localization of the core.
@@ -364,7 +362,7 @@ function XH_settingsView()
 /**
  * Returns the log file view.
  *
- * @return string (X)HTML.
+ * @return string HTML
  *
  * @global array  The paths of system files and folders.
  * @global array  The localization of the core.
@@ -398,7 +396,7 @@ function XH_logFileView()
 /**
  * Returns the backup view.
  *
- * @return string The (X)HTML.
+ * @return string HTML
  *
  * @global array  The paths of system files and folders.
  * @global array  The script name.
@@ -422,28 +420,24 @@ function XH_backupsView()
         . $sn . '?file=content&amp;action=download">' . $tx['action']['download']
         . '</a>'
         . ' <form action="' . $sn . '?&xh_backups" method="post"'
-        . ' class="xh_inline_form" onsubmit="return XH.promptBackupName(this)">'
-        . tag('input type="hidden" name="file" value="content"')
-        . tag('input type="hidden" name="action" value="backup"')
-        . tag('input type="hidden" name="xh_suffix" value="extra"')
-        . tag(
-            'input type="submit" class="submit" value="'
-            . $tx['action']['backup'] . '"'
-        )
+        . ' class="xh_inline_form" id="xh_backup_form">'
+        . '<input type="hidden" name="file" value="content">'
+        . '<input type="hidden" name="action" value="backup">'
+        . '<input type="hidden" name="xh_suffix" value="extra">'
+        . '<input type="submit" class="submit" value="'
+        . $tx['action']['backup'] . '">'
         . $_XH_csrfProtection->tokenInput()
         . '</form>'
         . ' <form action="' . $sn . '?&xh_backups" method="post"'
         . ' class="xh_inline_form">'
-        . tag('input type="hidden" name="file" value="content"')
-        . tag('input type="hidden" name="action" value="empty"')
-        . tag(
-            'input type="submit" class="submit" value="'
-            . $tx['action']['empty'] . '"'
-        )
+        . '<input type="hidden" name="file" value="content">'
+        . '<input type="hidden" name="action" value="empty">'
+        . '<input type="submit" class="submit" value="'
+        . $tx['action']['empty'] . '">'
         . $_XH_csrfProtection->tokenInput()
         . '</form>'
         . '</li>' . "\n";
-    $o .= '</ul>' . "\n" . tag('hr') . "\n" . '<p>'
+    $o .= '</ul>' . "\n" . '<hr>' . "\n" . '<p>'
         . $tx['settings']['backupexplain1'] . '</p>' . "\n" . '<p>'
         . $tx['settings']['backupexplain2'] . '</p>' . "\n" . '<ul>' . "\n";
     $fs = sortdir($pth['folder']['content']);
@@ -456,12 +450,10 @@ function XH_backupsView()
                 . $p . '</a> (' . $size . ' KB)'
                 . ' <form action="' . $sn . '?&xh_backups" method="post"'
                 . ' class="xh_inline_form">'
-                . tag('input type="hidden" name="file" value="' . $p . '"')
-                . tag('input type="hidden" name="action" value="restore"')
-                . tag(
-                    'input type="submit" class="submit" value="'
-                    . $tx['action']['restore'] . '"'
-                )
+                . '<input type="hidden" name="file" value="' . $p . '">'
+                . '<input type="hidden" name="action" value="restore">'
+                . '<input type="submit" class="submit" value="'
+                . $tx['action']['restore'] . '">'
                 . $_XH_csrfProtection->tokenInput()
                 . '</form>'
                 . '</li>' . "\n";
@@ -484,10 +476,10 @@ function XH_backupsView()
  *
  * @return mixed
  *
- * @global XH_ClassicPluginMenu The plugin menu builder.
+ * @global XH\ClassicPluginMenu The plugin menu builder.
  */
 function pluginMenu($add = '', $link = '', $target = '', $text = '',
-    $style = array()
+    array $style = array()
 ) {
     global $_XH_pluginMenu;
 
@@ -518,7 +510,7 @@ function pluginMenu($add = '', $link = '', $target = '', $text = '',
  */
 function XH_registerStandardPluginMenuItems($showMain)
 {
-    $pluginMenu = new XH_IntegratedPluginMenu();
+    $pluginMenu = new XH\IntegratedPluginMenu();
     $pluginMenu->render($showMain);
 }
 
@@ -562,7 +554,7 @@ function XH_registerPluginMenuItem($plugin, $label = null, $url = null,
  *
  * @param array $plugins A list of plugins.
  *
- * @return string (X)HTML.
+ * @return string HTML
  *
  * @global string The scipt name.
  * @global bool   Whether edit mode is active.
@@ -575,7 +567,7 @@ function XH_registerPluginMenuItem($plugin, $label = null, $url = null,
  *
  * @since 1.6
  */
-function XH_adminMenu($plugins = array())
+function XH_adminMenu(array $plugins = array())
 {
     global $sn, $edit, $s, $u, $cf, $tx, $su, $plugin_tx;
 
@@ -714,7 +706,7 @@ function XH_adminMenu($plugins = array())
  *
  * @since 1.6
  */
-function XH_adminMenuItem($item, $level = 0)
+function XH_adminMenuItem(array $item, $level = 0)
 {
     $indent = str_repeat('    ', $level);
     $t = $indent . '<li>';
@@ -757,9 +749,9 @@ function XH_adminMenuItem($item, $level = 0)
  * @param string $main Whether the main setting menu item should be shown
  *                     ('ON'/'OFF').
  *
- * @return string (X)HTML.
+ * @return string HTML
  *
- * @global XH_ClassicPluginMenu The plugin menu builder.
+ * @global XH\ClassicPluginMenu The plugin menu builder.
  */
 // @codingStandardsIgnoreStart
 function print_plugin_admin($main)
@@ -776,36 +768,26 @@ function print_plugin_admin($main)
  * Handles reading and writing of plugin files
  * (e.g. en.php, config.php, stylesheet.css).
  *
- * @param bool  $action Unused.
- * @param array $admin  Unused.
- * @param bool  $plugin Unused.
- * @param bool  $hint   Unused.
- *
  * @global string The requested action.
  * @global string The requested admin-action.
- * @global string The name of the currently loading plugin.
- * @global array  The paths of system files and folders.
  *
  * @return string Returns the created form or the result of saving the data.
- *
- * @todo Deprecated unused parameters.
  */
 // @codingStandardsIgnoreStart
-function plugin_admin_common($action, $admin, $plugin, $hint=array())
+function plugin_admin_common()
 {
 // @codingStandardsIgnoreEnd
-    global $action, $admin, $plugin, $pth;
+    global $action, $admin;
 
-    include_once $pth['folder']['classes'] . 'FileEdit.php';
     switch ($admin) {
     case 'plugin_config':
-        $fileEdit = new XH_PluginConfigFileEdit();
+        $fileEdit = new XH\PluginConfigFileEdit();
         break;
     case 'plugin_language':
-        $fileEdit = new XH_PluginLanguageFileEdit();
+        $fileEdit = new XH\PluginLanguageFileEdit();
         break;
     case 'plugin_stylesheet':
-        $fileEdit = new XH_PluginTextFileEdit();
+        $fileEdit = new XH\PluginTextFileEdit();
         break;
     default:
         return false;
@@ -831,12 +813,12 @@ function plugin_admin_common($action, $admin, $plugin, $hint=array())
  * @global int    The index of the currently active page.
  * @global array  The URLs of the pages.
  * @global array  The content of the pages.
- * @global string Error messages as (X)HTML fragment consisting of LI Elements.
+ * @global string Error messages as HTML fragment consisting of LI Elements.
  * @global array  The configuration of the core.
  * @global array  The localization of the core.
  * @global object The CSRF protection object.
  *
- * @return string  The (X)HTML.
+ * @return string  HTML
  *
  * @since 1.6
  */
@@ -852,8 +834,8 @@ function XH_contentEditor()
         $e .= '<li>' . $msg . '</li>' . "\n";
     }
     $o = '<form method="POST" id="ta" action="' . $sn . '">'
-        . tag('input type="hidden" name="selected" value="' . $u[$s] . '"')
-        . tag('input type="hidden" name="function" value="save"')
+        . '<input type="hidden" name="selected" value="' . $u[$s] . '">'
+        . '<input type="hidden" name="function" value="save">'
         . '<textarea name="text" id="text" class="xh-editor" style="height: '
         . $cf['editor']['height'] . 'px; width: 100%;" rows="30" cols="80">'
         . XH_hsc($c[$s])
@@ -864,7 +846,7 @@ function XH_contentEditor()
         . $_XH_csrfProtection->tokenInput();
     if ($cf['editor']['external'] == '' || !$editor) {
         $value = utf8_ucfirst($tx['action']['save']);
-        $o .= tag('input type="submit" value="' . $value . '"');
+        $o .= '<input type="submit" value="' . $value . '">';
     }
     $o .= '</form>';
     return $o;
@@ -1000,7 +982,7 @@ function XH_saveEditorContents($text)
  * @global array  The content of the pages.
  * @global int    The number of pages.
  * @global array  The paths of system files and folders.
- * @global array  An (X)HTML fragment with error messages.
+ * @global array  An HTML fragment with error messages.
  * @global object The pagedata router.
  */
 function XH_emptyContents()
@@ -1033,7 +1015,7 @@ function XH_emptyContents()
  * @return void
  *
  * @global array  The paths of system files and folders.
- * @global array  An (X)HTML fragment with error messages.
+ * @global array  An HTML fragment with error messages.
  *
  * @since 1.6
  */
@@ -1042,7 +1024,7 @@ function XH_restore($filename)
     global $pth, $e;
 
     $tempFilename = $pth['folder']['content'] . 'restore.htm';
-    if (!XH_renameFile($filename, $tempFilename)) {
+    if (!rename($filename, $tempFilename)) {
         e('cntsave', 'backup', $tempFilename);
         return;
     }
@@ -1053,7 +1035,7 @@ function XH_restore($filename)
         }
         return;
     }
-    if (!XH_renameFile($tempFilename, $pth['file']['content'])) {
+    if (!rename($tempFilename, $pth['file']['content'])) {
         e('cntsave', 'content', $pth['file']['content']);
         return;
     }
@@ -1090,7 +1072,7 @@ function XH_extraBackup($suffix)
 /**
  * Returns SCRIPT element containing the localization for admin.js.
  *
- * @return string (X)HTML
+ * @return string HTML
  *
  * @global array The localization of the core.
  *
@@ -1101,7 +1083,7 @@ function XH_adminJSLocalization()
     global $tx;
 
     $keys = array(
-        'action' => array('cancel', 'ok'),
+        'action' => array('advanced_hide', 'advanced_show', 'cancel', 'ok'),
         'password' => array('fields_missing', 'invalid', 'mismatch', 'wrong'),
         'error' => array('server'),
         'settings' => array('backupsuffix')

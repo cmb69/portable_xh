@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @version $Id: cmsbrowser.html 1479 2015-01-25 20:05:20Z cmb69 $
+ * @version $Id: cmsbrowser.html 1553 2015-04-21 20:30:40Z cmb69 $
  */
 
-global $tx, $sn;
+global $tx, $sn, $pth, $_XH_csrfProtection;
 ?>
 <div id="xhFilebrowserMenu">
     <div id="filebrowser_folders">
@@ -21,7 +21,7 @@ global $tx, $sn;
     <div id="filebrowser_subfolders">
         <div style="clear: both; margin: 0px 0;"><b><?php echo $tx['filetype']['folder']; ?>:</b> <?php echo $this->currentDirectory; ?></div>
         <div style="text-align: right;">
-        <button type="button" onclick="FILEBROWSER.togglexhfbForm('xhfbCreateDir');"><?php echo $this->translate('create_folder'); ?></button>
+        <button type="button" class="filebrowser_folder_toggle"><?php echo $this->translate('create_folder'); ?></button>
 
         </div>
 
@@ -32,9 +32,9 @@ global $tx, $sn;
             <div style="padding: 3em;">
 
                 <form method="POST" action="<?php echo $sn, '?', XH_hsc($_SERVER['QUERY_STRING']);?>">
-                    <?php echo tag('input type="text" name="createFolder" size="30"');?>
-                    <?php echo tag('input type="submit" class="submit" value="' . $this->translate('create_folder') . '"');?>
-		    <?php global $_XH_csrfProtection; echo $_XH_csrfProtection->tokenInput();?>
+                    <input type="text" name="createFolder" size="30">
+                    <input type="submit" class="submit" value="<?php echo $this->translate('create_folder')?>">
+		    <?php echo $_XH_csrfProtection->tokenInput()?>
                 </form>
             </div>
         </fieldset>
@@ -42,21 +42,21 @@ global $tx, $sn;
         %SUBFOLDERS%
 
     </div>
-	<?php echo tag('hr');?>
+	<hr>
 	<p class="xhfb_files"><?php echo $this->translate('files');?></p>
     <div id="filebrowser_files">
          <div style="text-align: right; font-weight: 900">
-                <button type="button" onclick="FILEBROWSER.togglexhfbForm('xhfbUploadFile');"><?php echo $this->translate('upload_file'); ?></button>
+                <button type="button" class="filebrowser_upload_toggle"><?php echo $this->translate('upload_file'); ?></button>
         </div>
                <fieldset id="xhfbUploadFile" class="xhfbform">
             <legend><?php echo $this->translate('upload_file_to', $this->currentDirectory); ?></legend>
             <div style="padding: 3em;">
 
-                <form method="POST" action="<?php echo $sn, '?', XH_hsc($_SERVER['QUERY_STRING']);?>" enctype="multipart/form-data" onsubmit="return FILEBROWSER.checkUpload(this, '<?php echo $this->escapeForEventHandlerAttribute($this->translate('confirm_upload'));?>')">
-                    <?php echo tag('input type="file" name="fbupload"');?>
-                    <?php echo tag('input type="hidden" name="upload" value="upload"');?>
-                    <?php echo tag('input type="submit" class="submit" value="' . $this->translate('upload_file') . '"');?>
-		    <?php global $_XH_csrfProtection; echo $_XH_csrfProtection->tokenInput();?>
+                <form method="POST" class="filebrowser_upload" action="<?php echo $sn, '?', XH_hsc($_SERVER['QUERY_STRING']);?>" enctype="multipart/form-data">
+                    <input type="file" name="fbupload">
+                    <input type="hidden" name="upload" value="upload">
+                    <input type="submit" class="submit" value="<?php echo $this->translate('upload_file')?>">
+		    <?php echo $_XH_csrfProtection->tokenInput()?>
                 </form>
             </div>
         </fieldset>
@@ -66,3 +66,4 @@ global $tx, $sn;
 
     <div style="clear:both;"></div>
 </div>
+<?php echo $this->renderJsConfig()?>

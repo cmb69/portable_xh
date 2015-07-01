@@ -1,11 +1,12 @@
 <?php
 
-$cf['security']['password']="\$P\$BHYRVbjeM5YAvnwX2AkXnyqjLhQAod1";
+$cf['security']['password']="\$2a\$09\$b032aima.KOrfY.N6ex44esuEon1K8WP/QjeTeaAc0Kmhw6NOl/2u";
 $cf['security']['secret']="5b2b98208d4fc6ce9331e47d";
 $cf['security']['email']="";
 $cf['security']['frame_options']="";
 $cf['site']['template']="mini1";
 $cf['site']['timezone']="";
+$cf['site']['compat']="true";
 $cf['language']['default']="en";
 $cf['language']['2nd_lang_names']="cs=Čeština;da=Dansk;de=Deutsch;en=English;es=Español;fi=Suomi;fr=Français;gr=Ελληνικά;hu=Magyar;it=Italiano;nl=Nederlands;no=Norsk;pl=Polski;ru=Русский;se=Svensk;sk=Slovenčina";
 $cf['mailform']['email']="";
@@ -41,9 +42,8 @@ $cf['plugins']['hidden']="meta_tags,page_params";
 $cf['uri']['seperator']="/";
 $cf['uri']['word_separator']="-";
 $cf['uri']['length']="200";
-$cf['xhtml']['endtags']="";
-$cf['xhtml']['amp']="true";
 $cf['editmenu']['scroll']="";
 $cf['editmenu']['external']="";
 $cf['title']['format']="{SITE} &ndash; {PAGE}";
+
 ?>

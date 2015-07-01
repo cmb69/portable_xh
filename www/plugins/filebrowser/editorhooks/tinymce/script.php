@@ -1,14 +1,14 @@
 <?php
 
 /**
- * @version $Id: script.php 1059 2013-11-08 18:30:47Z cmb69 $
+ * @version $Id: script.php 1518 2015-03-23 00:43:14Z cmb69 $
  */
 
 $script = '
-<script type="text/javascript" src="./../tinymce/tiny_mce/tiny_mce_popup.js">
+<script type="text/javascript" src="' . $pth['folder']['plugins'] . 'tinymce/tiny_mce/tiny_mce_popup.js">
 </script>
 
-<script language="javascript" type="text/javascript">
+<script type="text/javascript">
 
 var FileBrowserDialogue = {
 
