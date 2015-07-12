@@ -6,7 +6,7 @@ CMSimple_XH
 Building PHP
 ------------
 
-configure --disable-all --disable-zts --enable-cli --enable-session --enable-json --with-gd --enable-mbstring --with-iconv --with-libxml --with-simplexml --with-xml
+configure --disable-all --disable-zts --enable-cli --enable-session --enable-json --with-gd --enable-mbstring --with-iconv --with-libxml --with-simplexml --with-xml --with-dom
 
 PHP
 ---
