@@ -1,3 +1,7 @@
+Version 2.0dev2 - released 2015-07-12
+- updated to CMSimple_XH 1.7.0dev2
+- updated to PHP 7.0.0beta1
+
 Version 2.0dev1 - released 2015-07-01
 - upgraded to CMSimple_XH 1.7.0dev1
 - upgraded to PHP 7.0.0alpha2
