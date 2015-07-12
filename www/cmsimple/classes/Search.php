@@ -18,8 +18,8 @@
 
 /*
   ======================================
-  CMSimple_XH 1.7.0dev1
-  2015-07-01
+  CMSimple_XH 1.7.0dev2
+  2015-07-12
   based on CMSimple version 3.3 - December 31. 2009
   For changelog, downloads and information please see http://www.cmsimple-xh.com
   ======================================

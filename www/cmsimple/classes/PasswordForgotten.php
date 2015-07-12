@@ -10,7 +10,7 @@
  * @author    The CMSimple_XH developers <devs@cmsimple-xh.org>
  * @copyright 2013-2015 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @version   SVN: $Id: PasswordForgotten.php 1547 2015-04-21 19:57:37Z cmb69 $
+ * @version   SVN: $Id: PasswordForgotten.php 1666 2015-07-03 00:04:26Z cmb69 $
  * @link      http://cmsimple-xh.org/
  */
 
@@ -139,13 +139,15 @@ class PasswordForgotten
 
         if ($_POST['xh_email'] == $cf['security']['email']) {
             $to = $cf['security']['email'];
-            $subject = $tx['title']['password_forgotten'];
             $message = $tx['password_forgotten']['email1_text'] . "\r\n"
                 . '<' . CMSIMPLE_URL . '?&function=forgotten&xh_code='
                 . $this->mac() . '>';
-            $headers = 'From: ' . $to;
-            $mailform = new Mailform();
-            $ok = $mailform->sendMail($to, $subject, $message, $headers);
+            $mail = new Mail();
+            $mail->setTo($to);
+            $mail->setSubject($tx['title']['password_forgotten']);
+            $mail->setMessage($message);
+            $mail->addHeader('From', $to);
+            $ok = $mail->send();
             if ($ok) {
                 $this->status = 'sent';
             } else {
@@ -175,11 +177,13 @@ class PasswordForgotten
         $password = bin2hex($xh_hasher->getRandomBytes(8));
         $hash = $xh_hasher->hashPassword($password);
         $to = $cf['security']['email'];
-        $subject = $tx['title']['password_forgotten'];
         $message = $tx['password_forgotten']['email2_text'] . ' ' . $password;
-        $headers = 'From: ' . $to;
-        $mailform = new Mailform();
-        $sent = $mailform->sendMail($to, $subject, $message, $headers);
+        $mail = new Mail();
+        $mail->setTo($to);
+        $mail->setSubject($tx['title']['password_forgotten']);
+        $mail->setMessage($message);
+        $mail->addHeader('From', $to);
+        $sent = $mail->send();
         if ($sent) {
             if (!$this->saveNewPassword($hash)) {
                 e('cntsave', 'config', $pth['file']['config']);

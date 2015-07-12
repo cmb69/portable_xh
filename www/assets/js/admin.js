@@ -6,7 +6,7 @@
  * @author    The CMSimple_XH developers <devs@cmsimple-xh.org>
  * @copyright 2009-2015 The CMSimple_XH developers (http://cmsimple-xh.org/?The_Team)
  * @license   GNU GPLv3 (http://www.gnu.org/licenses/gpl-3.0.en.html)
- * @version   $Id: admin.js 1655 2015-06-16 00:44:46Z cmb69 $
+ * @version   $Id: admin.js 1668 2015-07-03 14:01:30Z cmb69 $
  * @since     1.6
  */
 var XH = {};
@@ -579,7 +579,9 @@ XH.toggleAdvancedFields = function () {
     var advanced;
 
     advanced = document.getElementById("xh_config_form_advanced");
-    advanced.style.display = advanced.style.display ? "" : "none";
+    if (advanced) {
+        advanced.style.display = advanced.style.display ? "" : "none";
+    }
 }
 
 /*
@@ -664,7 +666,7 @@ XH.on(window, "load", function () {
 
         form = document.getElementById("xh_config_form");
         advanced = document.getElementById("xh_config_form_advanced");
-        if (advanced.innerHTML) {
+        if (advanced && advanced.innerHTML) {
             button = document.createElement("button");
             button.setAttribute("type", "button");
             button.className = "xh_config_form_advanced_button";
@@ -682,7 +684,7 @@ XH.on(window, "load", function () {
         var inputs = document.getElementsByName(
             "PL3bbeec384_security_password_OLD"
         );
-        if (inputs) {
+        if (inputs && inputs.length > 0) {
             inputs[0].value = "";
         }
     }());

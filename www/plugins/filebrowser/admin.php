@@ -33,7 +33,7 @@ if (XH_wantsPluginAdministration('filebrowser')) {
     $o .= print_plugin_admin('off');
 
     $o .= '<div class="plugintext">'
-        . '<div class="plugineditcaption">Filebrowser for CMSimple_XH 1.7.0dev1'
+        . '<div class="plugineditcaption">Filebrowser for CMSimple_XH 1.7.0dev2'
         . '</div>' . '<hr>';
 
     if (!$admin) {
