@@ -20,10 +20,10 @@ Distributionen anschauen.
 Voraussetzungen
 ---------------
 
-Windows Vista SP 2 oder höher, auf dem das Visual C++ Redistributable für Visual
-Studio 2012[1] installiert ist (es wird immer die x86 Version benötigt!)
+64bit Windows Vista SP 2 oder höher, auf dem das Visual C++ Redistributable für Visual
+Studio 2015[1] installiert ist.
 
-[1] <http://www.microsoft.com/de-de/download/details.aspx?id=30679>
+[1] <https://www.microsoft.com/de-DE/download/details.aspx?id=48145>
 
 Installation
 ------------
@@ -87,7 +87,7 @@ die Ordner unabhängige Software, die als solche getrennt lizensiert ist.
     Website: <http://3-magi.net/?CMSimple_XH/Portable_XH>
 
 php/ (inkl. Unterordnern)
-    Copyright (c) 1997-2015 The PHP Group
+    Copyright (c) 1999 - 2016 The PHP Group
     Lizensiert unter der PHP License 3.01 <http://www.php.net/license/3_01.txt>
     Website: <http://www.php.net/>
 

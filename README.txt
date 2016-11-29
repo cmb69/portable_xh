@@ -18,10 +18,10 @@ any other of the major distributions.
 Requirements
 ------------
 
-Windows Vista SP 2 or higher, with the Visual C++ Redistributable for Visual
-Studio 2012[1] installed (you always need the x86 version!)
+64bit Windows Vista SP 2 or higher, with the Visual C++ Redistributable for Visual
+Studio 2015[1] installed.
 
-[1] <http://www.microsoft.com/en-us/download/details.aspx?id=30679>
+[1] <https://www.microsoft.com/en-US/download/details.aspx?id=48145>
 
 Installation
 ------------
@@ -79,7 +79,7 @@ folders contain independent software which is licensed separately as such.
     Website: <http://3-magi.net/?CMSimple_XH/Portable_XH>
 
 php/ (incl. subfolders)
-    Copyright (c) 1997-2015 The PHP Group
+    Copyright (c) 1999 - 2016 The PHP Group
     Licensed under PHP License 3.01 <http://www.php.net/license/3_01.txt>
     Website: <http://www.php.net/>
 
