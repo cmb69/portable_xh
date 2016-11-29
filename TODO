@@ -1,3 +1,0 @@
-* convert READMEs to HTML
-* use custom PHP build? For PHP 5.6.8 something like
-    configure --disable-zts --disable-cgi --disable-bcmath --disable-calendar --disable-com-dotnet --without-dom --disable-ftp --disable-hash --without-mysqlnd --disable-odbc --disable-phar --without-simplexml --disable-tokenizer --without-wddx --disable-zip --disable-zlib --disable-xmlreader --disable-xmlwriter
