@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- $Id$ -->
-
 <project name="Portable_XH" default="default">
 
     <target name="build">
         <fail unless="version" message="version is not defined!"/>
-        <svnexport revision="" repositoryurl="." todir="export"/>
+        <exec command="git archive -o export.tar HEAD" checkreturn="true"/>
+        <untar file="export.tar" todir="export"/>
+        <delete file="export.tar"/>
         <move todir="dist">
             <fileset dir="export">
                 <include name="Portable_XH.bat"/>
@@ -19,10 +19,8 @@
         </move>
         <move todir="dist">
             <fileset dir="export">
-                <exclude name="portable.komodoproject"/>
                 <exclude name="build.xml"/>
                 <exclude name="portable.ico"/>
-                <exclude name="TODO"/>
                 <exclude name="UPDATING"/>
             </fileset>
         </move>
