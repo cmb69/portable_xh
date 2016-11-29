@@ -74,7 +74,7 @@ As this distribution is an aggregation of different pieces of software, the
 folders contain independent software which is licensed separately as such.
 
 / (without subfolders)
-    Copyright (c) 2012-2015 Christoph M. Becker
+    Copyright (c) 2012-2016 Christoph M. Becker
     Licensed under MIT License <http://opensource.org/licenses/MIT>
     Website: <http://3-magi.net/?CMSimple_XH/Portable_XH>
 
