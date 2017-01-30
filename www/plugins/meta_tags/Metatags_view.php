@@ -6,7 +6,7 @@
  * Creates the menu for the user to change meta-tags
  * (description, keywords, title and robots) per page.
  *
- * PHP versions 4 and 5
+ * PHP version 5
  *
  * @category  CMSimple_XH
  * @package   Metatags
@@ -14,11 +14,9 @@
  * @author    The CMSimple_XH developers <devs@cmsimple-xh.org>
  * @copyright 2009-2015 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @version   SVN: $Id: Metatags_view.php 1508 2015-03-12 22:58:06Z cmb69 $
+ * @version   SVN: $Id: Metatags_view.php 1597 2015-05-05 14:12:27Z cmb69 $
  * @link      http://cmsimple-xh.org/
  */
-
-/* utf8-marker = äöüß */
 
 /**
  * Returns the Meta pagedata view.
@@ -30,35 +28,21 @@
  * @return string
  *
  * @global string The site name.
+ * @global array  The paths of system files and folders.
  * @global string The URL of the requested page.
  * @global array  The localization of the plugins.
- * @global array  The paths of system files and folders.
- * @global string The JavaScript for the onload attribute of the body element.
- * @global string The (X)HTML fragment to insert at the bottom of the body element.
+ * @global string The HTML fragment to insert at the bottom of the body element.
  */
-function Metatags_view($page)
+function Metatags_view(array $page)
 {
-    global $sn, $su, $plugin_tx, $pth, $onload, $bjs;
+    global $sn, $pth, $su, $plugin_tx, $bjs;
 
     $lang = $plugin_tx['meta_tags'];
 
     $my_fields = array('title', 'description', 'keywords', 'robots');
 
-    $bjs .= <<<EOT
-<script type="text/javascript">/* <![CDATA[ */
-var META_TAGS = {};
-
-META_TAGS.init = function () {
-    var description = document.getElementById("meta_tags").elements.description,
-        indicator = document.getElementById("mt_description_length");
-
-    if (description && indicator) {
-        XH.displayTextLength(description, indicator);
-    }
-};
-/* ]]> */</script>
-EOT;
-    $onload .= 'META_TAGS.init();';
+    $bjs .= '<script type="text/javascript" src="' . $pth['folder']['plugins']
+        . 'meta_tags/metatags.js"></script>';
 
     $view ="\n" . '<form action="' . $sn . '?' . $su
         . '" method="post" id="meta_tags">'
@@ -69,11 +53,9 @@ EOT;
                 . ' class="xh_setting">'
                 . XH_hsc($page[$field])
                 . '</textarea>'
-            : tag(
-                'input type="text" class="xh_setting" size="50"'
+            : '<input type="text" class="xh_setting" size="50"'
                 . ' name="' . $field . '" value="'
-                . XH_hsc($page[$field]) . '"'
-            );
+                . XH_hsc($page[$field]) . '">';
         $view .= "\n\t" . XH_helpIcon($lang['hint_' . $field])
             . "\n\t" . '<label><span class = "mt_label">'
             . $lang[$field] . '</span>';
@@ -81,13 +63,13 @@ EOT;
             $view .= '<span id="mt_description_length">['
                 . utf8_strlen($page[$field]). ']</span>';
         }
-        $view .= tag('br')
-            . "\n\t\t" . $element . '</label>' . tag('hr');
+        $view .= '<br>'
+            . "\n\t\t" . $element . '</label>' . '<hr>';
     }
-    $view .= "\n\t" . tag('input name="save_page_data" type="hidden"')
+    $view .= "\n\t" . '<input name="save_page_data" type="hidden">'
         . "\n\t" . '<div style="text-align: right;">'
-        . "\n\t\t" . tag('input type="submit" value="' . $lang['submit'].'"')
-        . tag('br')
+        . "\n\t\t" . '<input type="submit" value="' . $lang['submit'].'">'
+        . '<br>'
         . "\n\t" . '</div>'
         . "\n" . '</form>';
     return $view;

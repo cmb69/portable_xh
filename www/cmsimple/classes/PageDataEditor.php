@@ -3,16 +3,18 @@
 /**
  * The page data editor.
  *
- * PHP versions 4 and 5
+ * PHP version 5
  *
  * @category  CMSimple_XH
  * @package   XH
  * @author    The CMSimple_XH developers <devs@cmsimple-xh.org>
  * @copyright 2013-2015 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @version   SVN: $Id: PageDataEditor.php 1479 2015-01-25 20:05:20Z cmb69 $
+ * @version   SVN: $Id: PageDataEditor.php 1547 2015-04-21 19:57:37Z cmb69 $
  * @link      http://cmsimple-xh.org/
  */
+
+namespace XH;
 
 /**
  * The page data editor class.
@@ -24,7 +26,7 @@
  * @link     http://cmsimple-xh.org/
  * @since    1.6
  */
-class XH_PageDataEditor
+class PageDataEditor
 {
     /**
      * Returns the currently unused page data fields.
@@ -33,7 +35,7 @@ class XH_PageDataEditor
      *
      * @global object The page data router.
      */
-    function unusedFields()
+    protected function unusedFields()
     {
         global $pd_router;
 
@@ -53,7 +55,7 @@ class XH_PageDataEditor
      *
      * @global object The page data router.
      */
-    function deleteFields()
+    protected function deleteFields()
     {
         global $pd_router;
 
@@ -76,12 +78,12 @@ class XH_PageDataEditor
      *
      * @param string $field A field name.
      *
-     * @return string (X)HTML.
+     * @return string HTML
      */
-    function renderField($field)
+    protected function renderField($field)
     {
         return '<li><label>'
-            . tag('input type="checkbox" name="' . $field . '"')
+            . '<input type="checkbox" name="' . $field . '">'
             . XH_hsc($field)
             . '</label></li>';
     }
@@ -92,12 +94,12 @@ class XH_PageDataEditor
      * @param mixed $deleted The number of deleted fields resp.
      *                       <var>false</var> on failure.
      *
-     * @return string (X)HTML.
+     * @return string HTML
      *
      * @global array The paths of system files and folders.
      * @global array The localization of the core.
      */
-    function renderMessage($deleted)
+    protected function renderMessage($deleted)
     {
         global $pth, $tx;
 
@@ -120,13 +122,13 @@ class XH_PageDataEditor
      * @param mixed $deleted The number of deleted fields, <var>null</var> on
      *                       initial request resp. <var>false</var> on failure.
      *
-     * @return string (X)HTML.
+     * @return string HTML
      *
      * @global string The script name.
      * @global array  The localization of the core.
      * @global array  The CSRF protection object.
      */
-    function render($deleted = null)
+    protected function render($deleted = null)
     {
         global $sn, $tx, $_XH_csrfProtection;
 
@@ -149,10 +151,8 @@ class XH_PageDataEditor
                 $o .= $this->renderField($field);
             }
             $o .= '</ul>'
-                . tag(
-                    'input type="submit" class="submit" name="xh_pagedata_delete"'
-                    . ' value="' . $tx['action']['delete'] . '"'
-                )
+                . '<input type="submit" class="submit" name="xh_pagedata_delete"'
+                . ' value="' . $tx['action']['delete'] . '">'
                 . $_XH_csrfProtection->tokenInput()
                 . '</form>';
         }
@@ -162,11 +162,11 @@ class XH_PageDataEditor
     /**
      * Handles requests to the page data editor.
      *
-     * @return string (X)HTML.
+     * @return string HTML
      *
      * @global object The CSRF protection object.
      */
-    function process()
+    public function process()
     {
         global $_XH_csrfProtection;
 

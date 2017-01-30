@@ -3,7 +3,7 @@
 /**
  * Top-level functionality.
  *
- * PHP versions 4 and 5
+ * PHP version 5
  *
  * @category  CMSimple_XH
  * @package   XH
@@ -12,9 +12,11 @@
  * @copyright 1999-2009 Peter Harteg
  * @copyright 2009-2015 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @version   SVN: $Id: Controller.php 1479 2015-01-25 20:05:20Z cmb69 $
+ * @version   SVN: $Id: Controller.php 1547 2015-04-21 19:57:37Z cmb69 $
  * @link      http://cmsimple-xh.org/
  */
+
+namespace XH;
 
 /**
  * Top-level functionality.
@@ -27,7 +29,7 @@
  * @link     http://cmsimple-xh.org/
  * @since    1.6.3
  */
-class XH_Controller
+class Controller
 {
     /**
      * Initializes the paths related to the template.
@@ -38,7 +40,7 @@ class XH_Controller
      * @global array The configuration of the core.
      * @global array The localization of the core.
      */
-    function initTemplatePaths()
+    public function initTemplatePaths()
     {
         global $pth, $cf, $tx;
 
@@ -58,14 +60,12 @@ class XH_Controller
      *
      * @return void
      *
-     * @access public
-     *
      * @global array  The paths of system files and folders.
      * @global array  The localization of the core.
      * @global string The content of the title element.
-     * @global string The (X)HTML of the contents area.
+     * @global string The HTML of the contents area.
      */
-    function handleSearch()
+    public function handleSearch()
     {
         global $pth, $tx, $title, $o;
 
@@ -82,19 +82,19 @@ class XH_Controller
     /**
      * Makes and returns a search object.
      *
-     * @return XH_Search
+     * @return Search
      *
      * @access protected
      *
-     * @global array  The paths of system files and folders.
      * @global string The search string.
+     *
+     * @todo Declare visibility.
      */
     function makeSearch()
     {
-        global $pth, $search;
+        global $search;
 
-        include_once $pth['folder']['classes'] . 'Search.php';
-        return new XH_Search(stsl($search));
+        return new Search(stsl($search));
     }
 
     /**
@@ -102,14 +102,12 @@ class XH_Controller
      *
      * @return void
      *
-     * @access public
-     *
      * @global array  The configuration of the core.
      * @global array  The localization of the core.
      * @global string The content of the title element.
-     * @global string The (X)HTML of the contents area.
+     * @global string The HTML of the contents area.
      */
-    function handleMailform()
+    public function handleMailform()
     {
         global $cf, $tx, $title, $o;
 
@@ -128,18 +126,15 @@ class XH_Controller
     /**
      * Makes and returns a mailform object.
      *
-     * @return XH_Mailform
+     * @return Mailform
      *
      * @access protected
      *
-     * @global array The paths of system files and folders.
+     * @todo Declare visibility.
      */
     function makeMailform()
     {
-        global $pth;
-
-        include_once $pth['folder']['classes'] . 'Mailform.php';
-        return new XH_Mailform();
+        return new Mailform();
     }
 
     /**
@@ -147,15 +142,15 @@ class XH_Controller
      *
      * @return void
      *
-     * @access public
-     *
      * @global int    The number of pages.
      * @global array  The configuration of the core.
      * @global array  The localization of the core.
      * @global string The content of the title element.
-     * @global string The (X)HTML of the content area.
+     * @global string The HTML of the content area.
+     *
+     * @todo Declare visibility.
      */
-    function handleSitemap()
+    public function handleSitemap()
     {
         global $cl, $cf, $tx, $title, $o;
 
@@ -174,10 +169,8 @@ class XH_Controller
      * Handles password forgotten requests.
      *
      * @return void
-     *
-     * @access public
      */
-    function handlePasswordForgotten()
+    public function handlePasswordForgotten()
     {
         $passwordForgotten = $this->makePasswordForgotten();
         $passwordForgotten->dispatch();
@@ -186,18 +179,15 @@ class XH_Controller
     /**
      * Makes and returns a password forgotten object.
      *
-     * @return XH_PasswordForgotten
+     * @return PasswordForgotten
      *
      * @access protected
      *
-     * @global array The paths of system files and folders.
+     * @todo Declare visibility.
      */
     function makePasswordForgotten()
     {
-        global $pth;
-
-        include_once $pth['folder']['classes'] . 'PasswordForgotten.php';
-        return new XH_PasswordForgotten();
+        return new PasswordForgotten();
     }
 
     /**
@@ -205,15 +195,13 @@ class XH_Controller
      *
      * @return void
      *
-     * @access public
-     *
      * @global string Whether admin mode is active.
      * @global string Whether login is requested.
      * @global string Whether logout is requested.
      * @global string The admin password.
      * @global string The requested function.
      */
-    function handleLoginAndLogout()
+    public function handleLoginAndLogout()
     {
         global $adm, $login, $logout, $keycut, $f;
 
@@ -236,7 +224,7 @@ class XH_Controller
      *
      * @return void
      *
-     * @access public
+     * @access protected
      *
      * @global string       The requested function.
      * @global array        The paths of system files and folders.
@@ -245,21 +233,17 @@ class XH_Controller
      * @global PasswordHash The password hasher.
      * @global array        The configuration of the core.
      *
-     * @todo Make protected.
+     * @todo Declare visibility.
      */
     function handleLogin()
     {
         global $f, $pth, $keycut, $login, $adm, $edit, $xh_hasher, $cf;
 
-        if ($xh_hasher->CheckPassword($keycut, $cf['security']['password'])) {
+        if ($xh_hasher->checkPassword($keycut, $cf['security']['password'])) {
             setcookie('status', 'adm', 0, CMSIMPLE_ROOT);
-            if (session_id() == '') {
-                session_start();
-            }
-            // HACK to work around limititation of PHPCompatInfo
-            $sessionRegenerateId = 'session_regenerate_id';
-            $sessionRegenerateId(true);
-            $_SESSION['xh_password'][CMSIMPLE_ROOT] = $cf['security']['password'];
+            XH_startSession();
+            session_regenerate_id(true);
+            $_SESSION['xh_password'] = $cf['security']['password'];
             $_SESSION['xh_user_agent'] = md5($_SERVER['HTTP_USER_AGENT']);
             $adm = true;
             $edit = true;
@@ -290,9 +274,9 @@ class XH_Controller
      * @global string The requested function.
      * @global string Whether logout is requested.
      * @global array  The localization of the core.
-     * @global string The (X)HTML for the contents area.
+     * @global string The HTML for the contents area.
      *
-     * @todo Make protected.
+     * @todo Declare visibility.
      */
     function handleLogout()
     {
@@ -303,13 +287,9 @@ class XH_Controller
         }
         $adm = false;
         setcookie('status', '', 0, CMSIMPLE_ROOT);
-        if (session_id() == '') {
-            session_start();
-        }
-        // HACK to work around limititation of PHPCompatInfo
-        $sessionRegenerateId = 'session_regenerate_id';
-        $sessionRegenerateId(true);
-        unset($_SESSION['xh_password'][CMSIMPLE_ROOT]);
+        XH_startSession();
+        session_regenerate_id(true);
+        unset($_SESSION['xh_password']);
         $o .= XH_message('success', $tx['login']['loggedout']);
         $f = 'xh_loggedout';
     }
@@ -318,14 +298,10 @@ class XH_Controller
      * Handles Ajax request to keep the admin session alive.
      *
      * @return void
-     *
-     * @access public
      */
-    function handleKeepAlive()
+    public function handleKeepAlive()
     {
-        if (session_id() != '') {
-            session_start();
-        }
+        XH_startSession();
         header('Content-Type: text/plain');
         XH_exit();
     }
@@ -339,6 +315,8 @@ class XH_Controller
      *
      * @global PasswordHash The password hasher.
      * @global array        The configuration of the core.
+     *
+     * @todo Declare visibility.
      */
     function handlePasswordCheck()
     {
@@ -346,7 +324,7 @@ class XH_Controller
 
         header('Content-Type: text/plain');
         echo intval(
-            $xh_hasher->CheckPassword(
+            $xh_hasher->checkPassword(
                 stsl($_GET['xh_check']),
                 $cf['security']['password']
             )
@@ -359,8 +337,6 @@ class XH_Controller
      *
      * @return void
      *
-     * @access public
-     *
      * @global string The requested function.
      * @global string The URL of the current page.
      * @global string Whether the mailform is requested.
@@ -368,7 +344,7 @@ class XH_Controller
      * @global string Whether the page manager is requested.
      * @global string The requested function.
      */
-    function setFrontendF()
+    public function setFrontendF()
     {
         global $function, $su, $mailform, $sitemap, $xhpages, $f;
 
@@ -392,8 +368,6 @@ class XH_Controller
      *
      * @return void
      *
-     * @access public
-     *
      * @global string The requested function.
      * @global string Whether the link check is requested.
      * @global string Whether the actual link check is requested.
@@ -415,7 +389,7 @@ class XH_Controller
      *       necessary, as this should already be handled by the filebrowser.
      *       Otherwise media had to be handled also.
      */
-    function setBackendF()
+    public function setBackendF()
     {
         global $function, $validate, $xh_do_validate, $settings, $xh_backups,
             $xh_pagedata, $sysinfo, $phpinfo, $file, $userfiles, $images,
@@ -449,53 +423,13 @@ class XH_Controller
     }
 
     /**
-     * Returns whether saving from menumanager is requested.
-     *
-     * @return bool
-     *
-     * @access public
-     *
-     * @global string Whether the menumanager is requested.
-     * @global string The requested action.
-     */
-    function isSavingMenumanager()
-    {
-        global $menumanager, $action, $text;
-
-        return isset($menumanager) && $menumanager == 'true'
-            && $action == 'saverearranged' && !empty($text);
-    }
-
-    /**
-     * Handles menumanager requests.
-     *
-     * @return void
-     *
-     * @access public
-     *
-     * @global array             The paths of system files and folders.
-     * @global string            The menumanager page information.
-     * @global XH_PageDataRouter The page data router.
-     */
-    function handleMenumanager()
-    {
-        global $pth, $text, $pd_router;
-
-        if (!$pd_router->refresh_from_menu_manager($text)) {
-            e('notwritable', 'content', $pth['file']['content']);
-        }
-    }
-
-    /**
      * Returns whether page data have to be saved.
      *
      * @return bool
      *
-     * @access public
-     *
      * @global int The number of the current page.
      */
-    function wantsSavePageData()
+    public function wantsSavePageData()
     {
         global $s;
 
@@ -507,15 +441,13 @@ class XH_Controller
      *
      * @return void
      *
-     * @access public
-     *
-     * @global array             The paths of system files and folders.
-     * @global int               The index of the currently selected page.
-     * @global XH_PageDataRouter The page data router.
-     * @global array             The localization of the core.
-     * @global XH_CSRFProtection The CSRF protector.
+     * @global array          The paths of system files and folders.
+     * @global int            The index of the currently selected page.
+     * @global PageDataRouter The page data router.
+     * @global array          The localization of the core.
+     * @global CSRFProtection The CSRF protector.
      */
-    function handleSavePageData()
+    public function handleSavePageData()
     {
         global $pth, $s, $pd_router, $tx, $_XH_csrfProtection;
 
@@ -546,7 +478,10 @@ class XH_Controller
      *
      * @access public
      *
-     * @global string The (X)HTML for the contents area.
+     * @global string The HTML for the contents area.
+     *
+     * @todo Unused?
+     * @todo Declare visibility.
      */
     function handlePagedataEditor()
     {
@@ -559,18 +494,15 @@ class XH_Controller
     /**
      * Makes and returns a new page data editor object.
      *
-     * @return XH_PageDataEditor
+     * @return PageDataEditor
      *
      * @access protected
      *
-     * @global array The paths of system files and folders.
+     * @todo Declare visibility.
      */
     function makePageDataEditor()
     {
-        global $pth;
-
-        include_once $pth['folder']['classes'] . 'PageDataEditor.php';
-        return new XH_PageDataEditor();
+        return new PageDataEditor();
     }
 
     /**
@@ -578,13 +510,11 @@ class XH_Controller
      *
      * @return void
      *
-     * @access public
-     *
      * @global array  The paths of system files and folders.
      * @global string The name of a special file to be handled.
-     * @global string The (X)HTML for the contents area.
+     * @global string The HTML for the contents area.
      */
-    function handleFileView()
+    public function handleFileView()
     {
         global $pth, $file, $o;
 
@@ -602,12 +532,10 @@ class XH_Controller
      *
      * @return void
      *
-     * @access public
-     *
-     * @global string            The name of a special file to be handled.
-     * @global XH_CSRFProtection The CRSF protector.
+     * @global string         The name of a special file to be handled.
+     * @global CSRFProtection The CRSF protector.
      */
-    function handleFileBackup()
+    public function handleFileBackup()
     {
         global $file, $_XH_csrfProtection;
 
@@ -625,22 +553,20 @@ class XH_Controller
      *
      * @return void
      *
-     * @access public
-     *
      * @global string The name of a special file to be handled.
      * @global string The requested action.
-     * @global string The (X)HTML for the contents area.
+     * @global string The HTML for the contents area.
      */
-    function handleFileEdit()
+    public function handleFileEdit()
     {
         global $file, $action, $o;
 
         $map = array(
-            'config' => 'XH_CoreConfigFileEdit',
-            'language' => 'XH_CoreLangFileEdit',
-            'content' => 'XH_CoreTextFileEdit',
-            'template' => 'XH_CoreTextFileEdit',
-            'stylesheet' => 'XH_CoreTextFileEdit'
+            'config' => 'XH\CoreConfigFileEdit',
+            'language' => 'XH\CoreLangFileEdit',
+            'content' => 'XH\CoreTextFileEdit',
+            'template' => 'XH\CoreTextFileEdit',
+            'stylesheet' => 'XH\CoreTextFileEdit'
         );
         $fileEditor = isset($map[$file])
             ? $this->makeFileEditor($map[$file])
@@ -657,17 +583,14 @@ class XH_Controller
      *
      * @param string $class A class name.
      *
-     * @return XH_FileEdit
+     * @return FileEdit
      *
      * @access protected
      *
-     * @global array The paths of system files and folders.
+     * @todo Declare visibility.
      */
     function makeFileEditor($class)
     {
-        global $pth;
-
-        include_once $pth['folder']['classes'] . 'FileEdit.php';
         return new $class;
     }
 
@@ -676,12 +599,10 @@ class XH_Controller
      *
      * @return void
      *
-     * @access public
-     *
      * @global array  The localization of the core.
-     * @global string The (X)HTML for the contents area.
+     * @global string The HTML for the contents area.
      */
-    function outputAdminScripts()
+    public function outputAdminScripts()
     {
         global $tx, $o;
 
@@ -709,14 +630,12 @@ EOT;
      *
      * @return void
      *
-     * @access public
-     *
      * @global string Whether edit mode is requested.
      * @global string Whether normal mode is requested.
      *
      * @todo Rename!
      */
-    function setFunctionsAsPermitted()
+    public function setFunctionsAsPermitted()
     {
         global $edit, $normal;
 
@@ -745,12 +664,10 @@ EOT;
      *
      * @return void
      *
-     * @access public
-     *
-     * @global string            The text of the editor on save.
-     * @global XH_CSRFProtection The CSRF protector.
+     * @global string         The text of the editor on save.
+     * @global CSRFProtection The CSRF protector.
      */
-    function handleSaveRequest()
+    public function handleSaveRequest()
     {
         global $text, $_XH_csrfProtection;
 
@@ -763,8 +680,6 @@ EOT;
      *
      * @return bool
      *
-     * @access public
-     *
      * @global string Whether edit mode is requested.
      * @global string The requested function.
      * @global string The filename requested for download.
@@ -772,7 +687,7 @@ EOT;
      * @todo Do we need $f == 'save' && !$download?
      *       IOW: isn't the script already exited in these cases?
      */
-    function wantsEditContents()
+    public function wantsEditContents()
     {
         global $edit, $f, $download;
 
@@ -784,13 +699,11 @@ EOT;
      *
      * @return void
      *
-     * @access public
-     *
      * @global int    The index of the currently selected page.
      * @global array  The localization of the core.
-     * @global string The (X)HTML for the contents area.
+     * @global string The HTML for the contents area.
      */
-    function outputEditContents()
+    public function outputEditContents()
     {
         global $s, $tx, $o;
 
@@ -805,10 +718,8 @@ EOT;
      * Returns whether the filebrowser is missing.
      *
      * @return bool
-     *
-     * @access public
      */
-    function isFilebrowserMissing()
+    public function isFilebrowserMissing()
     {
         return $this->needsFilebrowser()
             && $this->isExternalMissing('filebrowser');
@@ -819,11 +730,9 @@ EOT;
      *
      * @return bool
      *
-     * @access public
-     *
      * @global string The requested function.
      */
-    function isPagemanagerMissing()
+    public function isPagemanagerMissing()
     {
         global $f;
 
@@ -835,8 +744,6 @@ EOT;
      * Returns whether the filebrowser is needed.
      *
      * @return bool
-     *
-     * @access protected
      *
      * @global string Whether the file browser is requested to show the image folder.
      * @global string Whether the file browser is requested to show the download
@@ -851,7 +758,7 @@ EOT;
      * @todo Do we need $f == 'save' && !$download?
      *       IOW: isn't the script already exited in these cases?
      */
-    function needsFilebrowser()
+    protected function needsFilebrowser()
     {
         global $images, $downloads, $userfiles, $media, $edit, $f, $download;
 
@@ -866,12 +773,10 @@ EOT;
      *
      * @return bool
      *
-     * @access protected
-     *
      * @global array The paths of system files and folders.
      * @global array The configuration of the core.
      */
-    function isExternalMissing($name)
+    protected function isExternalMissing($name)
     {
         global $pth, $cf;
 
@@ -886,13 +791,11 @@ EOT;
      *
      * @return bool
      *
-     * @access public
-     *
      * @global array  The configuration of the core.
      * @global array  The localization of the core.
-     * @global string The (X)HTML for the <li>s holding error messages.
+     * @global string The HTML for the <li>s holding error messages.
      */
-    function reportMissingExternal($name)
+    public function reportMissingExternal($name)
     {
         global $cf, $tx, $e;
 
@@ -912,11 +815,11 @@ EOT;
      * @global bool   Whether we're in edit mode.
      * @global array  The localization of the core.
      * @global int    The current page.
-     * @global string The (X)HTML fragment for insertion in the contents area.
+     * @global string The HTML fragment for insertion in the contents area.
      * @global string The current special function.
      * @global string The title of the page.
      */
-    function verifyAdm()
+    public function verifyAdm()
     {
         global $adm, $edit, $tx, $s, $o, $f, $title;
 
@@ -933,11 +836,11 @@ EOT;
     /**
      * Renders the error messages stored in $e.
      *
-     * @return string (X)HTML.
+     * @return string HTML
      *
-     * @global string The (X)HTML for the <li>s holding error messages.
+     * @global string The HTML for the <li>s holding error messages.
      */
-    function renderErrorMessages()
+    public function renderErrorMessages()
     {
         global $e;
 
@@ -963,10 +866,11 @@ EOT;
      *
      * @todo Emit error message only in admin mode?
      */
-    function sendStandardHeaders()
+    public function sendStandardHeaders()
     {
         global $sl, $cf, $tx;
 
+        $file = $line = null; // for unit test mocking of headers_sent()
         if (!headers_sent($file, $line)) {
             header('Content-Type: text/html; charset=UTF-8');
             header("Content-Language: $sl");

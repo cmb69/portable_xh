@@ -5,7 +5,7 @@
  * Creates the menu for the user to change
  * page-parameters per page.
  *
- * PHP versions 4 and 5
+ * PHP version 5
  *
  * @category  CMSimple_XH
  * @package   Pageparams
@@ -14,59 +14,31 @@
  * @author    The CMSimple_XH developers <devs@cmsimple-xh.org>
  * @copyright 2009-2015 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @version   SVN: $Id: Pageparams_view.php 1479 2015-01-25 20:05:20Z cmb69 $
+ * @version   SVN: $Id: Pageparams_view.php 1553 2015-04-21 20:30:40Z cmb69 $
  * @link      http://cmsimple-xh.org/
  */
 
 /**
  * Returns a document fragment to be inserted to the HEAD element.
  *
- * @return (X)HTML.
+ * @return string HTML
  *
  * @since 1.6
+ *
+ * @global array The paths of system files and folders.
+ * @global array The localization of the plugins.
  */
 function Pageparams_hjs()
 {
-    global $plugin_tx;
+    global $pth, $plugin_tx;
 
-    $message = addcslashes(
-        $plugin_tx['page_params']['error_date_format'], "\t\n\r\\/\""
+    $config = json_encode(
+        array('message' => $plugin_tx['page_params']['error_date_format'])
     );
-    return <<<HTM
-<script type="text/javascript">
-/* <![CDATA[ */
-var PAGEPARAMS = PAGEPARAMS || {};
-
-function page_params_date_check(field) {
-    var datearr = field.value.split(" ");
-    var dateformat = /^\d{4}[-](0?[1-9]|1[012])[-](0?[1-9]|[12][0-9]|3[01])$/;
-    var timeformat = /^([01]?[0-9]|2[0-3)])[:]([0-5]?[0-9])$/;
-
-    if (datearr[0] == "" || datearr[0] == undefined) {
-        datearr[0] = "2099-12-31";
-    }
-    if (datearr[1] == "" || datearr[1] == undefined) {
-        datearr[1] = "00:00";
-    }
-    if (dateformat.test(datearr[0]) && timeformat.test(datearr[1])) {
-        field.style.backgroundColor = "";
-        field.style.color = "";
-    } else {
-        field.style.backgroundColor ="#ffe4e1";
-        field.style.color = "#000";
-        alert("$message");
-    }
-}
-
-PAGEPARAMS.onLinkListChange = function(that) {
-    var input = document.forms["page_params"].elements["header_location"];
-
-    input.value = that.value ? "?" + that.value : "";
-}
-/* ]]> */
-</script>
-
-HTM;
+    return '<script type="text/javascript">var PAGEPARAMS = ' . $config
+        . ';</script>'
+        . '<script type="text/javascript" src="' . $pth['folder']['plugins']
+        . 'page_params/pageparams.js"></script>';
 }
 
  /**
@@ -75,7 +47,7 @@ HTM;
   * @param string $label A label.
   * @param string $hint  A help tooltip text.
   *
-  * @return string (X)HTML
+  * @return string HTML
   *
   * @since 1.6
   */
@@ -90,29 +62,17 @@ function Pageparams_caption($label, $hint)
  *
  * @param string $name    Name of the checkbox.
  * @param bool   $checked Whether the checkbox is checked.
- * @param array  $toggles An array of elements to en-/disable.
  *
- * @return string (X)HTML
+ * @return string HTML
  *
  * @since 1.6
  */
-function Pageparams_checkbox($name, $checked, $toggles)
+function Pageparams_checkbox($name, $checked)
 {
     $checkedAttr = $checked ? ' checked="checked"' : '';
-    $onclick = '';
-    foreach ($toggles as $toggle) {
-        $onclick .= 'document.forms[\'page_params\'].elements[\'' . $toggle
-            . '\'].disabled=!document.forms[\'page_params\'].elements[\'' . $toggle
-            . '\'].disabled;';
-    }
-    if ($onclick != '') {
-        $onclick = ' onclick="' . $onclick . '"';
-    }
-    $o = "\n\t\t" . tag('input type="hidden" name="' . $name . '" value="0"')
-        . tag(
-            'input type="checkbox" name="' . $name . '" value="1"'
-            . $checkedAttr . $onclick
-        );
+    $o = "\n\t\t" . '<input type="hidden" name="' . $name . '" value="0">'
+        . '<input type="checkbox" name="' . $name . '" value="1"'
+        . $checkedAttr . '>';
     return $o;
 }
 
@@ -121,7 +81,7 @@ function Pageparams_checkbox($name, $checked, $toggles)
  *
  * @param int $value The current value.
  *
- * @return string (X)HTML
+ * @return string HTML
  *
  * @global array The localization of the plugins.
  *
@@ -134,14 +94,12 @@ function Pageparams_lastEditRadiogroup($value)
     $o = '';
     foreach (array('top' => 2, 'bottom' => 1, 'no' => 0) as $string => $number) {
         $checked = $value == $number ? ' checked="checked"' : '';
-        $radio = tag(
-            'input type="radio" name="show_last_edit"'
-            . ' value="' . $number . '"' . $checked
-        );
+        $radio = '<input type="radio" name="show_last_edit"'
+            . ' value="' . $number . '"' . $checked . '>';
         $o .= "\n\t\t" . '<label>' . $radio
             . $plugin_tx['page_params'][$string] . '</label>';
     }
-    $o .= tag('br');
+    $o .= '<br>';
     return $o;
 }
 
@@ -150,7 +108,7 @@ function Pageparams_lastEditRadiogroup($value)
  *
  * @param int $value The current value.
  *
- * @return string (X)HTML
+ * @return string HTML
  *
  * @global array The localization of the plugins.
  *
@@ -161,23 +119,15 @@ function Pageparams_redirectRadiogroup($value)
     global $plugin_tx;
 
     $o = '';
-    $onclick = '';
     $options = array('yes_new' => 2, 'yes_same' => 1, 'no' => 0);
     foreach ($options as $string => $number) {
         $checked = $value == $number ? ' checked="checked"' : '';
-        $disabled = $number > 0 ? 'false' : 'true';
-        $onclick = 'document.forms[\'page_params\'].elements[\'header_location\']'
-            . '.disabled=' . $disabled . ';'
-            . 'document.getElementById(\'pageparams_linklist\').disabled='
-            . $disabled;
-        $radio = tag(
-            'input type="radio" name="use_header_location"'
-            . ' value="' . $number . '"' . $checked . ' onclick="' . $onclick . '"'
-        );
+        $radio = '<input type="radio" name="use_header_location"'
+            . ' value="' . $number . '"' . $checked . '>';
         $o .= "\n\t\t" . '<label>' . $radio
             . $plugin_tx['page_params'][$string] . '</label>';
     }
-    $o .= tag('br');
+    $o .= '<br>';
     return $o;
 }
 
@@ -188,17 +138,15 @@ function Pageparams_redirectRadiogroup($value)
  * @param string $value    A value.
  * @param bool   $disabled Whether the element is disabled.
  *
- * @return string (X)HTML
+ * @return string HTML
  *
  * @since 1.6
  */
 function Pageparams_input($name, $value, $disabled)
 {
-    $input = tag(
-        'input type="text" size="50" name="' . $name . '"'
+    $input = '<input type="text" size="50" name="' . $name . '"'
         . ' value="' . XH_hsc($value) . '"'
-        . ($disabled ? ' disabled="disabled"' : '')
-    );
+        . ($disabled ? ' disabled="disabled"' : '') . '>';
     return "\n\t\t" . $input;
 }
 
@@ -209,20 +157,15 @@ function Pageparams_input($name, $value, $disabled)
  * @param string $value    An element value.
  * @param bool   $disabled Whether the input is disabled.
  *
- * @return string (X)HTML
+ * @return string HTML
  *
  * @since 1.6
  */
 function Pageparams_scheduleInput($name, $value, $disabled)
 {
     $disabled = $disabled ? ' disabled="disabled"' : '';
-    $js = 'page_params_date_check(document.forms[\'page_params\'].elements[\''
-        . $name . '\'])';
-    return tag(
-        'input type="text" size="16" maxlength="16" name="' . $name . '"'
-        . ' value="' . $value . '"' . $disabled
-        . ' onchange="' . $js .'"'
-    );
+    return '<input type="text" size="16" maxlength="16" name="' . $name . '"'
+        . ' value="' . $value . '"' . $disabled . '">';
 }
 
 /**
@@ -230,13 +173,13 @@ function Pageparams_scheduleInput($name, $value, $disabled)
  *
  * @param array $page Page data of the current page.
  *
- * @return string (X)HTML
+ * @return string HTML
  *
  * @global array The localization of the plugins.
  *
  * @since 1.6
  */
-function Pageparams_templateSelectbox($page)
+function Pageparams_templateSelectbox(array $page)
 {
     global $plugin_tx;
 
@@ -266,22 +209,19 @@ function Pageparams_templateSelectbox($page)
  * @param string $default  Default value of the redirect.
  * @param bool   $disabled Whether the SELECT element is initially disabled.
  *
- * @return string (X)HTML
+ * @return string HTML
  *
- * @global array The paths of system files and folders.
  * @global array The localization of the plugins.
  *
  * @since 1.6
  */
 function Pageparams_linkList($default, $disabled)
 {
-    global $pth, $plugin_tx;
+    global $plugin_tx;
 
-    include_once $pth['folder']['classes'] . 'Pages.php';
-    $pages = new XH_Pages();
+    $pages = new XH\Pages();
     $disabled = $disabled ? ' disabled="disabled"' : '';
-    $onchange = ' onchange="PAGEPARAMS.onLinkListChange(this)"';
-    $o = '<select id="pageparams_linklist"' . $disabled . $onchange . '>';
+    $o = '<select id="pageparams_linklist"' . $disabled . '>';
     $links = $pages->linkList();
     array_unshift($links, array($plugin_tx['page_params']['quick_select'], ''));
     foreach ($links as $link) {
@@ -299,17 +239,16 @@ function Pageparams_linkList($default, $disabled)
  *
  * @param array $page Page data of the current page.
  *
- * @return string (X)HTML
+ * @return string HTML
  *
  * @global string The script name.
  * @global string The URL of the current page.
  * @global string Document fragment to insert into the HEAD element.
- * @global array  The localization of the core.
  * @global array  The localization of the plugins.
  */
-function Pageparams_view($page)
+function Pageparams_view(array $page)
 {
-    global $sn, $su, $hjs, $tx, $plugin_tx;
+    global $sn, $su, $hjs, $plugin_tx;
 
     $hjs .= Pageparams_hjs();
 
@@ -323,24 +262,19 @@ function Pageparams_view($page)
      * heading
      */
     $view .= Pageparams_caption($lang['heading'], $lang['hint_heading']);
-    $view .= Pageparams_checkbox(
-        'show_heading', $page['show_heading'] == '1', array('heading')
-    );
-    $view .= tag('br');
+    $view .= Pageparams_checkbox('show_heading', $page['show_heading'] == '1');
+    $view .= '<br>';
     $view .= Pageparams_input(
         'heading', $page['heading'], $page['show_heading'] !== '1'
     );
-    $view .= tag('br') . "\n\t" . tag('hr');
+    $view .= '<br>' . "\n\t" . '<hr>';
 
     /*
      * published
      */
     $view .= Pageparams_caption($lang['published'], $lang['hint_published']);
-    $view .= Pageparams_checkbox(
-        'published', $page['published'] != '0',
-        array('expires', 'publication_date')
-    );
-    $view .= tag('br');
+    $view .= Pageparams_checkbox('published', $page['published'] != '0');
+    $view .= '<br>';
     $view .= "\n\t" . XH_helpIcon($lang['hint_publication_period']);
     $view .= "\n\t\t" . $plugin_tx['page_params']['publication_period'];
     $view .= Pageparams_scheduleInput(
@@ -350,8 +284,8 @@ function Pageparams_view($page)
     $view .= Pageparams_scheduleInput(
         'expires', $page['expires'], $page['published'] == '0'
     );
-    $view .= tag('br');
-    $view .= "\n\t" . tag('hr');
+    $view .= '<br>';
+    $view .= "\n\t" . '<hr>';
 
     /*
      * linked to menu
@@ -359,18 +293,16 @@ function Pageparams_view($page)
     $view .= Pageparams_caption(
         $lang['linked_to_menu'], $lang['hint_linked_to_menu']
     );
-    $view .= Pageparams_checkbox(
-        'linked_to_menu', $page['linked_to_menu'] !== '0', array()
-    );
-    $view .= tag('br');
-    $view .= "\n\t" . tag('hr');
+    $view .= Pageparams_checkbox('linked_to_menu', $page['linked_to_menu'] !== '0');
+    $view .= '<br>';
+    $view .= "\n\t" . '<hr>';
 
     /*
      * template chooser
      */
     $view .= Pageparams_caption($lang['template'], $lang['hint_template'])
-        . Pageparams_templateSelectbox($page) . tag('br');
-    $view .= "\n\t" . tag('hr');
+        . Pageparams_templateSelectbox($page) . '<br>';
+    $view .= "\n\t" . '<hr>';
 
     /*
      * last edit
@@ -381,7 +313,7 @@ function Pageparams_view($page)
         $view .= "\n\t\t" . '&nbsp;&nbsp;(' . $lang['last_edit'] . ' '
             . XH_formatDate($page['last_edit']) . ')';
     }
-    $view .= "\n\t" . tag('hr');
+    $view .= "\n\t" . '<hr>';
 
     /*
      * header_location
@@ -394,16 +326,16 @@ function Pageparams_view($page)
         'header_location', $page['header_location'],
         (int) $page['use_header_location'] === 0
     );
-    $view .= tag('br');
+    $view .= '<br>';
     $view .= Pageparams_linkList(
         $page['header_location'], (int) $page['use_header_location'] === 0
     );
-    $view .= tag('br') . "\n\t";
+    $view .= '<br>' . "\n\t";
 
-    $view .= "\n\t" . tag('input name="save_page_data" type="hidden"')
+    $view .= "\n\t" . '<input name="save_page_data" type="hidden">'
         . "\n\t" . '<div style="text-align: right">'
-        . "\n\t\t" . tag('input type="submit" value="' . $lang['submit'] . '"')
-        . tag('br')
+        . "\n\t\t" . '<input type="submit" value="' . $lang['submit'] . '">'
+        . '<br>'
         . "\n\t" . '</div>'
         . "\n" . '</form>';
     return $view;

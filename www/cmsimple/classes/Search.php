@@ -3,7 +3,7 @@
 /**
  * The search function of CMSimple_XH.
  *
- * PHP versions 4 and 5
+ * PHP version 5
  *
  * @category  CMSimple_XH
  * @package   XH
@@ -12,15 +12,14 @@
  * @copyright 1999-2009 Peter Harteg
  * @copyright 2009-2015 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @version   SVN: $Id: Search.php 1479 2015-01-25 20:05:20Z cmb69 $
+ * @version   SVN: $Id: Search.php 1626 2015-06-01 13:40:38Z cmb69 $
  * @link      http://cmsimple-xh.org/
  */
 
-
 /*
   ======================================
-  CMSimple_XH 1.6.7
-  2015-06-30
+  CMSimple_XH 1.7.0dev2
+  2015-07-12
   based on CMSimple version 3.3 - December 31. 2009
   For changelog, downloads and information please see http://www.cmsimple-xh.com
   ======================================
@@ -35,6 +34,7 @@
   ======================================
  */
 
+namespace XH;
 
 /**
  * The search class.
@@ -46,7 +46,7 @@
  * @link     http://cmsimple-xh.org/
  * @since    1.6
  */
-class XH_Search
+class Search
 {
     /**
      * The search String.
@@ -55,7 +55,7 @@ class XH_Search
      *
      * @access protected
      */
-    var $searchString;
+    protected $searchString;
 
     /**
      * The search words.
@@ -64,16 +64,14 @@ class XH_Search
      *
      * @access protected
      */
-    var $words;
+    protected $words;
 
     /**
      * Constructs an instance.
      *
      * @param string $searchString String The search string.
-     *
-     * @return void
      */
-    function XH_Search($searchString)
+    public function __construct($searchString)
     {
         $this->searchString = $searchString;
     }
@@ -85,7 +83,7 @@ class XH_Search
      *
      * @access protected
      */
-    function getWords()
+    protected function getWords()
     {
         if (!isset($this->words)) {
             $words = explode(' ', $this->searchString);
@@ -93,8 +91,8 @@ class XH_Search
             foreach ($words as $word) {
                 $word = trim($word);
                 if ($word != '') {
-                    if (method_exists('Normalizer', 'normalize')) {
-                        $word = Normalizer::normalize($word);
+                    if (method_exists('\Normalizer', 'normalize')) {
+                        $word = \Normalizer::normalize($word);
                     }
                     $this->words[] = $word;
                 }
@@ -111,12 +109,15 @@ class XH_Search
      *
      * @global array The content of the pages.
      * @global array The configuration of the core.
+     *
+     * @access protected
+     *
+     * @todo Declare visibility.
      */
     function search()
     {
         global $c, $cf;
 
-        include_once UTF8 . '/stripos.php';
         $result = array();
         $words = $this->getWords();
         if (empty($words)) {
@@ -147,18 +148,16 @@ class XH_Search
      * @param string $pageIndex A page index.
      *
      * @return string
-     *
-     * @access protected
      */
-    function prepareContent($content, $pageIndex)
+    protected function prepareContent($content, $pageIndex)
     {
         global $s;
 
         $s = $pageIndex;
         $content = strip_tags(evaluate_plugincall($content));
         $s = -1;
-        if (method_exists('Normalizer', 'normalize')) {
-            $content = Normalizer::normalize($content);
+        if (method_exists('\Normalizer', 'normalize')) {
+            $content = \Normalizer::normalize($content);
         }
         // html_entity_decode() doesn't work for UTF-8 under PHP 4
         $decode = array(
@@ -176,11 +175,11 @@ class XH_Search
      *
      * @param int $count How often the search string was found.
      *
-     * @return string (X)HTML.
+     * @return string HTML
      *
      * @global array The localization of the core.
      */
-    function foundMessage($count)
+    protected function foundMessage($count)
     {
         global $tx;
 
@@ -202,7 +201,7 @@ class XH_Search
     /**
      * Returns the search results view.
      *
-     * @return string (X)HTML
+     * @return string HTML
      *
      * @global array  The headings of the pages.
      * @global array  The URLs of the pages.
@@ -210,7 +209,7 @@ class XH_Search
      * @global array  The localization of the core.
      * @global object The page data router.
      */
-    function render()
+    public function render()
     {
         global $h, $u, $sn, $tx, $pd_router;
 

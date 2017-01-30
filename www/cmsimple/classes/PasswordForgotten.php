@@ -3,16 +3,18 @@
 /**
  * Handling of password forgotten functionality.
  *
- * PHP versions 4 and 5
+ * PHP version 5
  *
  * @category  CMSimple_XH
  * @package   XH
  * @author    The CMSimple_XH developers <devs@cmsimple-xh.org>
  * @copyright 2013-2015 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @version   SVN: $Id: PasswordForgotten.php 1479 2015-01-25 20:05:20Z cmb69 $
+ * @version   SVN: $Id: PasswordForgotten.php 1666 2015-07-03 00:04:26Z cmb69 $
  * @link      http://cmsimple-xh.org/
  */
+
+namespace XH;
 
 /**
  * The password forgotten handling class.
@@ -24,21 +26,21 @@
  * @link     http://cmsimple-xh.org/
  * @since    1.6
  */
-class XH_PasswordForgotten
+class PasswordForgotten
 {
     /**
      * The status of the password forgotten procedure.
      *
      * @var string
      */
-    var $status = '';
+    protected $status = '';
 
     /**
      * Dispatches according to the request.
      *
      * @return void
      */
-    function dispatch()
+    public function dispatch()
     {
         if (isset($_POST['xh_email'])) {
             $this->submit();
@@ -54,12 +56,12 @@ class XH_PasswordForgotten
      * @return void
      *
      * @global string The page title.
-     * @global string The generated (X)HTML.
+     * @global string The generated HTML.
      * @global string The script name.
      * @global array  The localization of the core.
      * @global string JS for the onload attribute of the BODY element.
      */
-    function render()
+    protected function render()
     {
         global $title, $o, $sn, $tx, $onload;
 
@@ -76,8 +78,8 @@ class XH_PasswordForgotten
             $o .= '<p>' . $tx['password_forgotten']['request'] . '</p>'
             . '<form name="xh_forgotten" action="' . $sn . '?&function=forgotten"'
             . ' method="post">'
-            . tag('input type="text" name="xh_email"')
-            . tag('input type="submit" class="submit" value="Send Reminder"')
+            . '<input type="text" name="xh_email">'
+            . '<input type="submit" class="submit" value="Send Reminder">'
             . '</form>';
             $onload .= 'document.forms[\'xh_forgotten\'].elements[\'xh_email\']'
                 . '.focus();';
@@ -92,6 +94,8 @@ class XH_PasswordForgotten
      * @return string
      *
      * @global array The configuration of the core.
+     *
+     * @todo Declare visibility.
      */
     function mac($previous = false)
     {
@@ -111,6 +115,8 @@ class XH_PasswordForgotten
      * @param string $mac A MAC.
      *
      * @return bool
+     *
+     * @todo Declare visibility.
      */
     function checkMac($mac)
     {
@@ -123,25 +129,25 @@ class XH_PasswordForgotten
      *
      * @return void
      *
-     * @global array  The paths of system files and folders.
      * @global array  The configuration of the core.
      * @global array  The localization of the core.
      * @global string LI elements to be emitted as error messages.
      */
-    function submit()
+    protected function submit()
     {
-        global $pth, $cf, $tx, $e;
+        global $cf, $tx, $e;
 
         if ($_POST['xh_email'] == $cf['security']['email']) {
             $to = $cf['security']['email'];
-            $subject = $tx['title']['password_forgotten'];
             $message = $tx['password_forgotten']['email1_text'] . "\r\n"
                 . '<' . CMSIMPLE_URL . '?&function=forgotten&xh_code='
                 . $this->mac() . '>';
-            $headers = 'From: ' . $to;
-            include_once $pth['folder']['classes'] . 'Mailform.php';
-            $mailform = new XH_Mailform();
-            $ok = $mailform->sendMail($to, $subject, $message, $headers);
+            $mail = new Mail();
+            $mail->setTo($to);
+            $mail->setSubject($tx['title']['password_forgotten']);
+            $mail->setMessage($message);
+            $mail->addHeader('From', $to);
+            $ok = $mail->send();
             if ($ok) {
                 $this->status = 'sent';
             } else {
@@ -164,19 +170,20 @@ class XH_PasswordForgotten
      * @global array  The configuration of the core.
      * @global array  The localization of the core.
      */
-    function reset()
+    protected function reset()
     {
         global $xh_hasher, $pth, $cf, $tx;
 
-        $password = bin2hex($xh_hasher->get_random_bytes(8));
-        $hash = $xh_hasher->HashPassword($password);
+        $password = bin2hex($xh_hasher->getRandomBytes(8));
+        $hash = $xh_hasher->hashPassword($password);
         $to = $cf['security']['email'];
-        $subject = $tx['title']['password_forgotten'];
         $message = $tx['password_forgotten']['email2_text'] . ' ' . $password;
-        $headers = 'From: ' . $to;
-        include_once $pth['folder']['classes'] . 'Mailform.php';
-        $mailform = new XH_Mailform();
-        $sent = $mailform->sendMail($to, $subject, $message, $headers);
+        $mail = new Mail();
+        $mail->setTo($to);
+        $mail->setSubject($tx['title']['password_forgotten']);
+        $mail->setMessage($message);
+        $mail->addHeader('From', $to);
+        $sent = $mail->send();
         if ($sent) {
             if (!$this->saveNewPassword($hash)) {
                 e('cntsave', 'config', $pth['file']['config']);
@@ -197,7 +204,7 @@ class XH_PasswordForgotten
      *
      * @global array The paths of system files and folders.
      */
-    function saveNewPassword($hash)
+    protected function saveNewPassword($hash)
     {
         global $pth;
 

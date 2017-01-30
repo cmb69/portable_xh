@@ -3,7 +3,7 @@
 /**
  * Template functions.
  *
- * PHP versions 4 and 5
+ * PHP version 5
  *
  * @category  CMSimple_XH
  * @package   XH
@@ -12,14 +12,14 @@
  * @copyright 1999-2009 Peter Harteg
  * @copyright 2009-2015 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @version   SVN: $Id: tplfuncs.php 1657 2015-06-26 15:18:45Z cmb69 $
+ * @version   SVN: $Id: tplfuncs.php 1656 2015-06-25 08:42:58Z manu37 $
  * @link      http://cmsimple-xh.org/
  */
 
 /**
  * Renders the prev link.
  *
- * @return string (X)HTML.
+ * @return string HTML
  *
  * @global string The script name.
  * @global array  The page URLs.
@@ -32,7 +32,7 @@ function XH_renderPrevLink()
 
     $index = XH_findPreviousPage();
     if ($index !== false) {
-        return tag('link rel="prev" href="' . $sn . '?' . $u[$index] . '"');
+        return '<link rel="prev" href="' . $sn . '?' . $u[$index] . '">';
     } else {
         return '';
     }
@@ -41,7 +41,7 @@ function XH_renderPrevLink()
 /**
  * Renders the next link.
  *
- * @return string (X)HTML.
+ * @return string HTML
  *
  * @global string The script name.
  * @global array  The page URLs.
@@ -54,7 +54,7 @@ function XH_renderNextLink()
 
     $index = XH_findNextPage();
     if ($index !== false) {
-        return tag('link rel="next" href="' . $sn . '?' . $u[$index] . '"');
+        return '<link rel="next" href="' . $sn . '?' . $u[$index] . '">';
     } else {
         return '';
     }
@@ -63,13 +63,13 @@ function XH_renderNextLink()
 /**
  * Returns the complete HEAD element.
  *
- * @return string The (X)HTML.
+ * @return string HTML
  *
  * @global string The page title.
  * @global array  The configuration of the core.
  * @global array  The paths of system files and folders.
  * @global array  The localization of the core.
- * @global string (X)HTML to be inserted to the HEAD Element.
+ * @global string HTML to be inserted to the HEAD Element.
  */
 function head()
 {
@@ -77,34 +77,28 @@ function head()
 
     $t = XH_title($cf['site']['title'], $title);
     $t = '<title>' . strip_tags($t) . '</title>' . "\n";
-    foreach (array_merge($cf['meta'], $tx['meta']) as $i => $k) {
+    foreach (array_keys(array_merge($cf['meta'], $tx['meta'])) as $i) {
         $t .= meta($i);
     }
-    $t = tag('meta http-equiv="content-type" content="text/html;charset=UTF-8"')
+    $t = '<meta http-equiv="content-type" content="text/html;charset=UTF-8">'
         . "\n" . $t;
     $plugins = implode(', ', XH_plugins());
     return $t
-        . tag(
-            'meta name="generator" content="' . CMSIMPLE_XH_VERSION . ' '
-            . CMSIMPLE_XH_BUILD . ' - www.cmsimple-xh.org"'
-        ) . "\n"
+        . '<meta name="generator" content="' . CMSIMPLE_XH_VERSION . ' '
+        . CMSIMPLE_XH_BUILD . ' - www.cmsimple-xh.org">' . "\n"
         . '<!-- plugins: ' . $plugins . ' -->' . "\n"
         . XH_renderPrevLink() . XH_renderNextLink()
-        . tag(
-            'link rel="stylesheet" href="' . $pth['file']['corestyle']
-            . '" type="text/css"'
-        ) . "\n"
-        . tag(
-            'link rel="stylesheet" href="' . $pth['file']['stylesheet']
-            . '" type="text/css"'
-        ) . "\n"
+        . '<link rel="stylesheet" href="' . $pth['file']['corestyle']
+        . '" type="text/css">' . "\n"
+        . '<link rel="stylesheet" href="' . $pth['file']['stylesheet']
+        . '" type="text/css">' . "\n"
         . $hjs;
 }
 
 /**
  * Returns the language dependend site title.
  *
- * @return string The (X)HTML.
+ * @return string HTML
  *
  * @global array The localization of the core.
  */
@@ -119,7 +113,7 @@ function sitename()
 /**
  * Returns the global site title.
  *
- * @return string The (X)HTML.
+ * @return string HTML
  *
  * @global array The configuration of the core.
  */
@@ -134,7 +128,7 @@ function pagename()
 /**
  * Returns the onload attribute for the body element.
  *
- * @return string The (X)HTML.
+ * @return string HTML
  *
  * @global string JavaScript for the onload attribute of the BODY element.
  */
@@ -153,9 +147,8 @@ function onload()
  * @param int      $end   The menu level to end with.
  * @param callable $li    A callback that actually creates the view.
  *
- * @return string The (X)HTML.
+ * @return string HTML
  *
- * @global array The content of the pages.
  * @global int   The number of pages.
  * @global int   The index of the current page.
  * @global array The menu levels of the pages.
@@ -163,7 +156,7 @@ function onload()
  */
 function toc($start = null, $end = null, $li = 'li')
 {
-    global $c, $cl, $s, $l, $cf;
+    global $cl, $s, $l, $cf;
 
     if (isset($start)) {
         if (!isset($end)) {
@@ -216,16 +209,11 @@ function toc($start = null, $end = null, $li = 'li')
  * @param array $ta The indexes of the pages.
  * @param mixed $st The menu level to start with or the type of menu.
  *
- * @return string The (X)HTML.
- *
- * @global array The paths of system files and folders.
+ * @return string HTML
  */
-function li($ta, $st)
+function li(array $ta, $st)
 {
-    global $pth;
-
-    include_once $pth['folder']['classes'] . 'Menu.php';
-    $li = new XH_Li();
+    $li = new XH\Li();
     return $li->render($ta, $st);
 }
 
@@ -240,7 +228,6 @@ function li($ta, $st)
  *
  * @return void
  *
- * @global array The paths of system files and folders.
  * @global int   The number of pages.
  * @global int   The current page index.
  * @global array The configuration of the core.
@@ -252,10 +239,9 @@ function li($ta, $st)
  */
 function XH_buildHc()
 {
-    global $pth, $cl, $s, $cf, $si, $hc, $hl;
+    global $cl, $s, $cf, $si, $hc, $hl;
 
-    include_once $pth['folder']['classes'] . 'Pages.php';
-    $pages = new XH_Pages();
+    $pages = new XH\Pages();
     $si = -1;
     $hc = array();
     for ($i = 0; $i < $cl; $i++) {
@@ -275,7 +261,7 @@ function XH_buildHc()
 /**
  * Returns the search form.
  *
- * @return string The (X)HTML.
+ * @return string HTML
  *
  * @global string The script name.
  * @global array  The localization of the core.
@@ -286,15 +272,11 @@ function searchbox()
 
     return '<form action="' . $sn . '" method="get">' . "\n"
         . '<div id="searchbox">' . "\n"
-        . tag(
-            'input type="text" class="text" name="search" title="'
-            . $tx['search']['label'] . '" size="12"'
-        ) . "\n"
-        . tag('input type="hidden" name="function" value="search"') . "\n" . ' '
-        . tag(
-            'input type="submit" class="submit" value="'
-            . $tx['search']['button'] . '"'
-        ) . "\n"
+        . '<input type="text" class="text" name="search" title="'
+        . $tx['search']['label'] . '" size="12">' . "\n"
+        . '<input type="hidden" name="function" value="search">' . "\n" . ' '
+        . '<input type="submit" class="submit" value="'
+        . $tx['search']['button'] . '">' . "\n"
         . '</div>' . "\n" . '</form>' . "\n";
 }
 
@@ -302,7 +284,7 @@ function searchbox()
 /**
  * Returns the sitemap link.
  *
- * @return string The (X)HTML.
+ * @return string HTML
  */
 function sitemaplink()
 {
@@ -313,7 +295,7 @@ function sitemaplink()
 /**
  * Returns the link for the print view.
  *
- * @return string The (X)HTML.
+ * @return string HTML
  *
  * @global array  The localization of the core.
  */
@@ -357,7 +339,7 @@ function XH_printUrl()
 /**
  * Returns the link to the mail form.
  *
- * @return string The (X)HTML.
+ * @return string HTML
  *
  * @global array The configuration of the core.
  */
@@ -370,34 +352,20 @@ function mailformlink()
     }
 }
 
-
-/**
- * Returns the link to the guestbook.
- *
- * @return string The (X)HTML.
- *
- * @deprecated since 1.5.4
- */
-function guestbooklink()
-{
-    trigger_error(
-        'Function ' . __FUNCTION__ . '() is deprecated', E_USER_DEPRECATED
-    );
-    if (function_exists('gblink')) {
-        return gblink();
-    }
-}
-
-
 /**
  * Returns the link to the login form.
  *
- * @return string The (X)HTML.
+ * @global int    The index of the requested page.
+ * @global array  The localization of the core.
+ *
+ * @return string HTML
  */
 function loginlink()
 {
-    if (function_exists('lilink')) {
-        return lilink();
+    global $s, $tx;
+
+    if (!XH_ADM) {
+        return a($s > -1 ? $s : 0, '&amp;login') . $tx['menu']['login'] . '</a>';
     }
 }
 
@@ -408,7 +376,7 @@ function loginlink()
  * @param bool $br   Whether to emit a br element between text and date.
  * @param int  $hour The time correction in hours.
  *
- * @return string The (X)HTML.
+ * @return string HTML
  *
  * @global array The localization of the core.
  * @global array The paths of system files and folders.
@@ -419,94 +387,39 @@ function lastupdate($br = null, $hour = null)
 
     $t = $tx['lastupdate']['text'] . ':';
     if (!(isset($br))) {
-        $t .= tag('br');
+        $t .= '<br>';
     } else {
         $t .= ' ';
     }
-    return $t
-        . XH_formatDate(
-            filemtime($pth['file']['content']) + (isset($hour) ? $hour * 3600 : 0)
-        );
+    $time = filemtime($pth['file']['content']) + (isset($hour) ? $hour * 3600 : 0);
+    return $t . '<time datetime="' . date('c', $time) . '">'
+        . XH_formatDate($time)
+        . '</time>';
 }
-
-
-/**
- * Returns the link to the copyright and license informations.
- *
- * @return string The (X)HTML.
- *
- * @global array  The configuration of the core.
- * @global string The script name.
- *
- * @deprecated since 1.5.8
- */
-function legallink()
-{
-    global $cf, $sn;
-
-    trigger_error(
-        'Function ' . __FUNCTION__ . '() is deprecated', E_USER_DEPRECATED
-    );
-    return '<a href="' . $sn . '?' . uenc($cf['menu']['legal']) . '">'
-        . $cf['menu']['legal'] . '</a>';
-}
-
 
 /**
  * Returns the locator (breadcrumb navigation).
  *
- * @return string The (X)HTML.
- *
- * @global string The title of the page.
- * @global array  The headings of the pages.
- * @global int    The index of the current page.
- * @global string The requested special function.
- * @global array  The content of the pages.
- * @global array  The menu levels of the pages.
- * @global array  The localization of the core.
- * @global array  The configuration of the core.
- * @global int    The index of the first published page.
+ * @return string HTML
  */
 function locator()
 {
-    global $title, $h, $s, $f, $c, $l, $tx, $cf, $_XH_firstPublishedPage;
-
-    if (hide($s) && $cf['show_hidden']['path_locator'] != 'true') {
-        return $h[$s];
-    }
-    if ($s == $_XH_firstPublishedPage) {
-        return $h[$s];
-    } elseif ($title != '' && (!isset($h[$s]) || $h[$s] != $title)) {
-        $t = $title;
-    } elseif ($f != '') {
-        return ucfirst($f);
-    } elseif ($s > $_XH_firstPublishedPage) {
-        $t = '';
-        $tl = $l[$s];
-        if ($tl > 1) {
-            for ($i = $s - 1; $i >= $_XH_firstPublishedPage; $i--) {
-                if ($l[$i] < $tl) {
-                    $t = a($i, '') . $h[$i] . '</a> &gt; ' . $t;
-                    $tl--;
-                }
-                if ($tl < 2) {
-                    break;
-                }
-            }
+    $html = '';
+    $breadcrumbs = XH_getLocatorModel();
+    $last = count($breadcrumbs) - 1;
+    foreach ($breadcrumbs as $i => $breadcrumb) {
+        list($title, $url) = $breadcrumb;
+        if ($i > 0) {
+            $html .= ' &gt; ';
         }
-    } else {
-        return '&nbsp;';
+        if (isset($url) && $i < $last) {
+            $html .= '<a href="' . $url . '">' . $title . '</a>';
+        } else {
+            $html .= $title;
+        }
     }
-    if ($cf['locator']['show_homepage'] == 'true') {
-        return a($_XH_firstPublishedPage, '') . $tx['locator']['home']
-            . '</a> &gt; ' . $t
-            . (($s > $_XH_firstPublishedPage && $h[$s] == $title) ? $h[$s] : '');
-    } else {
-        return $t
-            . (($s > $_XH_firstPublishedPage && $h[$s] == $title) ? $h[$s] : '');
-    }
+    return $html;
 }
-
 
 /**
  * Returns the admin menu.
@@ -514,29 +427,32 @@ function locator()
  * Returns an empty string since XH 1.5,
  * as the admin menu is automatically inserted to the template.
  *
- * @return string The (X)HTML.
+ * @return string HTML
  *
  * @see XH_adminMenu()
+ *
+ * @deprecated since 1.7. Just remove from the template.
  */
 function editmenu()
 {
+    trigger_error('Function editmenu() is deprecated', E_USER_DEPRECATED);
+
     return '';
 }
 
 /**
  * Returns the contents area.
  *
- * @return string (X)HTML.
+ * @return string HTML
  *
  * @global int    The index of the current page.
  * @global string The output of the contents area.
  * @global array  The content of the pages.
  * @global bool   Whether edit mode is active.
- * @global array  The configuration of the core.
  */
 function content()
 {
-    global $s, $o, $c, $edit,  $cf;
+    global $s, $o, $c, $edit;
 
     if (!($edit && XH_ADM) && $s > -1) {
         if (isset($_GET['search'])) {
@@ -554,7 +470,7 @@ function content()
 /**
  * Returns the submenu of a page.
  *
- * @return string (X)HTML.
+ * @return string HTML
  *
  * @global int   The index of the current page.
  * @global int   The number of pages.
@@ -594,7 +510,7 @@ function submenu()
 /**
  * Returns a link to the previous page.
  *
- * @return string (X)HTML.
+ * @return string HTML
  *
  * @global array The localization of the core.
  *
@@ -613,7 +529,7 @@ function previouspage()
 /**
  * Returns a link to the next page
  *
- * @return string (X)HTML.
+ * @return string HTML
  *
  * @global array The localization of the core.
  *
@@ -632,24 +548,26 @@ function nextpage()
 /**
  * Returns a link to the top of the page.
  *
- * To work, an anchor TOP has to be defined in the template.
+ * To work, an appropriate ID has to be defined in the template.
  *
- * @return string (X)HTML.
+ * @param string $id An (X)HTML ID.
+ *
+ * @return string HTML
  *
  * @global array The localization of the core.
  */
-function top()
+function top($id = 'TOP')
 {
     global $tx;
 
-    return '<a href="#TOP">' . $tx['navigator']['top'] . '</a>';
+    return '<a href="#' . $id . '">' . $tx['navigator']['top'] . '</a>';
 }
 
 
 /**
  * Returns the language menu.
  *
- * @return string (X)HTML.
+ * @return string HTML
  *
  * @global array  The paths of system files and folders.
  * @global array  The configuration of the core.
@@ -680,10 +598,8 @@ function languagemenu()
             : $lang;
 
         $el = file_exists($img)
-            ? tag(
-                'img src="' . $img . '" alt="' . $title . '" title="'
-                . $title . '" class="flag"'
-            )
+            ? '<img src="' . $img . '" alt="' . $title . '" title="'
+                . $title . '" class="flag">'
             : $title;
         $t .= '<a href="' . $url . '">' . $el . '</a> ';
     }
@@ -713,6 +629,30 @@ function XH_emergencyTemplate()
     . loginlink()
     . '</body></html>';
     XH_exit();
+}
+
+/**
+ * Creates the link to the generated page "Site/CMS Info".
+ *
+ * One of the 3 functions to create "Site/CMS Info".
+ *
+ * @param string $linktext The text to be displayed as the link in the template.
+ *
+ * @return string The link.
+ *
+ * @global string The site (script) name.
+ *
+ * @access public
+ *
+ * @since 1.7
+ */
+function poweredByLink($linktext = '')
+{
+    global $sn;
+
+    $linktext = $linktext ? $linktext : 'Site/CMS Info';
+    return '<a href="' . $sn . '?' . uenc('site/cms info') . '">'
+        . $linktext . '</a>';
 }
 
 ?>

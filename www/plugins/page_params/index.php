@@ -7,7 +7,7 @@
  * visibility of the page.
  * index.php is called by pluginloader and manipulates the respective CMSimple-data.
  *
- * PHP versions 4 and 5
+ * PHP version 5
  *
  * @category  CMSimple_XH
  * @package   Pageparams
@@ -16,7 +16,7 @@
  * @author    The CMSimple_XH developers <devs@cmsimple-xh.org>
  * @copyright 2009-2015 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @version   SVN: $Id: index.php 1479 2015-01-25 20:05:20Z cmb69 $
+ * @version   SVN: $Id: index.php 1556 2015-04-21 20:36:52Z cmb69 $
  * @link      http://cmsimple-xh.org/
  */
 
@@ -39,14 +39,13 @@ if (!defined('PLUGINLOADER_VERSION')) {
  * @return void
  *
  * @global int    The preliminary index of the current page.
- * @global string The script name.
  * @global array  The content of the pages.
  *
  * @since 1.6
  */
-function Pageparams_handleRelocation($index, $data)
+function Pageparams_handleRelocation($index, array $data)
 {
-    global $pd_s, $sn, $c;
+    global $pd_s, $c;
 
     $location = $data['header_location'];
     if ((int) $data['use_header_location'] > 0 && trim($location) !== '' ) {
@@ -67,16 +66,12 @@ function Pageparams_handleRelocation($index, $data)
  *
  * @return bool
  *
- * @global array The localization of the plugins.
- *
  * @author Jerry Jakobsfeld <mail@simplesolutions.dk>
  *
  * @since 1.6
  */
-function Pageparams_isPublished($pd_page)
+function Pageparams_isPublished(array $pd_page)
 {
-    global $plugin_tx;
-
     if ($pd_page['published'] == '0') {
         return false;
     }
@@ -118,8 +113,7 @@ function Pageparams_switchTemplate($n)
 {
     global $pth, $cf, $pd_router;
 
-    include_once $pth['folder']['classes'] . 'Pages.php';
-    $pages = new XH_Pages();
+    $pages = new XH\Pages();
     while (true) {
         $data = $pd_router->find_page($n);
         if (isset($data['template']) && trim($data['template']) != ''
@@ -191,8 +185,9 @@ if (!$edit && $pd_current) {
     ) {
         $temp = '<div id = "pp_last_update">'
             . $plugin_tx['page_params']['last_edit'] .  ' '
+            . '<time datetime="' . date('c', $pd_current['last_edit']) . '">'
             . XH_formatDate($pd_current['last_edit'])
-            . '</div>';
+            . '</time></div>';
         if ($pd_current['show_last_edit'] == 1) {
             $c[$pd_s] .= $temp;
         } else {

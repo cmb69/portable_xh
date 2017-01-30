@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @version $Id: init.php 1379 2014-09-21 19:47:28Z cmb69 $
+ * @version $Id: init.php 1518 2015-03-23 00:43:14Z cmb69 $
  */
 
 // utf-8-marker: äöüß
@@ -35,7 +35,7 @@
 
         //default filebrowser
         $_SESSION['tinymce_fb_callback'] = 'wrFilebrowser';
-        $url =  CMSIMPLE_ROOT . 'plugins/filebrowser/editorbrowser.php?editor=tinymce&prefix=' . CMSIMPLE_BASE . '&base=./';
+        $url =  CMSIMPLE_ROOT . '?filebrowser=editorbrowser&editor=tinymce&prefix=' . CMSIMPLE_BASE;
         $script = file_get_contents(dirname(__FILE__) . '/filebrowser.js');
         $script = str_replace('%URL%',  $url, $script);
         return $script;

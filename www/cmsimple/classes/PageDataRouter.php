@@ -2,7 +2,7 @@
 /**
  * The page data facade.
  *
- * PHP versions 4 and 5
+ * PHP version 5
  *
  * @category  CMSimple_XH
  * @package   XH
@@ -11,9 +11,11 @@
  * @copyright 1999-2009 Peter Harteg
  * @copyright 2009-2015 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @version   SVN: $Id: PageDataRouter.php 1479 2015-01-25 20:05:20Z cmb69 $
+ * @version   SVN: $Id: PageDataRouter.php 1553 2015-04-21 20:30:40Z cmb69 $
  * @link      http://cmsimple-xh.org/
  */
+
+namespace XH;
 
 /**
  * Handles all the data that has to be collected
@@ -26,34 +28,28 @@
  * @license  http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
  * @link     http://cmsimple-xh.org/
  */
-class XH_PageDataRouter
+class PageDataRouter
 {
     /**
      * The model.
      *
      * @var object
-     *
-     * @access protected
      */
-    var $model;
+    protected $model;
 
     /**
      * The page data of the current page.
      *
      * @var array
-     *
-     * @access protected
      */
-    var $current_page;
+    protected $current_page;
 
     /**
      * The currently registered interests.
      *
      * @var array
-     *
-     * @access protected
      */
-    var $currentInterests = array();
+    protected $currentInterests = array();
 
     /**
      * Constructs an instance.
@@ -62,14 +58,11 @@ class XH_PageDataRouter
      * @param array $pageDataFields The page data fields.
      * @param array $tempData       The most recently deleted page data.
      * @param array $pageData       The page data.
-     *
-     * @return void
-     *
-     * @access public
      */
-    function XH_PageDataRouter($h, $pageDataFields, $tempData, $pageData)
-    {
-        $this->model = new XH_PageDataModel(
+    public function __construct(
+        array $h, array $pageDataFields, array $tempData, array $pageData
+    ) {
+        $this->model = new PageDataModel(
             $h, $pageDataFields, $tempData, $pageData
         );
     }
@@ -81,7 +74,7 @@ class XH_PageDataRouter
      *
      * @since 1.6
      */
-    function storedFields()
+    public function storedFields()
     {
         return $this->model->storedFields();
     }
@@ -93,11 +86,9 @@ class XH_PageDataRouter
      *
      * @return array
      *
-     * @access public
-     *
      * @since 1.6
      */
-    function getCurrentInterests()
+    public function getCurrentInterests()
     {
         return $this->currentInterests;
     }
@@ -108,11 +99,9 @@ class XH_PageDataRouter
      * @param string $field The name of the page data field.
      *
      * @return void
-     *
-     * @access public
      */
 // @codingStandardsIgnoreStart
-    function add_interest($field)
+    public function add_interest($field)
     {
 // @codingStandardsIgnoreEnd
         if (!in_array($field, $this->model->params)) {
@@ -129,11 +118,9 @@ class XH_PageDataRouter
      *
      * @return void
      *
-     * @access public
-     *
      * @since 1.6
      */
-    function removeInterest($field)
+    public function removeInterest($field)
     {
         $this->model->removeParam($field);
         $n = array_search($field, $this->currentInterests);
@@ -147,16 +134,27 @@ class XH_PageDataRouter
      *
      * @param string $tab_name The title of the tab.
      * @param string $tab_view The filename of the view.
+     * @param string $cssClass A CSS class name.
      *
      * @return void
-     *
-     * @access public
      */
 // @codingStandardsIgnoreStart
-    function add_tab($tab_name, $tab_view)
+    public function add_tab($tab_name, $tab_view, $cssClass = null)
     {
 // @codingStandardsIgnoreEnd
-        $this->model->addTab($tab_name, $tab_view);
+        $this->model->addTab($tab_name, $tab_view, $cssClass);
+    }
+
+    /**
+     * Replaces the existing page data.
+     *
+     * @param array $data The new page data.
+     *
+     * @return bool Whether the page data have been refreshed.
+     */
+    public function refresh(array $data = null)
+    {
+        return $this->model->refresh($data);
     }
 
     /**
@@ -165,11 +163,9 @@ class XH_PageDataRouter
      * @param int $id The page index.
      *
      * @return array
-     *
-     * @access public
      */
 // @codingStandardsIgnoreStart
-    function find_page($id)
+    public function find_page($id)
     {
 // @codingStandardsIgnoreEnd
         $page = $this->model->findKey($id);
@@ -180,11 +176,9 @@ class XH_PageDataRouter
      * Returns the page data of all pages.
      *
      * @return array
-     *
-     * @access public
      */
 // @codingStandardsIgnoreStart
-    function find_all()
+    public function find_all()
     {
 // @codingStandardsIgnoreEnd
         return $this->model->data;
@@ -196,11 +190,9 @@ class XH_PageDataRouter
      * @param array $params Default data of the page.
      *
      * @return array
-     *
-     * @access public
      */
 // @codingStandardsIgnoreStart
-    function new_page($params = array())
+    public function new_page(array $params = array())
     {
 // @codingStandardsIgnoreEnd
         $page = $this->model->create($params);
@@ -214,11 +206,9 @@ class XH_PageDataRouter
      *
      * @return void
      *
-     * @access public
-     *
      * @since 1.6
      */
-    function appendNewPage($params = array())
+    public function appendNewPage(array $params = array())
     {
         $pageData = $this->model->create($params);
         $this->model->appendPage($pageData);
@@ -231,10 +221,8 @@ class XH_PageDataRouter
      * @param int   $index The index of the page.
      *
      * @return bool
-     *
-     * @access public
      */
-    function insert($pages, $index)
+    public function insert(array $pages, $index)
     {
         return $this->model->replace($pages, $index);
     }
@@ -245,10 +233,8 @@ class XH_PageDataRouter
      * @param int $key The index of the page.
      *
      * @return bool
-     *
-     * @access public
      */
-    function destroy($key)
+    public function destroy($key)
     {
         return $this->model->delete($key);
     }
@@ -264,11 +250,9 @@ class XH_PageDataRouter
      * @param string $separator The list item separator.
      *
      * @return array
-     *
-     * @access public
      */
 // @codingStandardsIgnoreStart
-    function find_field_value($field, $value, $separator = null)
+    public function find_field_value($field, $value, $separator = null)
     {
 // @codingStandardsIgnoreEnd
         if ($separator) {
@@ -292,11 +276,9 @@ class XH_PageDataRouter
      * @param string $sep      The list item separator.
      *
      * @return array
-     *
-     * @access public
      */
 // @codingStandardsIgnoreStart
-    function find_field_value_sortkey($field, $value, $sortKey,
+    public function find_field_value_sortkey($field, $value, $sortKey,
         $sortFlag = null, $sep = null
     ) {
 // @codingStandardsIgnoreEnd
@@ -314,11 +296,9 @@ class XH_PageDataRouter
      * @param int   $index    The page index.
      *
      * @return bool
-     *
-     * @access public
      */
 // @codingStandardsIgnoreStart
-    function refresh_from_texteditor($headings, $index)
+    public function refresh_from_texteditor(array $headings, $index)
     {
 // @codingStandardsIgnoreEnd
         if (count($headings) == 0) {
@@ -338,7 +318,7 @@ class XH_PageDataRouter
              */
             $new_pages = array();
             $current_page = $this->find_page($index);
-            foreach ($headings as $key => $heading) {
+            foreach ($headings as $heading) {
                 $url = trim(xh_rmws(strip_tags($heading)));
                 $url = uenc($url);
 
@@ -388,76 +368,14 @@ class XH_PageDataRouter
     }
 
     /**
-     * Updates the page data according to changes from the menumanager plugin.
-     * Returns whether that succeeded.
-     *
-     * @param string $changes The changed page structure.
-     *
-     * @return bool
-     *
-     * @access public
-     *
-     * @todo Remove sometimes in the future.
-     */
-// @codingStandardsIgnoreStart
-    function refresh_from_menu_manager($changes)
-    {
-// @codingStandardsIgnoreEnd
-        $changes = explode(',', $changes);
-        /*
-         * Create an up-to-date page data array ...
-         */
-        $new_data = array();
-        /*
-         * index counter is needed for changed headings
-         */
-        $i = 0;
-        foreach ($changes as $temp) {
-            $infos = explode('^', $temp);
-            $old_position = $infos[0];
-            if ($old_position == 'New') {
-                /*
-                 * Page was added: create a new record
-                 * These informations are created by default
-                 */
-                $params = array();
-                $title = trim(strip_tags($infos[2]));
-                $url = uenc($title);
-                $params['url'] = $url;
-                $new_data[] = $this->new_page($params);
-            } else {
-                /*
-                 * Get the old record
-                 */
-                $new_data[] = $this->find_page($old_position);
-            }
-            if (isset($infos[3])) {
-                /*
-                 * if the heading has changed:
-                 * update 'url'
-                 */
-                $url = uenc(trim(strip_tags($infos[3])));
-                $new_data[$i]['url'] = $url;
-            }
-            $i++;
-        }
-        /*
-         * Replace the old data with the new array
-         */
-        return $this->model->refresh($new_data);
-    }
-
-    /**
      * Updates the page data of a single page and returns whether that succeeded.
      *
      * @param int   $s      The index of the page.
      * @param array $params The dictionary of fields to update.
      *
      * @return bool
-     *
-     * @access public
      */
-    function update($s, $params)
+    public function update($s, array $params)
     {
         $update_params = array();
         foreach ($params as $field => $update) {
@@ -479,12 +397,10 @@ class XH_PageDataRouter
      * @global string
      * @global int    The index of the first published page.
      *
-     * @return string  The (X)HTML.
-     *
-     * @access public
+     * @return string HTML
      */
 // @codingStandardsIgnoreStart
-    function create_tabs($s)
+    public function create_tabs($s)
     {
 // @codingStandardsIgnoreElse
         global $edit, $f, $o, $su, $_XH_firstPublishedPage;
@@ -499,7 +415,7 @@ class XH_PageDataRouter
             }
             $page = $this->find_page($pd_s);
             if ($pd_s > -1) {
-                $view_provider = new XH_PageDataView($page, $this->model->tabs);
+                $view_provider = new PageDataView($page, $this->model->tabs);
                 return $view_provider->tabs() . $view_provider->views();
             }
         }
@@ -516,7 +432,7 @@ class XH_PageDataRouter
      * @access protected
      */
 // @codingStandardsIgnoreStart
-    function keep_in_mind($pd_s)
+    protected function keep_in_mind($pd_s)
     {
 // @codingStandardsIgnoreEnd
         $page = $this->find_page($pd_s);
@@ -529,10 +445,8 @@ class XH_PageDataRouter
      * @return string The PHP tag.
      *
      * @since 1.6
-     *
-     * @access public
      */
-    function headAsPHP()
+    public function headAsPHP()
     {
         $flds = array();
         foreach ($this->model->params as $param) {
@@ -559,11 +473,9 @@ class XH_PageDataRouter
      *
      * @return string The PHP tag.
      *
-     * @access public
-     *
      * @since 1.6
      */
-    function pageAsPHP($id)
+    public function pageAsPHP($id)
     {
         $data = $this->find_page($id);
         $flds = array();

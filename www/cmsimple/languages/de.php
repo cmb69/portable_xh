@@ -15,6 +15,8 @@ $tx['template']['text3']="Text 3 für entsprechend vorbereitete Templates";
 $tx['urichar']['new']="ae|oe|ue|ss|Ae|Oe|Ue";
 $tx['urichar']['org']="ä|ö|ü|ß|Ä|Ö|Ü";
 
+$tx['action']['advanced_hide']="Weniger &hellip;";
+$tx['action']['advanced_show']="Mehr &hellip;";
 $tx['action']['backup']="sichern";
 $tx['action']['cancel']="Abbrechen";
 $tx['action']['delete']="löschen";
@@ -107,6 +109,7 @@ $tx['help']['language_default']="Die Hauptsprache der Website";
 $tx['help']['locator_show_homepage']="Angeklickt = Der Locator ('Sie sind hier') beginnt mit einen Link zur Startseite.";
 $tx['help']['mailform_captcha']="Angeklickt = CAPTCHA-Spamschutz im Kontakt-Formular aktiviert";
 $tx['help']['mailform_email']="Erst wenn eine E-Mail-Adresse eingegeben wird, ist das Kontakt-Formular verfügbar.";
+$tx['help']['mailform_lf_only']="Wenn der Mailversand nicht ordnungsgemäß funktioniert, versuchen Sie diese Option zu aktivieren.";
 $tx['help']['menu_color']="Nicht von CMSimple_XH Systemfunktionen genutzt";
 $tx['help']['menu_highlightcolor']="Nicht von CMSimple_XH Systemfunktionen genutzt";
 $tx['help']['menu_levels']="Die Seiten der Website können in bis zu 6 Menü-Ebenen angeordnet werden. 3 Ebenen sind die Voreinstellung.";
@@ -123,11 +126,11 @@ $tx['help']['security_email']="Die E-Mail-Adresse für die 'Kennwort vergessen'-
 $tx['help']['security_frame_options']="Ob Seiten Ihrer Website in Frames angezeigt werden dürfen: \"DENY\" bedeutet niemals, \"SAMEORIGIN\" bedeutet nur auf Seiten der selben Domain. Lassen sie die Einstellung leer, um die Darstellung in Frames zu erlauben; das ist allerdings aus Sicherheitsgründen nicht zu empfehlen.";
 $tx['help']['site_template']="Standard-Template für die Website";
 $tx['help']['site_timezone']="Normalerweise keine Einstellung erforderlich. Ab PHP 5.1 kann eine vom Server abweichende <a href=\"http://www.php.net/manual/de/timezones.php\">Zeitzone</a> eingeben werden (siehe http://php.net/manual/de/timezones.php).";
+$tx['help']['site_compat']="Benötigt die Website Funktionen, die in CMSimple_XH 1.7 entfernt wurden?";
 $tx['help']['title_format']="Das Format des Seitentitels (&lt;title&gt;) wie er normalerweise oben in den Seitenreitern des Browsers angezeigt wird.";
 $tx['help']['uri_seperator']="Das Zeichen, das die Namen von Seiten und Unterseiten in der URL trennt.";
 $tx['help']['uri_word_separator']="Das Zeichen, das Wörter in der URL trennt.";
 $tx['help']['uri_length']="Die URLs der Seiten werden ab dieser Länge abgeschnitten. Das könnte sich in einer zukünftigen Version ändern, so dass es das Beste ist, kürzere Seitenüberschriften zu verwenden (z.B. durch die Verwendung von Seite&rarr;Andere Seitenüberschrift).";
-$tx['help']['xhtml_endtags']="Anklicken wenn Sie XHTML-Ausgabe wünschen. Die für XHTML-Auszeichnungselemente erforderlichen Abschluss-Schrägstriche werden automatisch erzeugt.";
 
 $tx['help']['folders_userfiles']="Der Basisordner aller Benutzerdateien.";
 $tx['help']['folders_downloads']="Ein Unterordner der Benutzerdateien.";
@@ -267,6 +270,7 @@ $tx['syscheck']['fsockopen']="Funktion fsockopen verfügbar";
 $tx['syscheck']['locale_available']="Locale '%s' verfügbar";
 $tx['syscheck']['locale_default']="Standard-Locale aktiv";
 $tx['syscheck']['magic_quotes']="'Magic quotes runtime' aus";
+$tx['syscheck']['password']="Voreingestelltes Passwort geändert";
 $tx['syscheck']['phpversion']="PHP-Version ≥ %s";
 $tx['syscheck']['success']="OK";
 $tx['syscheck']['timezone']="Zeitzone gültig";
@@ -296,7 +300,7 @@ $tx['title']['password_forgotten']="Passwort vergessen";
 $tx['title']['phpinfo']="PHP-Info";
 $tx['title']['search']="Suchen";
 $tx['title']['settings']="Einstellungen";
-$tx['title']['sitemap']="Sitemap";
+$tx['title']['sitemap']="Inhaltsverzeichnis";
 $tx['title']['sysinfo']="System-Info";
 $tx['title']['userfiles']="Andere";
 $tx['title']['validate']="Links prüfen";
@@ -316,7 +320,5 @@ $tx['validate']['intfilok']="INTERNE VERLINKUNG AUF DATEI OK";
 $tx['validate']['intok']="INTERNE VERLINKUNG OK";
 $tx['validate']['mailto']="MAILTO VERLINKUNG";
 $tx['validate']['notxt']="KEIN TEXT IN VERLINKUNG";
-
-$tx['utf-8']['marker']="äöü";
 
 ?>

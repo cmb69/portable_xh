@@ -3,7 +3,7 @@
 /**
  * General functions.
  *
- * PHP versions 4 and 5
+ * PHP version 5
  *
  * @category  CMSimple_XH
  * @package   XH
@@ -12,15 +12,15 @@
  * @copyright 1999-2009 Peter Harteg
  * @copyright 2009-2015 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @version   SVN: $Id: functions.php 1652 2015-06-16 00:23:02Z cmb69 $
+ * @version   SVN: $Id: functions.php 1670 2015-07-04 16:57:06Z cmb69 $
  * @link      http://cmsimple-xh.org/
  */
 
 
 /*
   ======================================
-  CMSimple_XH 1.6.7
-  2015-06-30
+  CMSimple_XH 1.7.0dev2
+  2015-07-12
   based on CMSimple version 3.3 - December 31. 2009
   For changelog, downloads and information please see http://www.cmsimple-xh.org/
   ======================================
@@ -41,7 +41,7 @@
  *
  * @param string $u A URL.
  *
- * @return string The (X)HTML.
+ * @return string HTML
  */
 function geturl($u)
 {
@@ -60,7 +60,7 @@ function geturl($u)
  *
  * @param string $u A URL.
  *
- * @return string The (X)HTML.
+ * @return string HTML
  */
 function geturlwp($u)
 {
@@ -81,35 +81,6 @@ function geturlwp($u)
 }
 
 /**
- * Returns the code to display a photogallery.
- *
- * @param string $u Autogallery's installation folder.
- *
- * @global string The URL of the active page.
- *
- * @return string The (X)HTML.
- *
- * @deprecated since 1.5.4. Use a gallery plugin instead.
- */
-function autogallery($u)
-{
-    global $su;
-
-    trigger_error('Function autogallery() is deprecated', E_USER_DEPRECATED);
-
-    return preg_replace(
-        "/.*<!-- autogallery -->(.*)<!-- \/autogallery -->.*/is", '$1',
-        preg_replace(
-            "/(option value=\"\?)(p=)/is", '${1}' . $su . '&$2',
-            preg_replace(
-                "/(href=\"\?)/is", '${1}' . $su . '&amp;',
-                preg_replace("/(src=\")(\.)/is", '${1}' . $u . '$2', geturlwp($u))
-            )
-        )
-    );
-}
-
-/**
  * Returns a page heading.
  *
  * @param int $n The index of the page.
@@ -117,10 +88,14 @@ function autogallery($u)
  * @return string
  *
  * @see $h
+ *
+ * @deprecated since 1.7. Use $h instead.
  */
 function h($n)
 {
     global $h;
+
+    trigger_error('Function h() is deprecated', E_USER_DEPRECATED);
 
     return $h[$n];
 }
@@ -133,10 +108,14 @@ function h($n)
  * @return int
  *
  * @see $l
+ *
+ * @deprecated since 1.7. Use $l instead.
  */
 function l($n)
 {
     global $l;
+
+    trigger_error('Function l() is deprecated', E_USER_DEPRECATED);
 
     return $l[$n];
 }
@@ -144,7 +123,8 @@ function l($n)
 /**
  * Returns a text with CMSimple scripting evaluated.
  *
- * Scripts are evaluated in the global scope.
+ * Scripts are evaluated as if they were in the global scope, except that
+ * no new global variables can be defined (unless via $GLOBALS).
  *
  * @param string $__text   The text.
  * @param bool   $__compat Whether only last CMSimple script should be evaluated.
@@ -160,7 +140,6 @@ function evaluate_cmsimple_scripting($__text, $__compat = true)
 {
 // @codingStandardsIgnoreEnd
     extract($GLOBALS, EXTR_REFS);
-    $__scope_before = null; // just that it exists
     $__scripts = array();
     preg_match_all('~#CMSimple (.*?)#~is', $__text, $__scripts);
     if (count($__scripts[1]) > 0) {
@@ -169,24 +148,9 @@ function evaluate_cmsimple_scripting($__text, $__compat = true)
             $__scripts[1] = array_reverse($__scripts[1]);
         }
         foreach ($__scripts[1] as $__script) {
-            if (strtolower($__script) !== 'hide'
-                && strtolower($__script) !== 'remove'
-            ) {
-                $__script = preg_replace(
-                    array(
-                        "'&(quot|#34);'i", "'&(amp|#38);'i", "'&(apos|#39);'i",
-                        "'&(lt|#60);'i", "'&(gt|#62);'i", "'&(nbsp|#160);'i"
-                    ),
-                    array("\"", "&", "'", "<", ">", " "),
-                    $__script
-                );
-                $__scope_before = array_keys(get_defined_vars());
+            if (!in_array(strtolower($__script), array('hide', 'remove'))) {
+                $__script = html_entity_decode($__script, ENT_QUOTES, 'UTF-8');
                 eval($__script);
-                $__scope_after = array_keys(get_defined_vars());
-                $__diff = array_diff($__scope_after, $__scope_before);
-                foreach ($__diff as $__var) {
-                    $GLOBALS[$__var] = $$__var;
-                }
                 if ($__compat) {
                     break;
                 }
@@ -276,9 +240,7 @@ function evaluate_plugincall($text)
  */
 function XH_evaluateSinglePluginCall($___expression)
 {
-    foreach ($GLOBALS as $___var => $___value) {
-        $$___var = $GLOBALS[$___var];
-    }
+    extract($GLOBALS);
     return preg_replace_callback(
         '/#(CMSimple .*?)#/is', 'XH_escapeCMSimpleScripting',
         eval('return ' . $___expression . ';')
@@ -294,7 +256,7 @@ function XH_evaluateSinglePluginCall($___expression)
  *
  * @since 1.6.6
  */
-function XH_escapeCMSimpleScripting($matches)
+function XH_escapeCMSimpleScripting(array $matches)
 {
     trigger_error(
         'CMSimple scripting not allowed in return value of plugin call',
@@ -356,7 +318,7 @@ function evaluate_scripting($text, $compat = true)
  * @global array The configuation of the core.
  * @global bool  Whether edit mode is active.
  *
- * @return string The (X)HTML.
+ * @return string HTML
  */
 function newsbox($heading)
 {
@@ -391,7 +353,7 @@ function newsbox($heading)
  * @since 1.5
  */
 // @codingStandardsIgnoreStart
-function init_editor($elementClasses = array(),  $initFile = false)
+function init_editor(array $elementClasses = array(),  $initFile = false)
 {
 // @codingStandardsIgnoreEnd
     global $pth, $cf;
@@ -488,19 +450,17 @@ function editor_replace($elementID = false, $config = '')
 }
 
 /**
- * Callback for output buffering. Returns the postprocessed (X)HTML.
+ * Callback for output buffering. Returns the postprocessed HTML.
  *
  * Currently debug information and admin menu are prepended,
  * and $bjs is appended to the body element.
  *
- * @param string $html The (X)HTML generated so far.
+ * @param string $html The HTML generated so far.
  *
- * @global int    The index of the active page.
- * @global string The (X)HTML of the contents area.
  * @global array
  * @global array  The configuration of the core.
  * @global array  The localization of the core.
- * @global string (X)HTML to be preprended to the closing BODY tag.
+ * @global string HTML to be preprended to the closing BODY tag.
  *
  * @return string
  *
@@ -508,13 +468,13 @@ function editor_replace($elementID = false, $config = '')
  */
 function XH_finalCleanUp($html)
 {
-    global $s, $o, $errors, $cf, $tx, $bjs;
+    global $errors, $cf, $tx, $bjs;
 
     if (XH_ADM === true) {
         $debugHint = '';
         $errorList = '';
 
-        if ($debugMode = error_reporting() > 0) {
+        if (error_reporting() > 0) {
             $debugHint .= '<div class="xh_debug">' . "\n"
                 . $tx['message']['debug_mode'] . "\n"
                 . '</div>' . "\n";
@@ -685,106 +645,13 @@ function download($fl)
 }
 
 /**
- * Returns whether the file exists in the download folder
- * and is available for download.
- *
- * @param string $fl The download URL, e.g. ?download=file.ext
- *
- * @return bool
- *
- * @global array  The paths of system files and folders.
- * @global string The script name.
- *
- * @deprecated since 1.6.
- */
-function chkdl($fl)
-{
-    global $pth, $sn;
-
-    trigger_error(
-        'Function ' . __FUNCTION__ . '() is deprecated', E_USER_DEPRECATED
-    );
-    $m = false;
-    if (is_dir($pth['folder']['downloads'])) {
-        if ($fd = opendir($pth['folder']['downloads'])) {
-            while (($p = readdir($fd)) == true) {
-                if (preg_match("/.+\..+$/", $p)) {
-                    if ($fl == $sn . '?download=' . $p) {
-                        $m = true;
-                    }
-                }
-            }
-            closedir($fd);
-        }
-    }
-    return $m;
-}
-
-/**
- * Returns the content of file $filename, if it does exist, null otherwise.
- *
- * @param string $fl The file name.
- *
- * @return string
- *
- * @deprecated since 1.6
- */
-function rf($fl)
-{
-    trigger_error(
-        'Function ' . __FUNCTION__ . '() is deprecated', E_USER_DEPRECATED
-    );
-    if (!file_exists($fl)) {
-        return;
-    }
-    clearstatcache();
-    return file_get_contents($fl);
-}
-
-/**
- * Checks wether the file exists, is readable,
- * and if $writeable is true, is writeable.
- *
- * Appends an according message to $e otherwise.
- *
- * @param string $fl       A key of $pth['file'].
- * @param bool   $writable Whether the file has to writable.
- *
- * @global array The paths of system files and folders.
- * @global array The localization of the core.
- *
- * @return bool
- *
- * @deprecated since 1.6.
- */
-function chkfile($fl, $writable)
-{
-    global $pth, $tx;
-
-    trigger_error(
-        'Function '. __FUNCTION__ . '() is deprecated', E_USER_DEPRECATED
-    );
-
-    $t = isset($pth['file'][$fl]) ? $pth['file'][$fl] : '';
-    if ($t == '') {
-        e('undefined', 'file', $fl);
-    } elseif (!file_exists($t)) {
-        e('missing', $fl, $t);
-    } elseif (!is_readable($t)) {
-        e('notreadable', $fl, $t);
-    } elseif (!is_writable($t) && $writable) {
-        e('notwritable', $fl, $t);
-    }
-}
-
-/**
  * Appends an error message about the file to $e.
  *
  * @param string $et A key in $tx['error'].
  * @param string $ft A key in $tx['filetype'].
  * @param string $fn The file name.
  *
- * @global string Error messages as (X)HTML fragment consisting of LI Elements.
+ * @global string Error messages as HTML fragment consisting of LI Elements.
  * @global array  The localization of the core.
  *
  * @return void
@@ -794,7 +661,7 @@ function e($et, $ft, $fn)
     global $e, $tx;
 
     $e .= '<li><b>' . $tx['error'][$et] . ' ' . $tx['filetype'][$ft] . '</b>'
-        . tag('br') . $fn . '</li>' . "\n";
+        . '<br>' . $fn . '</li>' . "\n";
 }
 
 /**
@@ -809,7 +676,7 @@ function e($et, $ft, $fn)
  * @global string The URL of the current page.
  * @global string The index of the current page.
  * @global array  The localization of the core.
- * @global string Error messages as (X)HTML fragment consisting of LI Elements.
+ * @global string Error messages as HTML fragment consisting of LI Elements.
  * @global object The pagedata router.
  *
  * @return void
@@ -823,7 +690,7 @@ function rfc()
         e('missing', 'content', $pth['file']['content']);
         $contents = array(
             array(), array(), array(), array(), array(),
-            new XH_PageDataRouter(array(), array(), array(), array())
+            new XH\PageDataRouter(array(), array(), array(), array())
         );
     }
     list($u, $tooLong, $h, $l, $c, $pd_router, $removed) = array_values($contents);
@@ -847,13 +714,13 @@ function rfc()
 
     foreach ($tooLong as $i => $tl) {
         if (XH_ADM && $tl) {
-            $e .= '<li><b>' . $tx['uri']['toolong'] . '</b>' . tag('br')
+            $e .= '<li><b>' . $tx['uri']['toolong'] . '</b>' . '<br>'
                 . '<a href="?' . $u[$i] . '">' . $h[$i] . '</a>' . '</li>';
         }
     }
 
     foreach ($u as $i => $url) {
-        if (($su == $u[$i] || $su == urlencode($u[$i]))
+        if (($su == $url || $su == urlencode($url))
             && (XH_ADM && $edit || !$removed[$i])
         ) {
                 $s = $i;
@@ -980,7 +847,7 @@ function XH_readContents($language = null)
         include $pageDataFile;
     }
 
-    $pd_router = new XH_PageDataRouter(
+    $pd_router = new XH\PageDataRouter(
         $h, $page_data_fields, $temp_data, $page_data
     );
 
@@ -1017,13 +884,12 @@ function XH_readContents($language = null)
  * @return int
  *
  * @global int   The index of the current page.
- * @global int   The number of pages.
  *
  * @since 1.6.3
  */
 function XH_findPreviousPage()
 {
-    global $s, $cl;
+    global $s;
 
     for ($i = $s - 1; $i > -1; $i--) {
         if (!hide($i)) {
@@ -1065,7 +931,7 @@ function XH_findNextPage()
  * @global array  The URLs of the pages.
  * @global array  The configuration of the core.
  *
- * @return string The (X)HTML.
+ * @return string HTML
  */
 function a($i, $x)
 {
@@ -1091,7 +957,7 @@ function a($i, $x)
  * @global array The localization of the core.
  * @global bool  Whether print mode is active.
  *
- * @return string The (X)HTML.
+ * @return string HTML
  */
 function meta($n)
 {
@@ -1101,7 +967,7 @@ function meta($n)
     $value = isset($tx['meta'][$n]) ? $tx['meta'][$n] : $cf['meta'][$n];
     if ($n != 'codepage' && !empty($value) && !($print && in_array($n, $exclude))) {
         $content = XH_hsc($value);
-        return tag('meta name="' . $n . '" content="' . $content . '"') . "\n";
+        return '<meta name="' . $n . '" content="' . $content . '">' . "\n";
     }
 }
 
@@ -1114,7 +980,7 @@ function meta($n)
  * @global string The script name.
  * @global array  The localization of the core.
  *
- * @return string The (X)HTML.
+ * @return string HTML
  */
 function ml($i)
 {
@@ -1162,7 +1028,9 @@ function uenc($s)
  * Returns a percent encoded URL component.
  *
  * Additionally all character sequences in $search will be replaced
- * by their according character sequences in $replace.
+ * by their according character sequences in $replace, spaces will be replaced
+ * by the configured word_separator and leading, trailing and multiple
+ * consecutive word_separators will be trimmed.
  *
  * @param string $s       The URL component.
  * @param array  $search  Strings to search for.
@@ -1176,33 +1044,16 @@ function uenc($s)
  *
  * @since 1.6
  */
-function XH_uenc($s, $search, $replace)
+function XH_uenc($s, array $search, array $replace)
 {
     global $cf;
 
+    $separator = $cf['uri']['word_separator'];
     $s = str_replace($search, $replace, $s);
-    return str_replace('+', $cf['uri']['word_separator'], urlencode($s));
-}
-
-/**
- * Returns the canonicalized absolute pathname on success.
- * Otherwise returns its input.
- *
- * @param string $p The file name.
- *
- * @return string
- *
- * @deprecated since 1.5.4. Use realpath() instead.
- */
-function rp($p)
-{
-    trigger_error('Function rp() is deprecated', E_USER_DEPRECATED);
-
-    if (realpath($p) == '') {
-        return $p;
-    } else {
-        return realpath($p);
-    }
+    $s = str_replace('+', $separator, urlencode($s));
+    $s = trim($s, $separator);
+    $s = preg_replace('/' . preg_quote($separator, '/') . '+/', $separator, $s);
+    return $s;
 }
 
 /**
@@ -1233,14 +1084,10 @@ function sortdir($dir)
  * @param string $script The needle.
  * @param string $text   The haystack.
  *
- * @global array The configuration of the core.
- *
  * @return int
  */
 function cmscript($script, $text)
 {
-    global $cf;
-
     $pattern = str_replace('(.*?)', $script, '/#CMSimple (.*?)#/is');
     return preg_match($pattern, $text);
 }
@@ -1266,43 +1113,24 @@ function hide($i)
 }
 
 /**
- * Returns an (X)HTML compliant stand alone tag
+ * Returns an HTML stand alone tag.
+ *
+ * Used to returns an (X)HTML compliant stand alone tag
  * according to the settings of $cf['xhtml']['endtags'].
  *
  * @param string $s The contents of the tag.
  *
+ * @return string HTML
+ *
  * @global array The configuration of the core.
  *
- * @return string The (X)HTML.
+ * @deprecated since 1.7
+ *
+ * @todo Add deprecation warning (XH 1.8?)
  */
 function tag($s)
 {
-    global $cf;
-
-    $t = $cf['xhtml']['endtags'] == 'true' ? ' /' : '';
-    return '<' . $s . $t . '>';
-}
-
-/**
- * Returns '&' or '&amp;' according to the setting of $cf['xhtml']['amp'].
- *
- * @return string The (X)HTML.
- *
- * @global array The configuration of the core.
- *
- * @deprecated since 1.5.4. Use '&amp;' instead.
- */
-function amp()
-{
-    global $cf;
-
-    trigger_error('Function amp() is deprecated', E_USER_DEPRECATED);
-
-    if ($cf['xhtml']['amp'] == 'true') {
-        return '&amp;';
-    } else {
-        return '&';
-    }
+    return '<' . $s . '>';
 }
 
 /**
@@ -1314,7 +1142,7 @@ function amp()
  * @global bool   Whether the API is CGI.
  * @global array  The localization of the core.
  * @global string The page title.
- * @global string The (X)HTML of the contents area.
+ * @global string The HTML of the contents area.
  *
  * @return void.
  */
@@ -1421,13 +1249,12 @@ function XH_debugmode()
  * @param string $errstr  An error message.
  * @param string $errfile Filename where error was raised.
  * @param int    $errline Line number where error was raised.
- * @param array  $context The error context.
  *
- * @global array The list of PHP errors formatted as (X)HTML fragment.
+ * @global array The list of PHP errors formatted as HTML fragment.
  *
  * @return void
  */
-function XH_debug($errno, $errstr, $errfile, $errline, $context)
+function XH_debug($errno, $errstr, $errfile, $errline)
 {
     global $errors;
 
@@ -1468,8 +1295,8 @@ function XH_debug($errno, $errstr, $errfile, $errline, $context)
         $errtype = "Unknow error type [$errno]";
     }
 
-    $errors[] = "<b>$errtype:</b> $errstr" . tag('br') . "$errfile:$errline"
-        . tag('br') . "\n";
+    $errors[] = "<b>$errtype:</b> $errstr" . '<br>' . "$errfile:$errline"
+        . '<br>' . "\n";
 
     if ($errno === E_USER_ERROR) {
         die($errors[count($errors) - 1]);
@@ -1493,7 +1320,7 @@ function XH_debug($errno, $errstr, $errfile, $errline, $context)
  *
  * @since 1.5.5
  */
-function XH_checkValidUtf8($arr)
+function XH_checkValidUtf8(array $arr)
 {
     global $tx;
 
@@ -1600,54 +1427,6 @@ function pluginFiles($plugin)
 }
 
 /**
- * Function preCallPlugins() => Pre-Call of Plugins.
- *
- * All Plugins which are called through a function-call
- * can use this. At the moment it is'nt possible to do
- * this with class-based plugins. They need to be called
- * through standard-CMSimple-Scripting.
- *
- * Call a plugin: place this in your code (example):
- * {{{PLUGIN:pluginfunction('parameters');}}}
- *
- * Call a built-in function (at the moment only one for
- * demonstration):
- * {{{HOME}}} or: {{{HOME:name_of_Link}}}
- * This creates a link to the first page of your CMSimple-
- * Installation.
- *
- * @param int $pageIndex The page index.
- *
- * @global bool  Whether edit-mode is active.
- * @global array The contents of all pages.
- * @global int   The Index of the active page.
- * @global array The URLs of all pages.
- *
- * @return void
- *
- * @author mvwd
- *
- * @since 1.0
- *
- * @deprecated since 1.6
- */
-function preCallPlugins($pageIndex = -1)
-{
-    global $edit, $c, $s, $u;
-
-    trigger_error('Function preCallPlugins() is deprecated', E_USER_DEPRECATED);
-
-    if (!$edit) {
-        if ((int) $pageIndex > - 1 && (int) $pageIndex < count($u)) {
-            $as = $pageIndex;
-        } else {
-            $as = $s < 0 ? 0 : $s;
-        }
-        $c[$as] = evaluate_plugincall($c[$as]);
-    }
-}
-
-/**
  * Returns a list of all active plugins.
  *
  * @param bool $admin Whether to return only plugins with a admin.php
@@ -1725,43 +1504,11 @@ function logincheck()
 {
     global $cf;
 
-    if (session_id() == '') {
-        session_start();
-    }
+    XH_startSession();
     return isset($_SESSION['xh_password'])
-        && isset($_SESSION['xh_password'][CMSIMPLE_ROOT])
-        && $_SESSION['xh_password'][CMSIMPLE_ROOT] == $cf['security']['password']
+        && $_SESSION['xh_password'] == $cf['security']['password']
         && isset($_SESSION['xh_user_agent'])
         && $_SESSION['xh_user_agent'] == md5($_SERVER['HTTP_USER_AGENT']);
-}
-
-/**
- * Appends a message to the logfile.
- *
- * On failure an according message is appended to $e.
- *
- * @param string $m The log message.
- *
- * @return void
- *
- * @global array  The paths of system files and folders.
- * @global string Error messages as (X)HTML fragment consisting of LI Elements.
- *
- * @deprecated since 1.6
- */
-function writelog($m)
-{
-    global $pth, $e;
-
-    trigger_error(
-        'Function ' . __FUNCTION__ . '() is deprecated', E_USER_DEPRECATED
-    );
-    if ($fh = fopen($pth['file']['log'], "a")) {
-        fwrite($fh, $m);
-        fclose($fh);
-    } else {
-        e('cntwriteto', 'log', $pth['file']['log']);
-    }
 }
 
 /**
@@ -1798,35 +1545,18 @@ function XH_logMessage($type, $module, $category, $description)
 }
 
 /**
- * Returns the login link.
- *
- * @global int    The index of the requested page.
- * @global array  The localization of the core.
- *
- * @return string The (X)HTML.
- */
-function lilink()
-{
-    global $s, $tx;
-
-    if (!XH_ADM) {
-        return a($s > -1 ? $s : 0, '&amp;login') . $tx['menu']['login'] . '</a>';
-    }
-}
-
-/**
  * Returns the login form.
  *
  * @global array  The configuration of the core.
  * @global array  The localization of the core.
  * @global string JavaScript for the onload event of the BODY element.
  * @global string The requested special function.
- * @global string The (X)HTML of the contents area.
+ * @global string The HTML of the contents area.
  * @global int    The index of the requested page.
  * @global string The script name.
  * @global array  The URLs of the pages.
  *
- * @return string The (X)HTML.
+ * @return string HTML
  */
 function loginforms()
 {
@@ -1845,14 +1575,12 @@ function loginforms()
             . '<p><b>' . $tx['login']['warning'] . '</b></p>'
             . '<form id="login" name="login" action="' . $sn . '?' . $u[$s]
             . '" method="post">'
-            . tag('input type="hidden" name="login" value="true"')
-            . tag('input type="hidden" name="selected" value="' . $u[$s] . '"')
-            . tag('input type="password" name="keycut" id="passwd" value=""')
+            . '<input type="hidden" name="login" value="true">'
+            . '<input type="hidden" name="selected" value="' . $u[$s] . '">'
+            . '<input type="password" name="keycut" id="passwd" value="">'
             . ' '
-            . tag(
-                'input type="submit" name="submit" id="submit" value="'
-                . $tx['menu']['login'] . '"'
-            )
+            . '<input type="submit" name="submit" id="submit" value="'
+            . $tx['menu']['login'] . '">'
             . '</form>';
         if (!empty($cf['security']['email'])) {
             $o .= '<a href="' . $sn . '?&function=forgotten">'
@@ -1861,27 +1589,6 @@ function loginforms()
         $o .= ' </div>';
         $s = -1;
     }
-}
-
-/**
- * Returns the remaining contents of a stream.
- *
- * @param resource $stream An open stream.
- *
- * @return string
- *
- * @since 1.6
- */
-function XH_getStreamContents($stream)
-{
-    if (function_exists('stream_get_contents')) {
-        $contents = stream_get_contents($stream);
-    } else {
-        ob_start();
-        fpassthru($stream);
-        $contents = ob_get_clean();
-    }
-    return $contents;
 }
 
 /**
@@ -1900,7 +1607,7 @@ function XH_readFile($filename)
     $stream = fopen($filename, 'rb');
     if ($stream) {
         if (XH_lockFile($stream, LOCK_SH)) {
-            $contents = XH_getStreamContents($stream);
+            $contents = stream_get_contents($stream);
             XH_lockFile($stream, LOCK_UN);
         }
         fclose($stream);
@@ -1922,12 +1629,9 @@ function XH_readFile($filename)
 function XH_writeFile($filename, $contents)
 {
     $res = false;
-    // we can't use "cb" as it is available only since PHP 5.2.6
-    // we can't use "r+b" as it will fail if the file does not already exist
-    $stream = fopen($filename, 'a+b');
+    $stream = fopen($filename, 'cb');
     if ($stream) {
         if (XH_lockFile($stream, LOCK_EX)) {
-            fseek($stream, 0);
             ftruncate($stream, 0);
             $res = fwrite($stream, $contents);
             fflush($stream);
@@ -2060,7 +1764,7 @@ function XH_adjustStylesheetURLs($plugin, $css)
 }
 
 /**
- * Returns an (X)HTML element formatted as message.
+ * Returns an HTML element formatted as message.
  *
  * @param string $type    The type of message ('success', 'info', 'warning', 'fail').
  * @param string $message A message format to print in an printf() style.
@@ -2083,7 +1787,7 @@ function XH_message($type, $message)
  *
  * Surplus old backups will be deleted. Returns an appropriate message.
  *
- * @return string (X)HTML.
+ * @return string HTML
  *
  * @global array The paths of system files and folders.
  *
@@ -2093,13 +1797,12 @@ function XH_backup()
 {
     global $pth;
 
-    include_once $pth['folder']['classes'] . 'Backup.php';
     $languages = XH_secondLanguages();
     $folders = array($pth['folder']['base'] . 'content/');
     foreach ($languages as $language) {
         $folders[] = $pth['folder']['base'] . 'content/' . $language . '/';
     }
-    $backup = new XH_Backup($folders);
+    $backup = new XH\Backup($folders);
     return $backup->execute();
 }
 
@@ -2153,27 +1856,21 @@ function XH_title($site, $subtitle)
  *
  * @param string $bodyClass The CSS class of the BODY element.
  *
- * @return string (X)HTML.
+ * @return string HTML
  *
  * @since 1.6
+ *
+ * @global XH_CSRFProtection The CSRF protector.
  */
 function XH_builtinTemplate($bodyClass)
 {
     global $_XH_csrfProtection;
 
-    if ($cf['xhtml']['endtags'] == 'true') {
-        echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"',
-            ' "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">', "\n",
-            '<html xmlns="http://www.w3.org/1999/xhtml"',
-            (strlen($sl) == 2 ? " lang=\"$sl\" xml:lang=\"$sl\"" : ''), '>', "\n";
-    } else {
-        echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"',
-            ' "http://www.w3.org/TR/html4/loose.dtd">', "\n", '<html',
-            (strlen($sl) == 2 ? " lang=\"$sl\"" : ''), '>', "\n";
-    }
+    echo '<!DOCTYPE html>', "\n", '<html',
+        (strlen($sl) == 2 ? " lang=\"$sl\"" : ''), '>', "\n";
     $content = XH_convertPrintUrls(content());
     echo '<head>', "\n" . head(),
-        tag('meta name="robots" content="noindex"'), "\n",
+        '<meta name="robots" content="noindex">', "\n",
         '</head>', "\n", '<body class="', $bodyClass,'"', onload(), '>', "\n",
         $content, '</body>', "\n", '</html>', "\n";
     if (isset($_XH_csrfProtection)) {
@@ -2184,9 +1881,9 @@ function XH_builtinTemplate($bodyClass)
 /**
  * Returns a help icon which displays a tooltip on hover.
  *
- * @param string $tooltip A tooltip in (X)HTML.
+ * @param string $tooltip A tooltip in HTML.
  *
- * @return string (X)HTML.
+ * @return string HTML
  *
  * @global array The paths of system files and folders.
  * @global array The localization of the core.
@@ -2203,7 +1900,7 @@ function XH_helpIcon($tooltip)
 
     $src = $pth['folder']['corestyle'] . 'help_icon.png';
     $o = '<div class="pl_tooltip">'
-        . tag('img src="' . $src . '" alt="' . $tx['editmenu']['help'] . '"')
+        . '<img src="' . $src . '" alt="' . $tx['editmenu']['help'] . '">'
         . '<div>' . $tooltip . '</div>'
         . '</div>';
     return $o;
@@ -2377,7 +2074,7 @@ function XH_isInternalUrl($urlParts)
  *
  * @since 1.6
  */
-function XH_convertToPrintUrl($matches)
+function XH_convertToPrintUrl(array $matches)
 {
     $url = $matches[3];
     $parts = parse_url($url);
@@ -2396,7 +2093,7 @@ function XH_convertToPrintUrl($matches)
 /**
  * Convert all internal URLs in a text to print URLs.
  *
- * @param string $pageContent Some (X)HTML.
+ * @param string $pageContent Some HTML.
  *
  * @return string
  *
@@ -2416,24 +2113,15 @@ function XH_convertPrintUrls($pageContent)
  *
  * @return mixed
  *
- * @global array  The paths of system files and folders.
  * @global object The JSON codec.
  *
  * @since 1.6
+ *
+ * @todo Deprecate starting with 1.8.
  */
 function XH_decodeJson($string)
 {
-    global $pth, $_XH_json;
-
-    if (function_exists('json_decode')) {
-        return json_decode($string);
-    } else {
-        if (!isset($_XH_json)) {
-            include_once $pth['folder']['classes'] . 'JSON.php';
-            $_XH_json = new XH_JSON();
-        }
-        return $_XH_json->decode($string);
-    }
+    return json_decode($string);
 }
 
 /**
@@ -2443,24 +2131,15 @@ function XH_decodeJson($string)
  *
  * @return string
  *
- * @global array The paths of system files and folders.
  * @global object The JSON codec.
  *
  * @since 1.6
+ *
+ * @todo Deprecate starting with 1.8.
  */
 function XH_encodeJson($value)
 {
-    global $pth, $_XH_json;
-
-    if (function_exists('json_encode')) {
-        return json_encode($value);
-    } else {
-        if (!isset($_XH_json)) {
-            include_once $pth['folder']['classes'] . 'JSON.php';
-            $_XH_json = new XH_JSON();
-        }
-        return $_XH_json->encode($value);
-    }
+    return json_encode($value);
 }
 
 /**
@@ -2469,24 +2148,15 @@ function XH_encodeJson($value)
  *
  * @return bool
  *
- * @global array The paths of system files and folders.
  * @global object The JSON codec.
  *
  * @since 1.6
+ *
+ * @todo Deprecate starting with 1.8.
  */
 function XH_lastJsonError()
 {
-    global $pth, $_XH_json;
-
-    if (function_exists('json_last_error')) {
-        return json_last_error();
-    } else {
-        if (!isset($_XH_json)) {
-            include_once $pth['folder']['classes'] . 'JSON.php';
-            $_XH_json = new XH_JSON();
-        }
-        return $_XH_json->lastError();
-    }
+    return json_last_error();
 }
 
 /**
@@ -2504,7 +2174,6 @@ function XH_lastJsonError()
 function XH_hsc($string)
 {
     if (!defined('ENT_SUBSTITUTE')) {
-        include_once UTF8 . '/utils/bad.php';
         $string = utf8_bad_replace($string, "\xEF\xBF\xBD");
         $string = htmlspecialchars($string, ENT_COMPAT, 'UTF-8');
     } else {
@@ -2517,24 +2186,23 @@ function XH_hsc($string)
  * Handles a mailform embedded in a CMSimple_XH page.
  *
  * @param string $subject An alternative subject field preset text
+ *                        instead of the subject default in localization.
  * 
- * @return string (X)HTML.
- * instead of the subject default in localization.
+ * @return string HTML
  *
- * @global array The paths of system files and folders.
+ * @global array The configuration of the core.
  *
  * @since 1.6
  */
 function XH_mailform($subject=null)
 {
-    global $pth, $cf;
+    global $cf;
 
     if ($cf['mailform']['email'] == '') {
         return false;
     }
 
-    include_once $pth['folder']['classes'] . 'Mailform.php';
-    $mailform = new XH_Mailform(true, $subject);
+    $mailform = new XH\Mailform(true, $subject);
     return $mailform->process();
 }
 
@@ -2655,7 +2323,7 @@ function XH_readConfiguration($plugin = false, $language = false)
  *
  * @since 1.6
  */
-function XH_unionOf2DArrays($array1, $array2)
+function XH_unionOf2DArrays(array $array1, array $array2)
 {
     foreach ($array1 as $key => $subarray1) {
         $subarray2 = isset($array2[$key]) ? $array2[$key] : array();
@@ -2681,14 +2349,11 @@ function XH_unionOf2DArrays($array1, $array2)
  * @return bool
  *
  * @since 1.6
+ *
+ * @todo Deprecate for 1.8.
  */
 function XH_renameFile($oldname, $newname)
 {
-    if (strtoupper(substr(php_uname(), 0, 3)) == 'WIN'
-        && file_exists($newname)
-    ) {
-        unlink($newname);
-    }
     return rename($oldname, $newname);
 }
 
@@ -2826,11 +2491,11 @@ function XH_onShutdown()
 {
     global $tx;
 
-    if (!XH_ADM && isset($_SESSION['xh_password'][CMSIMPLE_ROOT])) {
-        unset($_SESSION['xh_password'][CMSIMPLE_ROOT]);
+    if (!XH_ADM && isset($_SESSION['xh_password'])) {
+        unset($_SESSION['xh_password']);
     }
 
-    if (error_reporting() <= 0 && function_exists('error_get_last')) {
+    if (error_reporting() <= 0) {
         $lastError = error_get_last();
         if (in_array($lastError['type'], array(E_ERROR, E_PARSE))) {
             echo $tx['error']['fatal'];
@@ -2878,11 +2543,11 @@ function XH_lockFile($handle, $operation)
  * @param array  $words An array of search words.
  * @param string $text  A text.
  *
- * @return string (X)HTML.
+ * @return string HTML
  *
  * @since 1.6.5
  */
-function XH_highlightSearchWords($words, $text)
+function XH_highlightSearchWords(array $words, $text)
 {
     $words = array_unique($words);
     usort($words, create_function('$a, $b', 'return strlen($b) - strlen($a);'));
@@ -2894,6 +2559,249 @@ function XH_highlightSearchWords($words, $text)
         }
     }
     return preg_replace($patterns, '<span class="xh_find">$0</span>', $text);
+}
+
+/**
+ * Autoloads classes named after CMSimple_XH/PEAR coding standards.
+ *
+ * @param string $className A class name.
+ *
+ * @return void
+ *
+ * @global array The paths of system files and folders.
+ *
+ * @since 1.7
+ */
+function XH_autoload($className)
+{
+    global $pth;
+
+    $className = str_replace('_', '\\', $className);
+    // set $package, $subpackages and $class
+    $subpackages = explode('\\', $className);
+    $packages = array_splice($subpackages, 0, 1);
+    $package = $packages[0];
+    $classes = array_splice($subpackages, -1);
+    $class = $classes[0];
+
+    // construct $filename
+    if ($package == 'XH') {
+        $folder = $pth['folder']['classes'];
+    } else {
+        $folder = $pth['folder']['plugins'] . strtolower($package) . '/classes/';
+    }
+    foreach ($subpackages as $subpackage) {
+        $folder .= strtolower($subpackage) . '/';
+    }
+    $filename = $folder . $class . '.php';
+
+    // possible error handling
+    if (!file_exists($filename)) {
+        // do something, or not
+
+        var_dump($className, $filename);
+    }
+
+    // include the class file
+    include_once $filename;
+
+    if (class_exists($className)) {
+        class_alias($className, str_replace('\\', '_', $className));
+    }
+}
+
+/**
+ * Starts a named session.
+ *
+ * If session is already started, nothing happens.
+ *
+ * @return void
+ *
+ * @since 1.7
+ */
+function XH_startSession()
+{
+    if (session_id() == '') {
+        session_name('XH_' . bin2hex(CMSIMPLE_ROOT));
+        session_start();
+    }
+}
+
+/**
+ * Returns The content of the generated page "Site/CMS Info".
+ *
+ * One of the 3 functions to show "Site/CMS Info".
+ *
+ * @return The HTML.
+ *
+ * @global array The configuration of the core.
+ * @global array The language localization of the core.
+ * @global array The paths of system files and folders.
+ *
+ * @since 1.7
+ */
+function XH_poweredBy()
+{
+    global $cf, $tx, $pth;
+
+    $o = '<h5>Content Management System</h5>'
+        . '<ul><li><a href="http://cmsimple-xh.org">'
+        . CMSIMPLE_XH_VERSION . '</a></li></ul>';
+    $defaulttpl = $tx['subsite']['template'] == ''
+        ? $cf['site']['template']
+        : $tx['subsite']['template'];
+
+    $tpltext = '';
+    foreach (XH_templates() as $template) {
+        $tpltext .= $defaulttpl == $template
+            ? '<li><p><strong>Default template: ' . ucfirst($template) . '</strong>'
+            : '<li>' . ucfirst($template);
+        $infoPath = $pth['folder']['templates'] . '/' . $template . '/template.nfo';
+        if (is_file($infoPath)) {
+            $tplinfo = utf8_substr(
+                strip_tags(file_get_contents($infoPath), '<a><br><br/>'),
+                0, 400
+            );
+            if ($tplinfo) {
+                $tpltext .= '<br>' . $tplinfo;
+            }
+        }
+        $tpltext .= '</li>';
+    }
+
+    $o .= '<h5>Templates</h5><ul>' . $tpltext . '</ul>';
+    $t = '';
+    foreach (XH_plugins() as $plugin) {
+        $url = XH_pluginURL($plugin);
+        if ($url) {
+            $t .= '<li><a href="' . $url . '">' . ucfirst($plugin)
+                . '</a></li>';
+        }
+    }
+    $o .= $t? '<h5>Plugins</h5><ul>' . $t . '</ul>' : '';
+    return $o;
+}
+
+/**
+ * Returns The link to a plugin download site.
+ *
+ * One of the 3 functions to show "Site/CMS Info".
+ *
+ * @param string $plugin The plugin name.
+ *
+ * @return string The URL
+ *
+ * @global array The paths of system files and folders.
+ *
+ * @since 1.7
+ */
+function XH_pluginURL($plugin)
+{
+    global $pth;
+
+    $internalPlugins = array(
+        'filebrowser', 'meta_tags', 'page_params', 'pagemanager' , 'tinymce',
+        'utf8', 'jquery', 'hi_updatecheck',
+    );
+    if (in_array($plugin, $internalPlugins)) {
+        $url = false;
+    } else {
+        $filename = $pth['folder']['plugins'] . $plugin . '/version.nfo';
+        if (is_readable($filename)) {
+            $contents = file_get_contents($filename);
+            $contents = explode(',', $contents);
+            $url = $contents[5];
+        } else {
+            $url = false;
+        }
+    }
+    return $url;
+}
+
+/**
+ * Returns the locator (breadcrumb navigation) model.
+ *
+ * The locator model is an ordered list of breadcrumb items, where each item is
+ * an array of the title and the URL. If there is no appropriate URL, the
+ * element is null.
+ *
+ * @return array
+ *
+ * @global string The title of the page.
+ * @global array  The headings of the pages.
+ * @global int    The index of the current page.
+ * @global string The requested special function.
+ * @global array  The menu levels of the pages.
+ * @global array  The localization of the core.
+ * @global array  The configuration of the core.
+ * @global int    The index of the first published page.
+ *
+ * @since 1.7
+ */
+function XH_getLocatorModel()
+{
+    global $title, $h, $s, $f, $l, $tx, $cf, $_XH_firstPublishedPage;
+
+    if (hide($s) && $cf['show_hidden']['path_locator'] != 'true') {
+        return array(array($h[$s], XH_getPageURL($s)));
+    }
+    if ($s == $_XH_firstPublishedPage) {
+        return array(array($h[$s], XH_getPageURL($s)));
+    } elseif ($title != '' && (!isset($h[$s]) || $h[$s] != $title)) {
+        $res = array(array($title, null));
+    } elseif ($f != '') {
+        return array(array(ucfirst($f), null));
+    } elseif ($s > $_XH_firstPublishedPage) {
+        $res = array();
+        $tl = $l[$s];
+        if ($tl > 1) {
+            for ($i = $s - 1; $i >= $_XH_firstPublishedPage; $i--) {
+                if ($l[$i] < $tl) {
+                    array_unshift($res, array($h[$i], XH_getPageURL($i)));
+                    $tl--;
+                }
+                if ($tl < 2) {
+                    break;
+                }
+            }
+        }
+    } else {
+        return array(array('&nbsp;', null));
+    }
+    if ($cf['locator']['show_homepage'] == 'true') {
+        array_unshift(
+            $res,
+            array($tx['locator']['home'], XH_getPageURL($_XH_firstPublishedPage))
+        );
+        if ($s > $_XH_firstPublishedPage && $h[$s] == $title) {
+            $res[] = array($h[$s], XH_getPageURL($s));
+        }
+        return $res;
+    } else {
+        if ($s > $_XH_firstPublishedPage && $h[$s] == $title) {
+            $res[] = array($h[$s], XH_getPageURL($s));
+        }
+        return $res;
+    }
+}
+
+/**
+ * Returns the full URL of a page.
+ *
+ * @param int $index A valid page index.
+ *
+ * @return string
+ *
+ * @global string The script name.
+ * @global array  The page URLs.
+ *
+ * @since 1.7
+ */
+function XH_getPageURL($index)
+{
+    global $sn, $u;
+
+    return $sn . '?' . $u[$index];
 }
 
 ?>
