@@ -10,16 +10,15 @@
  * @author    Peter Harteg <peter@harteg.dk>
  * @author    The CMSimple_XH developers <devs@cmsimple-xh.org>
  * @copyright 1999-2009 Peter Harteg
- * @copyright 2009-2015 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
+ * @copyright 2009-2016 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @version   SVN: $Id: Search.php 1626 2015-06-01 13:40:38Z cmb69 $
  * @link      http://cmsimple-xh.org/
  */
 
 /*
   ======================================
-  CMSimple_XH 1.7.0dev2
-  2015-07-12
+  CMSimple_XH 1.7.0dev3
+  2017-01-30
   based on CMSimple version 3.3 - December 31. 2009
   For changelog, downloads and information please see http://www.cmsimple-xh.com
   ======================================
@@ -91,7 +90,9 @@ class Search
             foreach ($words as $word) {
                 $word = trim($word);
                 if ($word != '') {
-                    if (method_exists('\Normalizer', 'normalize')) {
+                    if (class_exists('\Normalizer') 
+                        && method_exists('\Normalizer', 'normalize')
+                    ) {
                         $word = \Normalizer::normalize($word);
                     }
                     $this->words[] = $word;

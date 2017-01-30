@@ -1,5 +1,5 @@
 /**
- * @version $Id: filebrowser.js 229 2012-07-30 13:31:07Z cmb69 $
+ * @version $Id$
  */
 
 function wrFilebrowser (field_name, url, type, win) {

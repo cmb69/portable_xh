@@ -3,7 +3,7 @@
 /**
  * Editorhook for internal filebrowser -> Codeeditor_XH
  *
- * @version $Id: script.php 270 2012-08-22 12:40:15Z cmb69 $
+ * @version $Id$
  */
 
 $script = <<<EOS

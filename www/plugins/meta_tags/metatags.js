@@ -3,9 +3,8 @@
  *
  * @author    Martin Damken <kontakt@zeichenkombinat.de>
  * @author    The CMSimple_XH developers <devs@cmsimple-xh.org>
- * @copyright 2009-2015 The CMSimple_XH developers
+ * @copyright 2009-2016 The CMSimple_XH developers
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @version   SVN: $Id: metatags.js 1535 2015-04-21 18:23:55Z cmb69 $
  * @link      http://cmsimple-xh.org/
  */
 

@@ -32,7 +32,7 @@
  * @author   Solar Designer <solar@openwall.com>
  * @author   The CMSimple_XH developers <devs@cmsimple-xh.org>
  * @license  public domain
- * @version  SVN: $Id: PasswordHash.php 1547 2015-04-21 19:57:37Z cmb69 $
+ * @version  SVN: $Id$
  * @link     http://cmsimple-xh.org/
  */
 

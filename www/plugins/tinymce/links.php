@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @version $Id: links.php 1166 2014-01-07 14:10:29Z cmb69 $
+ * @version $Id$
  */
 
 function get_images($directory) {

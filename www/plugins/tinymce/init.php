@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @version $Id: init.php 1518 2015-03-23 00:43:14Z cmb69 $
+ * @version $Id$
  */
 
 // utf-8-marker: äöüß
@@ -14,7 +14,10 @@
     function tinymce_filebrowser() {
         global $adm, $cf;
 
-        if (!$adm) { return ''; }  // no filebrowser, if editor is called from front-end
+        if (!$adm) {   // no filebrowser, if editor is called from front-end
+            $_SESSION['tinymce_fb_callback'] = '';
+            return ''; 
+        }
 
         $url = '';
         $script = ''; //holds the code of the callback-function

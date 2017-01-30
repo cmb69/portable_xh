@@ -10,17 +10,16 @@
  * @author    Peter Harteg <peter@harteg.dk>
  * @author    The CMSimple_XH developers <devs@cmsimple-xh.org>
  * @copyright 1999-2009 Peter Harteg
- * @copyright 2009-2015 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
+ * @copyright 2009-2016 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @version   SVN: $Id: functions.php 1670 2015-07-04 16:57:06Z cmb69 $
  * @link      http://cmsimple-xh.org/
  */
 
 
 /*
   ======================================
-  CMSimple_XH 1.7.0dev2
-  2015-07-12
+  CMSimple_XH 1.7.0dev3
+  2017-01-30
   based on CMSimple version 3.3 - December 31. 2009
   For changelog, downloads and information please see http://www.cmsimple-xh.org/
   ======================================
@@ -632,7 +631,7 @@ function download($fl)
         || ($download != '' && !preg_match('/.+\..+$/', $fl))
     ) {
         shead('404');
-        $o .= '<p>File ' . $fl . '</p>';
+        $o .= '<p>File ' . XH_hsc($fl) . '</p>';
         return;
     } else {
         header('Content-Type: application/save-as');
@@ -820,8 +819,8 @@ function XH_readContents($language = null)
         $ancestors[$l[$i] - 1] = XH_uenc($temp, $search, $replace);
         $ancestors = array_slice($ancestors, 0, $l[$i]);
         $url = implode($cf['uri']['seperator'], $ancestors);
-        $u[] = substr($url, 0, $cf['uri']['length']);
-        $tooLong[] = strlen($url) > $cf['uri']['length'];
+        $u[] = utf8_substr($url, 0, $cf['uri']['length']);
+        $tooLong[] = utf8_strlen($url) > $cf['uri']['length'];
         $removed[] = false;
     }
 
@@ -2755,7 +2754,7 @@ function XH_getLocatorModel()
         $res = array();
         $tl = $l[$s];
         if ($tl > 1) {
-            for ($i = $s - 1; $i >= $_XH_firstPublishedPage; $i--) {
+            for ($i = $s - 1; $i > $_XH_firstPublishedPage; $i--) {
                 if ($l[$i] < $tl) {
                     array_unshift($res, array($h[$i], XH_getPageURL($i)));
                     $tl--;

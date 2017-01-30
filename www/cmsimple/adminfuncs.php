@@ -10,9 +10,8 @@
  * @author    Peter Harteg <peter@harteg.dk>
  * @author    The CMSimple_XH developers <devs@cmsimple-xh.org>
  * @copyright 1999-2009 Peter Harteg
- * @copyright 2009-2015 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
+ * @copyright 2009-2016 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @version   SVN: $Id: adminfuncs.php 1642 2015-06-15 17:36:02Z cmb69 $
  * @link      http://cmsimple-xh.org/
  */
 
@@ -241,7 +240,7 @@ function XH_sysinfo()
 <li><a href="http://www.cmsimple-xh.org/">cmsimple-xh.org &raquo;</a></li>
 <li><a href="http://www.cmsimple-xh.org/wiki/">cmsimple-xh.org/wiki/ &raquo;</a></li>
 <li><a href="http://www.cmsimpleforum.com/">cmsimpleforum.com &raquo;</a></li>
-<li><a href="http://www.cmsimplewiki.com/">cmsimplewiki.com &raquo;</a></li>
+<li><a href="http://www.cmsimple-xh.org/de/?Alles_auf_einen_Blick">cmsimple-xh.org/de/?Alles_auf_einen_Blick &raquo;</a></li>
 </ul>
 
 HTML;

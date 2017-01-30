@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @version $Id: script.php 1518 2015-03-23 00:43:14Z cmb69 $
+ * @version $Id$
  */
 
 $script = '
