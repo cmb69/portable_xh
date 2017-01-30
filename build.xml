@@ -23,7 +23,7 @@
                 <exclude name="composer.*"/>
                 <exclude name="pax_global_header"/>
                 <exclude name="portable.ico"/>
-                <exclude name="UPDATING"/>
+                <exclude name="UPDATING.md"/>
             </fileset>
         </move>
         <delete dir="export"/>
