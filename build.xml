@@ -20,6 +20,7 @@
         <move todir="dist">
             <fileset dir="export">
                 <exclude name="build.xml"/>
+                <exclude name="composer.*"/>
                 <exclude name="pax_global_header"/>
                 <exclude name="portable.ico"/>
                 <exclude name="UPDATING"/>
