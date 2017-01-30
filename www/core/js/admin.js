@@ -4,9 +4,9 @@
  * @namespace
  *
  * @author    The CMSimple_XH developers <devs@cmsimple-xh.org>
- * @copyright 2009-2015 The CMSimple_XH developers (http://cmsimple-xh.org/?The_Team)
+ * @copyright 2009-2016 The CMSimple_XH developers (http://cmsimple-xh.org/?The_Team)
  * @license   GNU GPLv3 (http://www.gnu.org/licenses/gpl-3.0.en.html)
- * @version   $Id: admin.js 1654 2015-06-16 00:39:11Z cmb69 $
+ * @version   $Id: admin.js 1693 2016-12-14 23:14:04Z cmb69 $
  * @since     1.6
  */
 var XH = {};
@@ -526,7 +526,7 @@ XH.initQuickSubmit();
         var inputs = document.getElementsByName(
             "PL3bbeec384_security_password_OLD"
         );
-        if (inputs) {
+        if (inputs && inputs.length > 0) {
             inputs[0].value = "";
         }
     }

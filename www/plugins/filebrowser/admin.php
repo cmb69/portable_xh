@@ -9,9 +9,9 @@
  * @package   Filebrowser
  * @author    Martin Damken <kontakt@zeichenkombinat.de>
  * @author    The CMSimple_XH developers <devs@cmsimple-xh.org>
- * @copyright 2009-2015 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
+ * @copyright 2009-2016 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @version   SVN: $Id: admin.php 1479 2015-01-25 20:05:20Z cmb69 $
+ * @version   SVN: $Id: admin.php 1693 2016-12-14 23:14:04Z cmb69 $
  * @link      http://cmsimple-xh.org/
  */
 
@@ -27,7 +27,7 @@ if (XH_wantsPluginAdministration('filebrowser')) {
     $o .= print_plugin_admin('off');
 
     $o .= '<div class="plugintext">'
-        . '<div class="plugineditcaption">Filebrowser for CMSimple_XH 1.6.7'
+        . '<div class="plugineditcaption">Filebrowser for CMSimple_XH 1.6.9'
         . '</div>' . tag('hr');
 
     if (!$admin) {

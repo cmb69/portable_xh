@@ -10,9 +10,9 @@
  * @author    Peter Harteg <peter@harteg.dk>
  * @author    The CMSimple_XH developers <devs@cmsimple-xh.org>
  * @copyright 1999-2009 Peter Harteg
- * @copyright 2009-2015 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
+ * @copyright 2009-2016 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @version   SVN: $Id: tplfuncs.php 1657 2015-06-26 15:18:45Z cmb69 $
+ * @version   SVN: $Id: tplfuncs.php 1693 2016-12-14 23:14:04Z cmb69 $
  * @link      http://cmsimple-xh.org/
  */
 
@@ -484,7 +484,7 @@ function locator()
         $t = '';
         $tl = $l[$s];
         if ($tl > 1) {
-            for ($i = $s - 1; $i >= $_XH_firstPublishedPage; $i--) {
+            for ($i = $s - 1; $i > $_XH_firstPublishedPage; $i--) {
                 if ($l[$i] < $tl) {
                     $t = a($i, '') . $h[$i] . '</a> &gt; ' . $t;
                     $tl--;

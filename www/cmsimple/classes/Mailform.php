@@ -10,9 +10,9 @@
  * @author    Peter Harteg <peter@harteg.dk>
  * @author    The CMSimple_XH developers <devs@cmsimple-xh.org>
  * @copyright 1999-2009 Peter Harteg
- * @copyright 2009-2015 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
+ * @copyright 2009-2016 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @version   SVN: $Id: Mailform.php 1636 2015-06-15 16:36:08Z cmb69 $
+ * @version   SVN: $Id: Mailform.php 1693 2016-12-14 23:14:04Z cmb69 $
  * @link      http://cmsimple-xh.org/
  */
 

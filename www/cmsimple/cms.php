@@ -10,16 +10,16 @@
  * @author    Peter Harteg <peter@harteg.dk>
  * @author    The CMSimple_XH developers <devs@cmsimple-xh.org>
  * @copyright 1999-2009 Peter Harteg
- * @copyright 2009-2015 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
+ * @copyright 2009-2016 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @version   SVN: $Id: cms.php 1502 2015-03-08 00:52:55Z cmb69 $
+ * @version   SVN: $Id: cms.php 1693 2016-12-14 23:14:04Z cmb69 $
  * @link      http://cmsimple-xh.org/
  */
 
 /*
   ======================================
-  CMSimple_XH 1.6.7, 2015063001
-  2015-06-30
+  CMSimple_XH 1.6.9, 2016121501
+  2016-12-15
   based on CMSimple version 3.3 - December 31. 2009
   For changelog, downloads and information please see http://www.cmsimple-xh.org/
   ======================================
@@ -207,15 +207,15 @@ $j = null;
 /**
  * The version in textual representation, e.g. CMSimple_XH 1.6
  */
-define('CMSIMPLE_XH_VERSION', 'CMSimple_XH 1.6.7');
+define('CMSIMPLE_XH_VERSION', 'CMSimple_XH 1.6.9');
 /**
  * The build number as integer: YYYYMMDDBB
  */
-define('CMSIMPLE_XH_BUILD', '2015063001');
+define('CMSIMPLE_XH_BUILD', '2016121501');
 /**
  * The release date in ISO 8601 format: YYYY-MM-DD
  */
-define('CMSIMPLE_XH_DATE', '2015-06-30');
+define('CMSIMPLE_XH_DATE', '2016-12-15');
 
 if (!defined('E_STRICT')) {
     /**
@@ -814,7 +814,7 @@ if (sv('QUERY_STRING') != '') {
 if (!isset($cf['uri']['length'])) {
     $cf['uri']['length'] = 200;
 }
-$su = substr($su, 0, $cf['uri']['length']);
+$su = utf8_substr($su, 0, $cf['uri']['length']);
 
 if ($download != '') {
     download($pth['folder']['downloads'] . basename(stsl($download)));
