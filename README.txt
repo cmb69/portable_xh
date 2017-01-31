@@ -19,9 +19,9 @@ Requirements
 ------------
 
 64bit Windows Vista SP 2 or higher, with the Visual C++ Redistributable for
-Visual Studio 2015 RC[1] installed.
+Visual Studio 2015 RC[1] installed (you need the x64 version!)
 
-[1] <https://www.microsoft.com/en-us/download/details.aspx?id=46881>
+[1] <https://www.microsoft.com/en-us/download/details.aspx?id=48145>
 
 Installation
 ------------
