@@ -1,3 +1,6 @@
+Version 1.4 - released 2017-02-14
+* added ext/filter
+
 Version 1.4rc1 - released 2017-01-31
 * updated to CMSimple_XH 1.6.9
 * updated to PHP 5.6.30 (custom build)
