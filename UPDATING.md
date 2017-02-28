@@ -9,7 +9,7 @@ Update PHP
 ==========
 
 * do a custom build of PHP:
-  `configure --disable-all --disable-zts --enable-cli --enable-session --enable-json --with-gd --enable-mbstring --with-iconv --with-libxml --with-simplexml --with-xml --with-dom --enable-filter`
+  `configure --disable-all --disable-zts --enable-cli --enable-session --enable-json --with-gd --enable-mbstring --with-iconv --with-libxml --with-simplexml --with-xml --with-dom --enable-filter --with-sqlite3`
 
 * put the compiled php.exe and php7.dll into php/
 
