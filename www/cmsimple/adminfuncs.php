@@ -181,7 +181,9 @@ function XH_isAccessProtected($path)
 {
     // Portable_XH can't do this check, but as it is not accessible from
     // outside, we simply report that everything is okay
-    return true;
+    if (php_sapi_name() === 'cli-server' && $_SERVER['SERVER_NAME'] === 'localhost') {
+        return true;
+    }
 
     global $sn;
 
