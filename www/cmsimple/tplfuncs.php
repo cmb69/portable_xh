@@ -302,7 +302,8 @@ function printlink()
 {
     global $tx;
 
-    return '<a href="' . XH_printUrl() . '">' . $tx['menu']['print'] . '</a>';
+    return '<a href="' . XH_printUrl() . '" rel="nofollow">'
+        . $tx['menu']['print'] . '</a>';
 }
 
 /**
@@ -364,7 +365,8 @@ function loginlink()
     global $s, $tx;
 
     if (!XH_ADM) {
-        return a($s > -1 ? $s : 0, '&amp;login') . $tx['menu']['login'] . '</a>';
+        return a($s > -1 ? $s : 0, '&amp;login" rel="nofollow')
+            . $tx['menu']['login'] . '</a>';
     }
 }
 
@@ -403,20 +405,26 @@ function lastupdate($br = null, $hour = null)
  */
 function locator()
 {
-    $html = '';
     $breadcrumbs = XH_getLocatorModel();
     $last = count($breadcrumbs) - 1;
+    $html = '<span vocab="http://schema.org/" typeof="BreadcrumbList">';
     foreach ($breadcrumbs as $i => $breadcrumb) {
         list($title, $url) = $breadcrumb;
         if ($i > 0) {
             $html .= ' &gt; ';
         }
+        $html .= '<span property="itemListElement" typeof="ListItem">';
+        $inner = '<span property="name">' . $title
+            . '</span><meta property="position" content="'. ($i + 1) . '">';
         if (isset($url) && $i < $last) {
-            $html .= '<a href="' . $url . '">' . $title . '</a>';
+            $html .= '<a property="item" typeof="WebPage" href="' . $url . '">'
+                . $inner . '</a>';
         } else {
-            $html .= $title;
+            $html .= $inner;
         }
+        $html .= '</span>';
     }
+    $html .= '</span>';
     return $html;
 }
 
@@ -444,30 +452,45 @@ function editmenu()
  *
  * @return string HTML
  *
+ * @global array  The headings of the pages.
  * @global int    The index of the current page.
  * @global string The output of the contents area.
  * @global array  The content of the pages.
  * @global bool   Whether edit mode is active.
+ * @global array  The configuration of the core.
  */
 function content()
 {
-    global $s, $o, $c, $edit;
+    global $h, $s, $o, $c, $edit, $cf;
+    $heading = '';
 
+    if ($cf['headings']['show'] && $s > -1) {
+        if (preg_match('/<!--XH_ml[1-9]:(.+)-->/isU', $c[$s], $matches)) {
+            $heading = sprintf($cf['headings']['format'], $matches[1]);
+        } 
+    }
     if (!($edit && XH_ADM) && $s > -1) {
         if (isset($_GET['search'])) {
             $search = XH_hsc(stsl($_GET['search']));
             $words = explode(' ', $search);
             $c[$s] = XH_highlightSearchWords($words, $c[$s]);
+            $heading = XH_highlightSearchWords($words, $heading);
         }
-        return $o . preg_replace('/#CMSimple (.*?)#/is', '', $c[$s]);
+        $o .= $heading . preg_replace('/#CMSimple (.*?)#/is', '', $c[$s]);
+        return  preg_replace('/<!--XH_ml[1-9]:.*?-->/isu', '', $o);
     } else {
-        return $o;
+        if ($s > -1 && ($cf['headings']['show'] || ($edit && XH_ADM))) {
+            $o = sprintf($cf['headings']['format'], $h[$s]) . $o;
+        }
+        return  preg_replace('/<!--XH_ml[1-9]:.*?-->/isu', '', $o);
     }
 }
 
 
 /**
  * Returns the submenu of a page.
+ *
+ * @param string $html Optional markup to wrap the heading.
  *
  * @return string HTML
  *
@@ -477,7 +500,7 @@ function content()
  * @global array The localization of the core.
  * @global array The configuration of the core.
  */
-function submenu()
+function submenu($html = '')
 {
     global $s, $cl, $l, $tx, $cf;
 
@@ -498,10 +521,15 @@ function submenu()
             }
         }
         if (count($ta) != 0) {
-            $level = min($cf['menu']['levels'] + 1, 6);
-            return '<h' . $level . '>' . $tx['submenu']['heading']
-                . '</h' . $level . '>'
-                . li($ta, 'submenu');
+            if ($html == '') {
+                $level = min($cf['menu']['levels'] + 1, 6);
+                return '<h' . $level . '>' . $tx['submenu']['heading']
+                    . '</h' . $level . '>'
+                    . li($ta, 'submenu');
+            } else {
+                return sprintf($html, $tx['submenu']['heading'])
+                    . li($ta, 'submenu');
+            }
         }
     }
 }

@@ -32,7 +32,7 @@ if (XH_wantsPluginAdministration('filebrowser')) {
     $o .= print_plugin_admin('off');
 
     $o .= '<div class="plugintext">'
-        . '<div class="plugineditcaption">Filebrowser for CMSimple_XH 1.7.0dev3'
+        . '<div class="plugineditcaption">Filebrowser for CMSimple_XH 1.7.0dev4'
         . '</div>' . '<hr>';
 
     if (!$admin) {
@@ -192,8 +192,12 @@ function Filebrowser_forEditor()
 
         $_XH_filebrowser->readDirectory();
 
-        $jsFile = $pth['folder']['plugin'] . 'editorhooks/'
-            . basename($_GET['editor']) . '/script.php';
+        $jsFile = $pth['folder']['plugins'] . basename($_GET['editor'])
+            . '/editorhook.php';
+        if (!file_exists($jsFile)) {
+            $jsFile = $pth['folder']['plugin'] . 'editorhooks/'
+                . basename($_GET['editor']) . '/script.php';
+        }
 
         $script = '';
         if (file_exists($jsFile)) {

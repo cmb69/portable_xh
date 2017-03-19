@@ -17,8 +17,8 @@
 
 /*
   ======================================
-  CMSimple_XH 1.7.0dev3
-  2017-01-30
+  CMSimple_XH 1.7.0dev4
+  2017-03-19
   based on CMSimple version 3.3 - December 31. 2009
   For changelog, downloads and information please see http://www.cmsimple-xh.com
   ======================================
@@ -152,9 +152,13 @@ class Search
      */
     protected function prepareContent($content, $pageIndex)
     {
-        global $s;
+        global $cf, $s, $h;
 
         $s = $pageIndex;
+        // we have to add the page heading, if visible in content
+        if ($cf['headings']['show']) {
+            $content = $h[$s] . $content;
+        }
         $content = strip_tags(evaluate_plugincall($content));
         $s = -1;
         if (method_exists('\Normalizer', 'normalize')) {

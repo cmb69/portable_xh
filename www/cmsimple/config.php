@@ -27,7 +27,7 @@ $cf['show_hidden']['pages_sitemap']="";
 $cf['show_hidden']['path_locator']="";
 $cf['images']['maxsize']="150000";
 $cf['downloads']['maxsize']="1000000";
-$cf['editor']['external']="tinymce";
+$cf['editor']['external']="tinymce4";
 $cf['editor']['height']="600";
 $cf['filebrowser']['external']="";
 $cf['pagemanager']['external']="";
@@ -45,5 +45,8 @@ $cf['uri']['length']="200";
 $cf['editmenu']['scroll']="";
 $cf['editmenu']['external']="";
 $cf['title']['format']="{SITE} &ndash; {PAGE}";
+$cf['headings']['show']="true";
+$cf['headings']['format']="<h1>%s</h1>";
+$cf['mode']['advanced']="";
 
 ?>

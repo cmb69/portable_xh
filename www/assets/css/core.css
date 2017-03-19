@@ -274,6 +274,7 @@
 
 #xh_system_check {
     list-style: none;
+    padding-left: 0;
 }
 
 #xh_system_check li {
@@ -390,6 +391,11 @@ div.plugineditcaption {
 .xh_config_form_advanced_button {
     display: block;
     margin: 1em 0;
+}
+
+#xh_change_password label {
+    display: inline-block;
+    min-width: 12em;
 }
 
 /*

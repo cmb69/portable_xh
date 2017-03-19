@@ -53,7 +53,6 @@ function XH_pluginVersion($plugin)
  *
  * @param array $data The data ;)
  *
- * @global array The paths of system files and folders.
  * @global array The localization of the core.
  *
  * @return string HTML
@@ -64,26 +63,22 @@ function XH_pluginVersion($plugin)
  */
 function XH_systemCheck(array $data)
 {
-    global $pth, $tx;
+    global $tx;
 
     $stx = $tx['syscheck'];
-
-    foreach (array('success', 'warning', 'fail') as $img) {
-        $txt = $stx[$img];
-        $imgs[$img] = '<img src="' . $pth['folder']['corestyle'] . $img . '.png"'
-            . ' alt="' . $txt . '" title="' . $txt . '" width="16" height="16">';
-    }
 
     $o = "<h4>$stx[title]</h4>\n<ul id=\"xh_system_check\">\n";
 
     if (key_exists('phpversion', $data)) {
         $ok = version_compare(PHP_VERSION, $data['phpversion']) >= 0;
-        $o .= '<li>' . $imgs[$ok ? 'success' : 'fail']
-            . sprintf($stx['phpversion'], $data['phpversion']) . "</li>\n";
+        $o .= XH_systemCheckLi(
+            '', $ok ? 'success' : 'fail', 
+            sprintf($stx['phpversion'], $data['phpversion'])
+        );
     }
 
     if (key_exists('extensions', $data)) {
-        $cat = ' class="xh_system_check_cat_start"';
+        $cat = 'xh_system_check_cat_start';
         foreach ($data['extensions'] as $ext) {
             if (is_array($ext)) {
                 $notok = $ext[1] ? 'fail' : 'warning';
@@ -91,15 +86,16 @@ function XH_systemCheck(array $data)
             } else {
                 $notok = 'fail';
             }
-            $o .= '<li' . $cat . '>'
-                . $imgs[extension_loaded($ext) ? 'success' : $notok]
-                . sprintf($stx['extension'], $ext) . "</li>\n";
+            $o .= XH_systemCheckLi(
+                $cat, extension_loaded($ext) ? 'success' : $notok,
+                sprintf($stx['extension'], $ext)
+            );
             $cat = '';
         }
     }
 
     if (key_exists('writable', $data)) {
-        $cat = ' class="xh_system_check_cat_start"';
+        $cat = 'xh_system_check_cat_start';
         foreach ($data['writable'] as $file) {
             if (is_array($file)) {
                 $notok = $file[1] ? 'fail' : 'warning';
@@ -107,18 +103,21 @@ function XH_systemCheck(array $data)
             } else {
                 $notok = 'warning';
             }
-            $o .= '<li' . $cat . '>' . $imgs[is_writable($file) ? 'success' : $notok]
-                . sprintf($stx['writable'], $file) . "</li>\n";
+            $o .= XH_systemCheckLi(
+                $cat, is_writable($file) ? 'success' : $notok,
+                sprintf($stx['writable'], $file)
+            );
             $cat = '';
         }
     }
 
     if (key_exists('other', $data)) {
-        $cat = ' class="xh_system_check_cat_start"';
+        $cat = 'xh_system_check_cat_start';
         foreach ($data['other'] as $check) {
             $notok = $check[1] ? 'fail' : 'warning';
-            $o .= '<li' . $cat . '>' . $imgs[$check[0] ? 'success' : $notok]
-                . $check[2] . "</li>\n";
+            $o .= XH_systemCheckLi(
+                $cat, $check[0] ? 'success' : $notok, $check[2]
+            );
             $cat = '';
         }
     }
@@ -126,6 +125,29 @@ function XH_systemCheck(array $data)
     $o .= "</ul>\n";
 
     return $o;
+}
+
+/**
+ * Returns a single `<li>` of the system check.
+ *
+ * @param string $class A CSS class.
+ * @param string $state A state.
+ * @param string $text  A message text.
+ *
+ * @global array The localization of the core.
+ *
+ * @return string
+ *
+ * @since 1.7.0
+ */
+function XH_systemCheckLi($class, $state, $text)
+{
+    global $tx;
+
+    $class = "class=\"xh_$state $class\"";
+    return "<li $class>"
+        . sprintf($tx['syscheck']['message'], $text, $tx['syscheck'][$state])
+        . "</li>\n";
 }
 
 /**
@@ -247,6 +269,7 @@ function XH_sysinfo()
 
 HTML;
 
+    $stx = $tx['syscheck'];
     $checks = array(
         'phpversion' => '5.3',
         'extensions' => array(
@@ -277,43 +300,43 @@ HTML;
     foreach ($files as $file) {
         $checks['other'][] = array(
             XH_isAccessProtected($file), false,
-            sprintf($tx['syscheck']['access_protected'], $file)
+            sprintf($stx['access_protected'], $file)
         );
     }
     if ($tx['locale']['all'] == '') {
-        $checks['other'][] = array(true, false, $tx['syscheck']['locale_default']);
+        $checks['other'][] = array(true, false, $stx['locale_default']);
     } else {
         $checks['other'][] = array(
             setlocale(LC_ALL, $tx['locale']['all']), false,
-            sprintf($tx['syscheck']['locale_available'], $tx['locale']['all'])
+            sprintf($stx['locale_available'], $tx['locale']['all'])
         );
     }
     $checks['other'][] = array(
         date_default_timezone_get() !== 'UTC',
-        false, $tx['syscheck']['timezone']
+        false, $stx['timezone']
     );
     $checks['other'][] = array(
-        !get_magic_quotes_runtime(), false, $tx['syscheck']['magic_quotes']
+        !get_magic_quotes_runtime(), false, $stx['magic_quotes']
     );
     $checks['other'][] = array(
-        !ini_get('safe_mode'), false, 'safe_mode off'
+        !ini_get('safe_mode'), false, $stx['safe_mode']
     );
     $checks['other'][] = array(
-        !ini_get('session.use_trans_sid'), false, 'session.use_trans_sid off'
+        !ini_get('session.use_trans_sid'), false, $stx['use_trans_sid']
     );
     $checks['other'][] = array(
-        ini_get('session.use_only_cookies'), false, 'session.use_only_cookies on'
+        ini_get('session.use_only_cookies'), false, $stx['use_only_cookies']
     );
     $checks['other'][] = array(
         strpos(ob_get_contents(), "\xEF\xBB\xBF") !== 0,
-        false, $tx['syscheck']['bom']
+        false, $stx['bom']
     );
     $checks['other'][] = array(
         !$xh_hasher->checkPassword('test', $cf['security']['password']),
-        false, $tx['syscheck']['password']
+        false, $stx['password']
     );
     $checks['other'][] = array(
-        function_exists('fsockopen'), false, $tx['syscheck']['fsockopen']
+        function_exists('fsockopen'), false, $stx['fsockopen']
     );
     $o .= XH_systemCheck($checks);
     return $o;
@@ -619,6 +642,10 @@ function XH_adminMenu(array $plugins = array())
             'url' => $sn . '?&xh_pagedata'
         ),
         array(
+            'label' => utf8_ucfirst($tx['editmenu']['change_password']),
+            'url' => $sn . '?&xh_change_password'
+        ),
+        array(
             'label' => utf8_ucfirst($tx['editmenu']['sysinfo']),
             'url' => $sn . '?&sysinfo'
         )
@@ -825,7 +852,7 @@ function plugin_admin_common()
  */
 function XH_contentEditor()
 {
-    global $sn, $su, $s, $u, $c, $e, $cf, $tx, $_XH_csrfProtection;
+    global $sn, $su, $s, $u, $c, $e, $cf, $tx, $_XH_csrfProtection, $l, $h, $s;
 
     $su = $u[$s]; // TODO: is changing of $su correct here???
 
@@ -835,8 +862,16 @@ function XH_contentEditor()
         $e .= '<li>' . $msg . '</li>' . "\n";
     }
     $o = '<form method="POST" id="ta" action="' . $sn . '">'
-        . '<input type="hidden" name="selected" value="' . $u[$s] . '">'
-        . '<input type="hidden" name="function" value="save">'
+        . tag('input type="hidden" name="selected" value="' . $u[$s] . '"');
+    //Add page level and heading to post data because the split markers
+    //are filtered out if mode is not "advanced"
+    if (!$cf['mode']['advanced']) {
+        $o .= tag('input type="hidden" name="level" value="' . $l[$s] . '"')
+            . tag('input type="hidden" name="heading" value="' . $h[$s] . '"');
+        //replace split-markers
+        $c[$s] = preg_replace('/<!--XH_ml[1-9]:.*?-->/isu', '', $c[$s]);
+    }
+    $o .= tag('input type="hidden" name="function" value="save"')
         . '<textarea name="text" id="text" class="xh-editor" style="height: '
         . $cf['editor']['height'] . 'px; width: 100%;" rows="30" cols="80">'
         . XH_hsc($c[$s])
@@ -860,7 +895,6 @@ function XH_contentEditor()
  *
  * @global array  The content of the pages.
  * @global array  The paths of system files and folders.
- * @global array  The configuration of the core.
  * @global array  The localization of the core.
  * @global array  Whether edit mode is active.
  * @global object The page data router.
@@ -869,7 +903,7 @@ function XH_contentEditor()
  */
 function XH_saveContents()
 {
-    global $c, $pth, $cf, $tx, $edit, $pd_router;
+    global $c, $pth, $tx, $edit, $pd_router;
 
     if (!(XH_ADM && $edit)) {
         trigger_error(
@@ -878,8 +912,8 @@ function XH_saveContents()
         );
         return false;
     }
-    $hot = '<h[1-' . $cf['menu']['levels'] . '][^>]*>';
-    $hct = '<\/h[1-' . $cf['menu']['levels'] . ']>';
+    $hot = '<!--XH_ml[1-9]:';
+    $hct = '-->';
     $title = utf8_ucfirst($tx['filetype']['content']);
     $cnts = "<html><head><title>$title</title>\n"
         . $pd_router->headAsPHP()
@@ -919,8 +953,16 @@ function XH_saveEditorContents($text)
 {
     global $pth, $cf, $tx, $pd_router, $c, $s, $u, $selected;
 
-    $hot = '<h[1-' . $cf['menu']['levels'] . '][^>]*>';
-    $hct = '<\/h[1-' . $cf['menu']['levels'] . ']>'; // TODO: use $1 ?
+    //clean up and inject split-markers
+    if (!$cf['mode']['advanced']) {
+        $text = preg_replace('/<!--XH_ml[1-9]:.*?-->/isu', '', $text);
+        $split = '<!--XH_ml' . stsl($_POST['level']) . ':' 
+            . stsl($_POST['heading']) . '-->'
+            . "\n";
+        $text = $split . $text;
+    }
+    $hot = '<!--XH_ml[1-9]:';
+    $hct = '-->';
     // TODO: this might be done before the plugins are loaded
     //       for backward compatibility
     $text = stsl($text);
@@ -933,20 +975,20 @@ function XH_saveEditorContents($text)
 
     // handle missing heading on the first page
     if ($s == 0) {
-        if (!preg_match('/^<h1[^>]*>.*<\/h1>/isu', $text)
+        if (!preg_match('/^<!--XH_ml[1-9]:.+-->/isu', $text)
             && !preg_match('/^(<p[^>]*>)?(\&nbsp;| |<br \/>)?(<\/p>)?$/isu', $text)
         ) {
-            $text = '<h1>' . $tx['toc']['missing'] . '</h1>' . "\n" . $text;
+            $text = '<!--XH_ml1:' . $tx['toc']['missing'] . '-->' . "\n" . $text;
         }
     }
     $c[$s] = $text; // keep editor contents, if saving fails
 
     // insert $text to $c
     $text = preg_replace(
-        '/<h[1-' . $cf['menu']['levels'] . ']/i', "\x00" . '$0', $text
+        '/<!--XH_ml[1-9]:/is', "\x00" . '$0', $text
     );
     $pages = explode("\x00", $text);
-    // append everything before the first page heading to the previous page:
+    // append everything before the first page to the previous page
     if ($s > 0) {
         $c[$s - 1] .= $pages[0];
     }
@@ -1085,7 +1127,6 @@ function XH_adminJSLocalization()
 
     $keys = array(
         'action' => array('advanced_hide', 'advanced_show', 'cancel', 'ok'),
-        'password' => array('fields_missing', 'invalid', 'mismatch', 'wrong'),
         'error' => array('server'),
         'settings' => array('backupsuffix')
     );
@@ -1111,7 +1152,7 @@ function XH_adminJSLocalization()
  */
 function XH_wantsPluginAdministration($pluginName)
 {
-    return isset($GLOBALS[$pluginName]) && $GLOBALS[$pluginName] == 'true';
+    return (bool) preg_match('/(?:^|&)' . preg_quote($pluginName, '/') . '(?!=)/', sv('QUERY_STRING'));
 }
 
 ?>

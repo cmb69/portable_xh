@@ -30,6 +30,7 @@ $tx['action']['upload']="upload";
 $tx['action']['view']="view";
 
 $tx['editmenu']['backups']="Backups";
+$tx['editmenu']['change_password']="Password";
 $tx['editmenu']['configuration']="CMS";
 $tx['editmenu']['downloads']="Downloads";
 $tx['editmenu']['edit']="Edit mode";
@@ -224,7 +225,6 @@ $tx['pagedata']['info']="The following page data fields are <em>currently</em> u
 $tx['pagedata']['nothing']="No action necessary.";
 $tx['pagedata']['ok']="No superfluous fields detected in page data.";
 
-$tx['password']['change']="Change password";
 $tx['password']['confirmation']="Confirmation";
 $tx['password']['fields_missing']="Fill out all fields.";
 $tx['password']['invalid']="New password must consist of ASCII characters only.";
@@ -260,22 +260,25 @@ $tx['settings']['warning']="Only change settings when you understand the effect 
 
 $tx['submenu']['heading']="Submenu";
 
-$tx['syscheck']['access_protected']="'%s' access protected";
-$tx['syscheck']['bom']="Without <a href=\"http://www.cmsimple-xh.org/wiki/doku.php/utf8#what_s_a_bom\" target=\"_blank\">BOM</a>";
-$tx['syscheck']['encoding']="Encoding 'UTF-8' configured";
-$tx['syscheck']['extension']="Extension '%s' loaded";
-$tx['syscheck']['fail']="Failure";
-$tx['syscheck']['fsockopen']="Function fsockopen available";
-$tx['syscheck']['locale_available']="Locale '%s' available";
-$tx['syscheck']['locale_default']="Default locale in use";
-$tx['syscheck']['magic_quotes']="Magic quotes runtime off";
-$tx['syscheck']['password']="Non-default password set";
+$tx['syscheck']['access_protected']="'%s' is access protected";
+$tx['syscheck']['bom']="there is no <a href=\"http://www.cmsimple-xh.org/wiki/doku.php/utf8#what_s_a_bom\" target=\"_blank\">BOM</a>";
+$tx['syscheck']['extension']="extension '%s' is loaded";
+$tx['syscheck']['fail']="failure";
+$tx['syscheck']['fsockopen']="function fsockopen is available";
+$tx['syscheck']['locale_available']="locale '%s' is available";
+$tx['syscheck']['locale_default']="default locale is in use";
+$tx['syscheck']['magic_quotes']="magic_quotes_runtime is off";
+$tx['syscheck']['message']="Checking that %1\$s … %2\$s";
+$tx['syscheck']['password']="non-default password is set";
 $tx['syscheck']['phpversion']="PHP version ≥ %s";
-$tx['syscheck']['success']="OK";
-$tx['syscheck']['timezone']="Time zone valid";
+$tx['syscheck']['safe_mode']="safe_mode is off";
+$tx['syscheck']['success']="okay";
+$tx['syscheck']['timezone']="time zone is valid";
 $tx['syscheck']['title']="System check";
-$tx['syscheck']['warning']="Warning";
-$tx['syscheck']['writable']="'%s' writable";
+$tx['syscheck']['use_only_cookies']="session.use_only_cookies is off";
+$tx['syscheck']['use_trans_sid']="session.use_trans_sid is off";
+$tx['syscheck']['warning']="warning";
+$tx['syscheck']['writable']="'%s' is writable";
 
 $tx['sysinfo']['helplinks']="Info and Help Links";
 $tx['sysinfo']['php_version']="PHP-Version";
@@ -289,6 +292,7 @@ $tx['sysinfo']['webserver']="Webserver";
 $tx['template']['default']="default template";
 
 $tx['title']['bad_request']="Bad request";
+$tx['title']['change_password']="Change Password";
 $tx['title']['downloads']="Downloads";
 $tx['title']['images']="Images";
 $tx['title']['log']="Log File";

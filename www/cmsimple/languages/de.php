@@ -30,6 +30,7 @@ $tx['action']['upload']="upload";
 $tx['action']['view']="ansehen";
 
 $tx['editmenu']['backups']="Sicherheitskopien";
+$tx['editmenu']['change_password']="Passwort";
 $tx['editmenu']['configuration']="CMS";
 $tx['editmenu']['downloads']="Downloads";
 $tx['editmenu']['edit']="Bearbeiten";
@@ -225,7 +226,6 @@ $tx['pagedata']['info']="Die folgenden Page-Data-Felder werden <em>derzeit</em> 
 $tx['pagedata']['nothing']="Keine Aktion erforderlich.";
 $tx['pagedata']['ok']="Keine überflüssigen Page-Data-Felder gefunden.";
 
-$tx['password']['change']="Passwort ändern";
 $tx['password']['confirmation']="Bestätigung";
 $tx['password']['fields_missing']="Alle Felder ausfüllen.";
 $tx['password']['invalid']="Das neue Passwort darf nur aus ASCII-Zeichen bestehen.";
@@ -261,22 +261,25 @@ $tx['settings']['warning']="Bitte hier nur solche Änderungen durchführen, bei 
 
 $tx['submenu']['heading']="weiter zu:";
 
-$tx['syscheck']['access_protected']="'%s' zugriffsgeschützt";
-$tx['syscheck']['bom']="Ohne <a href=\"http://www.cmsimple-xh.org/wiki/doku.php/de:utf8#was_ist_ein_bom\" target=\"_blank\">BOM</a>";
-$tx['syscheck']['encoding']="UTF-8-Kodierung eingestellt";
-$tx['syscheck']['extension']="Erweiterung '%s' geladen";
+$tx['syscheck']['access_protected']="'%s' zugriffsgeschützt ist";
+$tx['syscheck']['bom']="kein <a href=\"http://www.cmsimple-xh.org/wiki/doku.php/de:utf8#was_ist_ein_bom\" target=\"_blank\">BOM</a> vorhanden ist";
+$tx['syscheck']['extension']="die Erweiterung '%s' geladen ist";
 $tx['syscheck']['fail']="Fehler";
-$tx['syscheck']['fsockopen']="Funktion fsockopen verfügbar";
-$tx['syscheck']['locale_available']="Locale '%s' verfügbar";
-$tx['syscheck']['locale_default']="Standard-Locale aktiv";
-$tx['syscheck']['magic_quotes']="'Magic quotes runtime' aus";
-$tx['syscheck']['password']="Voreingestelltes Passwort geändert";
-$tx['syscheck']['phpversion']="PHP-Version ≥ %s";
+$tx['syscheck']['fsockopen']="die Funktion fsockopen verfügbar ist";
+$tx['syscheck']['locale_available']="Locale '%s' verfügbar ist";
+$tx['syscheck']['locale_default']="das Standard-Locale aktiv ist";
+$tx['syscheck']['magic_quotes']="magic_quotes_runtime deaktiviert ist";
+$tx['syscheck']['message']="Prüfe, dass %1\$s … %2\$s";
+$tx['syscheck']['password']="das voreingestellte Passwort geändert wurde";
+$tx['syscheck']['phpversion']="die PHP-Version ≥ %s";
+$tx['syscheck']['safe_mode']="safe_mode deaktiviert ist";
 $tx['syscheck']['success']="OK";
-$tx['syscheck']['timezone']="Zeitzone gültig";
+$tx['syscheck']['timezone']="die Zeitzone gültig ist";
 $tx['syscheck']['title']="System-Prüfung";
+$tx['syscheck']['use_only_cookies']="session.use_only_cookies deaktiviert ist";
+$tx['syscheck']['use_trans_sid']="session.use_trans_sid deaktiviert ist";
 $tx['syscheck']['warning']="Warnung";
-$tx['syscheck']['writable']="'%s' schreibbar";
+$tx['syscheck']['writable']="'%s' schreibbar ist";
 
 $tx['sysinfo']['helplinks']="Hilfe und Informationen";
 $tx['sysinfo']['php_version']="PHP-Version";
@@ -290,6 +293,7 @@ $tx['sysinfo']['webserver']="Webserver";
 $tx['template']['default']="Standard Template";
 
 $tx['title']['bad_request']="Inkorrekte Anfrage";
+$tx['title']['change_password']="Passwort ändern";
 $tx['title']['downloads']="Downloads";
 $tx['title']['images']="Bilder";
 $tx['title']['log']="Log-Datei";

@@ -18,8 +18,8 @@
 
 /*
   ======================================
-  CMSimple_XH 1.7.0dev3
-  2017-01-30
+  CMSimple_XH 1.7.0dev4
+  2017-03-19
   based on CMSimple version 3.3 - December 31. 2009
   For changelog, downloads and information please see http://www.cmsimple-xh.org/
   ======================================
@@ -314,18 +314,17 @@ function evaluate_scripting($text, $compat = true)
  * @global array The content of the pages.
  * @global int   The number of pages.
  * @global array The headings of the pages.
- * @global array The configuation of the core.
  * @global bool  Whether edit mode is active.
  *
  * @return string HTML
  */
 function newsbox($heading)
 {
-    global $c, $cl, $h, $cf, $edit;
+    global $c, $cl, $h, $edit;
 
     for ($i = 0; $i < $cl; $i++) {
         if ($h[$i] == $heading) {
-            $pattern = "/.*<\/h[1-".$cf['menu']['levels']."]>/is";
+            $pattern = '/.*?<!--XH_ml[1-9]:.*?-->/isu';
             $body = preg_replace($pattern, "", $c[$i]);
             $pattern = '/#CMSimple (.*?)#/is';
             return $edit
@@ -699,7 +698,7 @@ function rfc()
     $s = -1;
 
     if ($cl == 0) {
-        $c[] = '<h1>' . $tx['toc']['newpage'] . '</h1>';
+        $c[] = '<!--XH_ml1:' . $tx['toc']['newpage'] . '-->'; //HI
         $h[] = trim(strip_tags($tx['toc']['newpage']));
         $u[] = uenc($h[0]);
         $l[] = 1;
@@ -788,15 +787,14 @@ function XH_readContents($language = null)
     if (($content = XH_readFile($contentFile)) === false) {
         return false;
     }
-    $stop = $cf['menu']['levels'];
-    $content = preg_split('/(?=<h[1-' . $stop . '])/i', $content);
+    $content = preg_split('/(?=<!--XH_ml[1-9]:)/i', $content);
     $content[] = preg_replace('/(.*?)<\/body>.*/isu', '$1', array_pop($content));
     $contentHead = array_shift($content);
 
     $temp_h = array();
     foreach ($content as $page) {
         $c[] = $page;
-        preg_match('~<h([1-' . $stop . ']).*>(.*)</h~isU', $page, $temp);
+        preg_match('~<!--XH_ml([1-9]):(.*)-->~isU', $page, $temp);
         $l[] = $temp[1];
         $temp_h[] = trim(xh_rmws(strip_tags($temp[2])));
     }
@@ -865,6 +863,9 @@ function XH_readContents($language = null)
             }
         }
     }
+
+    //TODO: don't use $cf['menu']['levels'] anymore
+    $cf['menu']['levels'] = max($l);
 
     return array(
         'urls' => $u,
@@ -1553,13 +1554,13 @@ function XH_logMessage($type, $module, $category, $description)
  * @global string The HTML of the contents area.
  * @global int    The index of the requested page.
  * @global string The script name.
- * @global array  The URLs of the pages.
+ * @global string The URL of the selected page.
  *
  * @return string HTML
  */
 function loginforms()
 {
-    global $cf, $tx, $onload, $f, $o, $s, $sn, $u;
+    global $cf, $tx, $onload, $f, $o, $s, $sn, $su;
 
     if ($f == 'login' || $f == 'xh_login_failed') {
         $cf['meta']['robots'] = "noindex";
@@ -1572,10 +1573,10 @@ function loginforms()
             . '<h1>' . $tx['menu']['login'] . '</h1>'
             . $message
             . '<p><b>' . $tx['login']['warning'] . '</b></p>'
-            . '<form id="login" name="login" action="' . $sn . '?' . $u[$s]
+            . '<form id="login" name="login" action="' . $sn . '?' . $su
             . '" method="post">'
             . '<input type="hidden" name="login" value="true">'
-            . '<input type="hidden" name="selected" value="' . $u[$s] . '">'
+            . '<input type="hidden" name="selected" value="' . $su . '">'
             . '<input type="password" name="keycut" id="passwd" value="">'
             . ' '
             . '<input type="submit" name="submit" id="submit" value="'

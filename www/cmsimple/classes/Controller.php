@@ -306,32 +306,6 @@ class Controller
     }
 
     /**
-     * Handles password check Ajax requests.
-     *
-     * @return void
-     *
-     * @access protected
-     *
-     * @global PasswordHash The password hasher.
-     * @global array        The configuration of the core.
-     *
-     * @todo Declare visibility.
-     */
-    function handlePasswordCheck()
-    {
-        global $xh_hasher, $cf;
-
-        header('Content-Type: text/plain');
-        echo intval(
-            $xh_hasher->checkPassword(
-                stsl($_GET['xh_check']),
-                $cf['security']['password']
-            )
-        );
-        XH_exit();
-    }
-
-    /**
      * Sets frontend $f.
      *
      * @return void
@@ -392,7 +366,7 @@ class Controller
     {
         global $function, $validate, $xh_do_validate, $settings, $xh_backups,
             $xh_pagedata, $sysinfo, $phpinfo, $file, $userfiles, $images,
-            $downloads, $f;
+            $downloads, $f, $xh_change_password;
 
         if ($function == 'save') {
             $f = 'save';
@@ -404,20 +378,22 @@ class Controller
             $f = 'userfiles';
         } elseif ($file) {
             $f = 'file';
-        } elseif (isset($phpinfo)) {
+        } elseif ($phpinfo) {
             $f = 'phpinfo';
-        } elseif (isset($sysinfo)) {
+        } elseif ($sysinfo) {
             $f = 'sysinfo';
-        } elseif (isset($xh_pagedata)) {
+        } elseif ($xh_pagedata) {
             $f = 'xh_pagedata';
-        } elseif (isset($xh_backups)) {
+        } elseif ($xh_backups) {
             $f = 'xh_backups';
         } elseif ($settings) {
             $f = 'settings';
-        } elseif (isset($xh_do_validate)) {
+        } elseif ($xh_do_validate) {
             $f = 'do_validate';
         } elseif ($validate) {
             $f = 'validate';
+        } elseif ($xh_change_password) {
+            $f = 'change_password';
         }
     }
 

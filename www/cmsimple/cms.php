@@ -17,8 +17,8 @@
 
 /*
   ======================================
-  CMSimple_XH 1.7.0dev3, 2017013001
-  2017-01-30
+  CMSimple_XH 1.7.0dev4, 2017031901
+  2017-03-19
   based on CMSimple version 3.3 - December 31. 2009
   For changelog, downloads and information please see http://www.cmsimple-xh.org/
   ======================================
@@ -206,15 +206,15 @@ $j = null;
 /**
  * The version in textual representation, e.g. CMSimple_XH 1.6
  */
-define('CMSIMPLE_XH_VERSION', 'CMSimple_XH 1.7.0dev3');
+define('CMSIMPLE_XH_VERSION', 'CMSimple_XH 1.7.0dev4');
 /**
  * The build number as integer: YYYYMMDDBB
  */
-define('CMSIMPLE_XH_BUILD', '2017013001');
+define('CMSIMPLE_XH_BUILD', '2017031901');
 /**
  * The release date in ISO 8601 format: YYYY-MM-DD
  */
-define('CMSIMPLE_XH_DATE', '2017-01-30');
+define('CMSIMPLE_XH_DATE', '2017-03-19');
 
 if (!defined('E_STRICT')) {
     /**
@@ -749,8 +749,9 @@ $xhpages = null;
 
 $temp = array(
     'action', 'download', 'downloads', 'edit', 'file', 'function', 'images',
-    'login', 'logout', 'keycut', 'mailform', 'media', 'normal', 'print', 'search',
-    'selected', 'settings', 'sitemap', 'text', 'userfiles', 'validate', 'xhpages'
+    'login', 'logout', 'keycut', 'mailform', 'media', 'normal', 'phpinfo', 'print', 'search',
+    'selected', 'settings', 'sitemap', 'sysinfo', 'text', 'userfiles', 'validate', 'xhpages',
+    'xh_backups', 'xh_change_password', 'xh_do_validate', 'xh_pagedata'
 );
 foreach ($temp as $i) {
     initvar($i);
@@ -803,7 +804,7 @@ if (sv('QUERY_STRING') != '') {
         $su = $selected;
     }
     foreach ($rq as $i) {
-        if (!strpos($i, '=')) {
+        if (!strpos($i, '=') && in_array($i, $temp)) {
             $GLOBALS[$i] = 'true';
         }
     }
@@ -922,9 +923,6 @@ if (XH_ADM) {
     include_once $pth['folder']['cmsimple'] . 'adminfuncs.php';
     if (isset($_GET['xh_keep_alive'])) {
         $_XH_controller->handleKeepAlive();
-    }
-    if (isset($_GET['xh_check'])) {
-        $_XH_controller->handlePasswordCheck();
     }
     $_XH_controller->outputAdminScripts();
 }
@@ -1246,7 +1244,7 @@ if (XH_ADM) {
 
     $temp = array(
         'settings', 'xh_backups', 'images', 'downloads', 'validate', 'sysinfo',
-        'phpinfo', 'xh_pagedata'
+        'phpinfo', 'xh_pagedata', 'change_password'
     );
     if (in_array($f, $temp)) {
         $title = $tx['title'][$f];
@@ -1303,6 +1301,11 @@ if (XH_ADM) {
     case 'do_validate':
         $temp = new XH\LinkChecker();
         $o .= ($f == 'validate') ? $temp->prepare() : $temp->doCheck();
+        break;
+    case 'change_password':
+        $temp = new XH\ChangePassword();
+        $i = $action === 'save' ? 'save' : 'default';
+        $temp->{"{$i}Action"}();
         break;
     }
 }
@@ -1371,8 +1374,8 @@ $_XH_controller->sendStandardHeaders();
 
 if ($print) {
     XH_builtinTemplate('print');
-    //} elseif (strtolower($f) == 'login' || $f == 'forgotten') {
-    //    XH_builtinTemplate('xh_login');
+} elseif (strtolower($f) == 'login' || $f == 'forgotten') {
+    XH_builtinTemplate('xh_login');
 }
 
 if (XH_ADM) {

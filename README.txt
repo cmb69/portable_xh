@@ -85,7 +85,7 @@ php/ (incl. subfolders)
 
 www/ (incl. subfolders)
     Copyright (c) 1999-2009 Peter Harteg
-    Copyright (c) 2009-2015 The CMSimple_XH Developers
+    Copyright (c) 2009-2017 The CMSimple_XH Developers
     Licensed under GNU GPLv3 <http://www.gnu.org/licenses/gpl.html>
     Website: <http://www.cmsimple-xh.org/>
 
