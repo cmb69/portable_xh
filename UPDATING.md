@@ -5,6 +5,8 @@ Update CMSimple_XH
 
 * fix XH_isAccessProtected() for the single threaded webserver
 
+* put an empty `.gitignore` into `userfiles/media/`
+
 Update PHP
 ==========
 
