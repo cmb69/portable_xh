@@ -121,13 +121,11 @@ function include_tinymce4()
         $tiny_src. 
         '"></script>
 	<script type="text/javascript">
-	/* <![CDATA[ */
 	' . tinymce4_filebrowser() . '
     var myImageList;
 	' . $imageList . '
     var myLinkList;
 	' . $linkList . '
-	/* ]]> */
 	</script>
     <style type="text/css">
         div.mce-fullscreen {z-index: 999;}  /*fullscreen overlays admin toolbar */
@@ -148,8 +146,8 @@ function tinymce4_config($config, $selector)
 {
     global $cl, $pth, $sl, $cf, $plugin_cf, $plugin_tx, $s;
 
-    $pcf = &$plugin_cf['tinymce4'];
-    $ptx = &$plugin_tx['tinymce4'];
+    $pcf = $plugin_cf['tinymce4'];
+    $ptx = $plugin_tx['tinymce4'];
     $pluginName = basename(dirname(__FILE__), "/");
     $pluginPth = $pth['folder']['plugins'] . $pluginName . '/';
 
@@ -199,6 +197,7 @@ function tinymce4_config($config, $selector)
     } else {
         $tiny_language = 'en';
     }
+    
 
     /*
      * The styles of this sheet will be used inside the editor.
@@ -214,14 +213,17 @@ function tinymce4_config($config, $selector)
         'stylesheet.css', $temp
     );
 
+    /* %LANGUAGE% = language:"[lang]"  and language_url = path to 
+     * tinymce language file(in regard to the TinyMCE CDN Variant) 
+     * if lang other than en
+     */
     $temp = str_replace(
-        '%LANGUAGE%', $tiny_language !='en' ? 
-            TINYMCE4_VARIANT == 'CDN' ?
-                'language_url: "' . 
-                CMSIMPLE_ROOT.'plugins/tinymce4/tinymce/langs/' . 
-                $tiny_language.'.js",'
-            :   'language: "' . $tiny_language .'",' 
-        :   'language: "en",', $temp
+        '%LANGUAGE%', 'language: "' . $tiny_language .'",'
+        . ($tiny_language !='en' && TINYMCE4_VARIANT == 'CDN' ? 
+            '
+  language_url: "' . 
+            CMSIMPLE_ROOT.'plugins/tinymce4/tinymce/langs/' . 
+            $tiny_language.'.js",' : ''), $temp
     );
 
     $elementFormat = $cf['xhtml']['endtags'] == 'true' ? 'xhtml' : 'html';
@@ -229,18 +231,13 @@ function tinymce4_config($config, $selector)
     
     $_named_pageheaders = $_pageheaders = $_headers = array();
     for ( $i = 1; $i <= 6; $i++ ) {
-        if ($i <= $cf['menu']['levels']) {
-            $_pageheaders [] = "Header $i=h$i";
+             $_pageheaders [] = "Header $i=h$i";
             $_named_pageheaders [] = sprintf($ptx['pageheader'], $i) . "=h$i";
-        } else {
             $_headers[] = "Header $i=h$i";
-            
-        }
     };
     $temp = str_replace('%PAGEHEADERS%', implode(';', $_pageheaders), $temp);
     
     $temp = str_replace('%HEADERS%', implode(';', $_headers), $temp);
-
     $temp = str_replace(
         '%NAMED_PAGEHEADERS%', 
         implode(
@@ -319,8 +316,7 @@ function init_tinymce4($classes = array(), $config = false)
 
     $hjs .= '
 	<script language="javascript" type="text/javascript">
-	/* <![CDATA[ */' . _setInit($temp) . '
-	/* ]]> */
+	' . _setInit($temp) . '
 	</script>
 	';
     return;
@@ -339,14 +335,18 @@ function _setInit($config)
     static $run = 0;
     $js = str_replace(
         'tinyArgs', 'tinyArgs'.$run, '
-        var tinyArgs = ' . $config . ';
-        if (myImageList && myImageList.length > 0 ) 
-            tinyArgs.image_list = myImageList;
-        else
-            delete tinyArgs.image_list;
-        if (myLinkList) 
-            tinyArgs.link_list = myLinkList;
-        tinymce.init(tinyArgs);
+        if (typeof(tinymce) === "undefined" || tinymce === null) {
+            alert("tinyMCE not present! Either offline or local library missing.")
+        } else {
+            var tinyArgs = ' . $config . ';
+            if (myImageList && myImageList.length > 0 ) 
+                tinyArgs.image_list = myImageList;
+            else
+                delete tinyArgs.image_list;
+            if (myLinkList) 
+                tinyArgs.link_list = myLinkList;
+            tinymce.init(tinyArgs);
+        }
         '
     );
     $run++;

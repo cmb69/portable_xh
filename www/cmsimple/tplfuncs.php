@@ -3,14 +3,12 @@
 /**
  * Template functions.
  *
- * PHP version 5
- *
  * @category  CMSimple_XH
  * @package   XH
  * @author    Peter Harteg <peter@harteg.dk>
  * @author    The CMSimple_XH developers <devs@cmsimple-xh.org>
  * @copyright 1999-2009 Peter Harteg
- * @copyright 2009-2016 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
+ * @copyright 2009-2017 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
  * @link      http://cmsimple-xh.org/
  */
@@ -87,11 +85,11 @@ function head()
         . CMSIMPLE_XH_BUILD . ' - www.cmsimple-xh.org">' . "\n"
         . '<!-- plugins: ' . $plugins . ' -->' . "\n"
         . XH_renderPrevLink() . XH_renderNextLink()
-        . '<link rel="stylesheet" href="' . $pth['file']['corestyle']
-        . '" type="text/css">' . "\n"
+        . '<link rel="stylesheet" href="' . XH_pluginStylesheet()
+        . '" type="text/css">' . PHP_EOL
+        . $hjs
         . '<link rel="stylesheet" href="' . $pth['file']['stylesheet']
-        . '" type="text/css">' . "\n"
-        . $hjs;
+        . '" type="text/css">' . "\n";
 }
 
 /**
@@ -197,7 +195,7 @@ function toc($start = null, $end = null, $li = 'li')
         if ($l[$i] < $tl) {
             $tl = $l[$i];
         }
-    }    
+    }
     return $li($ta, $start);
 }
 
@@ -269,14 +267,14 @@ function searchbox()
 {
     global $sn, $tx;
 
-    return '<form action="' . $sn . '" method="get">' . "\n"
-        . '<div id="searchbox">' . "\n"
-        . '<input type="text" class="text" name="search" title="'
-        . $tx['search']['label'] . '" size="12">' . "\n"
+    return '<form id="searchbox" action="' . $sn . '" method="get">' . "\n"
+        . '<input type="search" class="text" name="search" title="'
+        . $tx['search']['label'] . '" placeholder="' . $tx['search']['label']
+        . '" size="12">' . "\n"
         . '<input type="hidden" name="function" value="search">' . "\n" . ' '
         . '<input type="submit" class="submit" value="'
         . $tx['search']['button'] . '">' . "\n"
-        . '</div>' . "\n" . '</form>' . "\n";
+        . '</form>' . "\n";
 }
 
 
@@ -324,7 +322,7 @@ function XH_printUrl()
 
     $t = '&print';
     if ($f == 'search') {
-        $t .= '&function=search&search=' . stsl($search);
+        $t .= '&function=search&search=' . urlencode(stsl($search));
     } elseif ($f == 'file') {
         $t .= '&file=' . $file;
     } elseif ($f != '' && $f != 'save') {
@@ -452,23 +450,16 @@ function editmenu()
  *
  * @return string HTML
  *
- * @global array  The headings of the pages.
  * @global int    The index of the current page.
  * @global string The output of the contents area.
  * @global array  The content of the pages.
  * @global bool   Whether edit mode is active.
- * @global array  The configuration of the core.
  */
 function content()
 {
-    global $h, $s, $o, $c, $edit, $cf;
+    global $s, $o, $c, $edit;
     $heading = '';
 
-    if ($cf['headings']['show'] && $s > -1) {
-        if (preg_match('/<!--XH_ml[1-9]:(.+)-->/isU', $c[$s], $matches)) {
-            $heading = sprintf($cf['headings']['format'], $matches[1]);
-        } 
-    }
     if (!($edit && XH_ADM) && $s > -1) {
         if (isset($_GET['search'])) {
             $search = XH_hsc(stsl($_GET['search']));
@@ -479,9 +470,6 @@ function content()
         $o .= $heading . preg_replace('/#CMSimple (.*?)#/is', '', $c[$s]);
         return  preg_replace('/<!--XH_ml[1-9]:.*?-->/isu', '', $o);
     } else {
-        if ($s > -1 && ($cf['headings']['show'] || ($edit && XH_ADM))) {
-            $o = sprintf($cf['headings']['format'], $h[$s]) . $o;
-        }
         return  preg_replace('/<!--XH_ml[1-9]:.*?-->/isu', '', $o);
     }
 }
@@ -618,7 +606,10 @@ function languagemenu()
     foreach ($r as $lang) {
         $url = $pth['folder']['base']
             . ($lang == $cf['language']['default'] ? '' : $lang . '/');
-        $img = $pth['folder']['flags'] . $lang . '.gif';
+        $img = $pth['folder']['templateflags'] . $lang . '.gif';
+        if (!file_exists($img)) {
+            $img = $pth['folder']['flags'] . $lang . '.gif';
+        }
 
         $title = isset($langName[$lang])
             ? $langName[$lang]
@@ -669,8 +660,6 @@ function XH_emergencyTemplate()
  *
  * @global string The site (script) name.
  *
- * @access public
- *
  * @since 1.7
  */
 function poweredByLink($linktext = '')
@@ -681,5 +670,3 @@ function poweredByLink($linktext = '')
     return '<a href="' . $sn . '?' . uenc('site/cms info') . '">'
         . $linktext . '</a>';
 }
-
-?>

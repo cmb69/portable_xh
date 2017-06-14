@@ -3,14 +3,12 @@
 /**
  * Admin only functions.
  *
- * PHP version 5
- *
  * @category  CMSimple_XH
  * @package   XH
  * @author    Peter Harteg <peter@harteg.dk>
  * @author    The CMSimple_XH developers <devs@cmsimple-xh.org>
  * @copyright 1999-2009 Peter Harteg
- * @copyright 2009-2016 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
+ * @copyright 2009-2017 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
  * @link      http://cmsimple-xh.org/
  */
@@ -71,10 +69,7 @@ function XH_systemCheck(array $data)
 
     if (key_exists('phpversion', $data)) {
         $ok = version_compare(PHP_VERSION, $data['phpversion']) >= 0;
-        $o .= XH_systemCheckLi(
-            '', $ok ? 'success' : 'fail', 
-            sprintf($stx['phpversion'], $data['phpversion'])
-        );
+        $o .= XH_systemCheckLi('', $ok ? 'success' : 'fail', sprintf($stx['phpversion'], $data['phpversion']));
     }
 
     if (key_exists('extensions', $data)) {
@@ -87,7 +82,8 @@ function XH_systemCheck(array $data)
                 $notok = 'fail';
             }
             $o .= XH_systemCheckLi(
-                $cat, extension_loaded($ext) ? 'success' : $notok,
+                $cat,
+                extension_loaded($ext) ? 'success' : $notok,
                 sprintf($stx['extension'], $ext)
             );
             $cat = '';
@@ -103,10 +99,7 @@ function XH_systemCheck(array $data)
             } else {
                 $notok = 'warning';
             }
-            $o .= XH_systemCheckLi(
-                $cat, is_writable($file) ? 'success' : $notok,
-                sprintf($stx['writable'], $file)
-            );
+            $o .= XH_systemCheckLi($cat, is_writable($file) ? 'success' : $notok, sprintf($stx['writable'], $file));
             $cat = '';
         }
     }
@@ -115,9 +108,7 @@ function XH_systemCheck(array $data)
         $cat = 'xh_system_check_cat_start';
         foreach ($data['other'] as $check) {
             $notok = $check[1] ? 'fail' : 'warning';
-            $o .= XH_systemCheckLi(
-                $cat, $check[0] ? 'success' : $notok, $check[2]
-            );
+            $o .= XH_systemCheckLi($cat, $check[0] ? 'success' : $notok, $check[2]);
             $cat = '';
         }
     }
@@ -170,15 +161,15 @@ function XH_absoluteUrlPath($path)
     $i = 0;
     while ($i < count($parts)) {
         switch ($parts[$i]) {
-        case '.':
-            array_splice($parts, $i, 1);
-            break;
-        case '..':
-            array_splice($parts, $i - 1, 2);
-            $i--;
-            break;
-        default:
-            $i++;
+            case '.':
+                array_splice($parts, $i, 1);
+                break;
+            case '..':
+                array_splice($parts, $i - 1, 2);
+                $i--;
+                break;
+            default:
+                $i++;
         }
     }
     $path = implode('/', $parts);
@@ -222,7 +213,6 @@ function XH_isAccessProtected($path)
  * @global array           The paths of system files and folders.
  * @global array           The configuration of the core.
  * @global array           The localization of the core.
- * @global XH\PasswordHash The password hasher.
  * @global string The script name.
  *
  * @return string HTML
@@ -231,7 +221,7 @@ function XH_isAccessProtected($path)
  */
 function XH_sysinfo()
 {
-    global $pth, $cf, $tx, $xh_hasher, $sn;
+    global $pth, $cf, $tx, $sn;
 
     $o = '<p><b>' . $tx['sysinfo']['version'] . '</b></p>' . "\n";
     $o .= '<ul>' . "\n" . '<li>' . CMSIMPLE_XH_VERSION . '&nbsp;&nbsp;Released: '
@@ -271,13 +261,12 @@ HTML;
 
     $stx = $tx['syscheck'];
     $checks = array(
-        'phpversion' => '5.3',
+        'phpversion' => '5.3.7',
         'extensions' => array(
+            array('intl', false),
             'json',
             'mbstring',
-            'pcre',
-            array('session', false),
-            array('xml', false)
+            'session'
         ),
         'writable' => array(),
         'other' => array()
@@ -332,7 +321,7 @@ HTML;
         false, $stx['bom']
     );
     $checks['other'][] = array(
-        !$xh_hasher->checkPassword('test', $cf['security']['password']),
+        !password_verify('test', $cf['security']['password']),
         false, $stx['password']
     );
     $checks['other'][] = array(
@@ -380,6 +369,13 @@ function XH_settingsView()
 
     $o .= '<h4>' . $tx['settings']['backup'] . '</h4>' . "\n";
     $o .= XH_backupsView();
+    $o .= '<h4>' . $tx['settings']['more'] . '</h4>' . "\n"
+        . '<ul>' . "\n"
+        . '<li><a href="' . $sn . '?&validate">' . $tx['editmenu']['validate'] . '</a></li>'
+        . '<li><a href="' . $sn . '?&xh_pagedata">' .$tx['editmenu']['pagedata'] . '</a></li>'
+        . '<li><a href="' . $sn . '?&xh_change_password">' . $tx['editmenu']['change_password'] . '</a></li>'
+        . '<li><a href="' . $sn . '?&sysinfo">' . $tx['editmenu']['sysinfo'] . '</a></li>'
+        . '</ul>' . "\n";
     return $o;
 }
 
@@ -402,12 +398,12 @@ function XH_logFileView()
     return '<h1>' . $tx['title']['log'] . '</h1>'
         . '<pre id="xh_logfile">' . XH_hsc(XH_readFile($pth['file']['log']))
         . '</pre>'
-        . '<script type="text/javascript">/* <![CDATA[ */'
+        . '<script type="text/javascript">'
         . '(function () {'
         . 'var elt = document.getElementById("xh_logfile");'
         . 'elt.scrollTop = elt.scrollHeight;'
         . '}())'
-        . '/* ]]> */</script>'
+        . '</script>'
         . '<p>('
         . $tx['log']['timestamp'] . ' &ndash; '
         . $tx['log']['type']      . ' &ndash; '
@@ -488,6 +484,41 @@ function XH_backupsView()
 }
 
 /**
+ * Returns the plugins view.
+ *
+ * @return string HTML
+ *
+ * @global array  The script name.
+ * @global array  The configuration of the core
+ * @global array  The localization of the core.
+ *
+ * @since 1.7
+ */
+function XH_pluginsView()
+{
+    global $sn, $cf, $tx;
+
+    $plugins = XH_plugins(true);
+    $hiddenPlugins = explode(',', $cf['plugins']['hidden']);
+    $hiddenPlugins = array_map('trim', $hiddenPlugins);
+    $plugins = array_diff($plugins, $hiddenPlugins);
+    natcasesort($plugins);
+    $plugins = array_values($plugins);
+
+    $o = '<h1>' . $tx['title']['plugins'] . '</h1><ul>';
+    foreach ($plugins as $plugin) {
+        $item = array(
+            'label' => utf8_ucfirst($plugin),
+            'url' => "$sn?$plugin&normal",
+            'children' => XH_registerPluginMenuItem($plugin)
+        );
+        $o .= XH_adminMenuItem($item, 0);
+    }
+    $o .= '</ul>';
+    return $o;
+}
+
+/**
  * Creates the menu of a plugin (add row, add tab), constructed as a table.
  * This is an object implemented with a procedural interface.
  *
@@ -502,24 +533,23 @@ function XH_backupsView()
  *
  * @global XH\ClassicPluginMenu The plugin menu builder.
  */
-function pluginMenu($add = '', $link = '', $target = '', $text = '',
-    array $style = array()
-) {
+function pluginMenu($add = '', $link = '', $target = '', $text = '', array $style = array())
+{
     global $_XH_pluginMenu;
 
     switch (strtoupper($add)) {
-    case 'ROW':
-        $_XH_pluginMenu->makeRow($style);
-        break;
-    case 'TAB':
-        $_XH_pluginMenu->makeTab($link, $target, $text, $style);
-        break;
-    case 'DATA':
-        $_XH_pluginMenu->makeData($text, $style);
-        break;
-    case 'SHOW':
-        return $_XH_pluginMenu->show();
-        break;
+        case 'ROW':
+            $_XH_pluginMenu->makeRow($style);
+            break;
+        case 'TAB':
+            $_XH_pluginMenu->makeTab($link, $target, $text, $style);
+            break;
+        case 'DATA':
+            $_XH_pluginMenu->makeData($text, $style);
+            break;
+        case 'SHOW':
+            return $_XH_pluginMenu->show();
+            break;
     }
 }
 
@@ -553,9 +583,8 @@ function XH_registerStandardPluginMenuItems($showMain)
  *
  * @since 1.6.2
  */
-function XH_registerPluginMenuItem($plugin, $label = null, $url = null,
-    $target = null
-) {
+function XH_registerPluginMenuItem($plugin, $label = null, $url = null, $target = null)
+{
     static $pluginMenu = array();
 
     if (isset($label) && isset($url)) {
@@ -605,7 +634,7 @@ function XH_adminMenu(array $plugins = array())
     foreach (array('images', 'downloads', 'media') as $item) {
         $filesMenu[] =  array(
             'label' => utf8_ucfirst($tx['editmenu'][$item]),
-            'url' => $sn . '?&normal&' . $item
+            'url' => $sn . '?&edit&' . $item
         );
     }
     $settingsMenu = array(
@@ -693,7 +722,7 @@ function XH_adminMenu(array $plugins = array())
         ),
         array(
             'label' => utf8_ucfirst($tx['editmenu']['files']),
-            'url' => $sn . '?&normal&userfiles',
+            'url' => $sn . '?&edit&userfiles',
             'children' => $filesMenu
             ),
         array(
@@ -703,7 +732,7 @@ function XH_adminMenu(array $plugins = array())
         ),
         array(
             'label' => utf8_ucfirst($tx['editmenu']['plugins']),
-            'url' => $sn, // TODO: use more sensible URL
+            'url' => $sn . '?&xh_plugins',
             'children' => $pluginMenu,
             'id' => 'xh_adminmenu_plugins',
             'style' => 'width:' . $width . 'px; margin-left: ' . $marginLeft . 'px'
@@ -781,14 +810,10 @@ function XH_adminMenuItem(array $item, $level = 0)
  *
  * @global XH\ClassicPluginMenu The plugin menu builder.
  */
-// @codingStandardsIgnoreStart
 function print_plugin_admin($main)
 {
-// @codingStandardsIgnoreEnd
     global $_XH_pluginMenu;
 
-    initvar('action');
-    initvar('admin');
     return $_XH_pluginMenu->render(strtoupper($main) == 'ON');
 }
 
@@ -801,34 +826,32 @@ function print_plugin_admin($main)
  *
  * @return string Returns the created form or the result of saving the data.
  */
-// @codingStandardsIgnoreStart
 function plugin_admin_common()
 {
-// @codingStandardsIgnoreEnd
     global $action, $admin;
 
     switch ($admin) {
-    case 'plugin_config':
-        $fileEdit = new XH\PluginConfigFileEdit();
-        break;
-    case 'plugin_language':
-        $fileEdit = new XH\PluginLanguageFileEdit();
-        break;
-    case 'plugin_stylesheet':
-        $fileEdit = new XH\PluginTextFileEdit();
-        break;
-    default:
-        return false;
+        case 'plugin_config':
+            $fileEdit = new XH\PluginConfigFileEdit();
+            break;
+        case 'plugin_language':
+            $fileEdit = new XH\PluginLanguageFileEdit();
+            break;
+        case 'plugin_stylesheet':
+            $fileEdit = new XH\PluginTextFileEdit();
+            break;
+        default:
+            return false;
     }
     switch ($action) {
-    case 'plugin_edit':
-    case 'plugin_text':
-        return $fileEdit->form();
-    case 'plugin_save':
-    case 'plugin_textsave':
-        return $fileEdit->submit();
-    default:
-        return false;
+        case 'plugin_edit':
+        case 'plugin_text':
+            return $fileEdit->form();
+        case 'plugin_save':
+        case 'plugin_textsave':
+            return $fileEdit->submit();
+        default:
+            return false;
     }
 }
 
@@ -869,16 +892,18 @@ function XH_contentEditor()
         $o .= tag('input type="hidden" name="level" value="' . $l[$s] . '"')
             . tag('input type="hidden" name="heading" value="' . $h[$s] . '"');
         //replace split-markers
-        $c[$s] = preg_replace('/<!--XH_ml[1-9]:.*?-->/isu', '', $c[$s]);
+        $tempContent = preg_replace('/<!--XH_ml[1-9]:.*?-->/isu', '', $c[$s]);
+    } else {
+        $tempContent = $c[$s];
     }
     $o .= tag('input type="hidden" name="function" value="save"')
         . '<textarea name="text" id="text" class="xh-editor" style="height: '
         . $cf['editor']['height'] . 'px; width: 100%;" rows="30" cols="80">'
-        . XH_hsc($c[$s])
+        . XH_hsc($tempContent)
         . '</textarea>'
-        . '<script type="text/javascript">/* <![CDATA[ */'
+        . '<script type="text/javascript">'
         . 'document.getElementById("text").style.height=(' . $cf['editor']['height']
-        . ') + "px";/* ]]> */</script>'
+        . ') + "px";</script>'
         . $_XH_csrfProtection->tokenInput();
     if ($cf['editor']['external'] == '' || !$editor) {
         $value = utf8_ucfirst($tx['action']['save']);
@@ -956,7 +981,7 @@ function XH_saveEditorContents($text)
     //clean up and inject split-markers
     if (!$cf['mode']['advanced']) {
         $text = preg_replace('/<!--XH_ml[1-9]:.*?-->/isu', '', $text);
-        $split = '<!--XH_ml' . stsl($_POST['level']) . ':' 
+        $split = '<!--XH_ml' . stsl($_POST['level']) . ':'
             . stsl($_POST['heading']) . '-->'
             . "\n";
         $text = $split . $text;
@@ -969,9 +994,7 @@ function XH_saveEditorContents($text)
     // remove empty headings
     $text = preg_replace("/$hot(&nbsp;|&#160;|\xC2\xA0| )?$hct/isu", '', $text);
     // replace P elements around plugin calls and scripting with DIVs
-    $text = preg_replace(
-        '/<p>({{{.*?}}}|#CMSimple .*?#)<\/p>/isu', '<div>$1</div>', $text
-    );
+    $text = preg_replace('/<p>({{{.*?}}}|#CMSimple .*?#)<\/p>/isu', '<div>$1</div>', $text);
 
     // handle missing heading on the first page
     if ($s == 0) {
@@ -984,9 +1007,7 @@ function XH_saveEditorContents($text)
     $c[$s] = $text; // keep editor contents, if saving fails
 
     // insert $text to $c
-    $text = preg_replace(
-        '/<!--XH_ml[1-9]:/is', "\x00" . '$0', $text
-    );
+    $text = preg_replace('/<!--XH_ml[1-9]:/is', "\x00" . '$0', $text);
     $pages = explode("\x00", $text);
     // append everything before the first page to the previous page
     if ($s > 0) {
@@ -1002,9 +1023,7 @@ function XH_saveEditorContents($text)
         if (count($matches[1]) > 0) {
             // page heading might have changed
             $urlParts = explode($cf['uri']['seperator'], $selected);
-            array_splice(
-                $urlParts, -1, 1, uenc(trim(xh_rmws(strip_tags($matches[1][0]))))
-            );
+            array_splice($urlParts, -1, 1, uenc(trim(xh_rmws(strip_tags($matches[1][0])))));
             $su = implode($cf['uri']['seperator'], $urlParts);
         } else {
             // page was deleted; go to previous page
@@ -1113,7 +1132,7 @@ function XH_extraBackup($suffix)
 }
 
 /**
- * Returns SCRIPT element containing the localization for admin.js.
+ * Returns SCRIPT element containing the localization for admin.min.js.
  *
  * @return string HTML
  *
@@ -1128,6 +1147,7 @@ function XH_adminJSLocalization()
     $keys = array(
         'action' => array('advanced_hide', 'advanced_show', 'cancel', 'ok'),
         'error' => array('server'),
+        'password' => array('score'),
         'settings' => array('backupsuffix')
     );
     $l10n = array();
@@ -1136,8 +1156,8 @@ function XH_adminJSLocalization()
             $l10n[$category][$key] = $tx[$category][$key];
         }
     }
-    $o = '<script type="text/javascript">/* <![CDATA[ */XH.i18n = '
-        . XH_encodeJson($l10n) . '/* ]]> */</script>' . PHP_EOL;
+    $o = '<script type="text/javascript">XH.i18n = '
+        . XH_encodeJson($l10n) . '</script>' . PHP_EOL;
     return $o;
 }
 
@@ -1152,7 +1172,5 @@ function XH_adminJSLocalization()
  */
 function XH_wantsPluginAdministration($pluginName)
 {
-    return (bool) preg_match('/(?:^|&)' . preg_quote($pluginName, '/') . '(?!=)/', sv('QUERY_STRING'));
+    return (bool) preg_match('/(?:^|&)' . preg_quote($pluginName, '/') . '(?=&|$)/', sv('QUERY_STRING'));
 }
-
-?>

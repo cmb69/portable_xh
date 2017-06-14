@@ -3,22 +3,20 @@
 /**
  * The search function of CMSimple_XH.
  *
- * PHP version 5
- *
  * @category  CMSimple_XH
  * @package   XH
  * @author    Peter Harteg <peter@harteg.dk>
  * @author    The CMSimple_XH developers <devs@cmsimple-xh.org>
  * @copyright 1999-2009 Peter Harteg
- * @copyright 2009-2016 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
+ * @copyright 2009-2017 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
  * @link      http://cmsimple-xh.org/
  */
 
 /*
   ======================================
-  CMSimple_XH 1.7.0dev5
-  2017-03-22
+  CMSimple_XH 1.7.0rc1
+  2017-05-30
   based on CMSimple version 3.3 - December 31. 2009
   For changelog, downloads and information please see http://www.cmsimple-xh.com
   ======================================
@@ -51,19 +49,15 @@ class Search
      * The search String.
      *
      * @var string
-     *
-     * @access protected
      */
-    protected $searchString;
+    private $searchString;
 
     /**
      * The search words.
      *
      * @var array
-     *
-     * @access protected
      */
-    protected $words;
+    private $words;
 
     /**
      * Constructs an instance.
@@ -79,10 +73,8 @@ class Search
      * Returns the array of search words.
      *
      * @return array
-     *
-     * @access protected
      */
-    protected function getWords()
+    private function getWords()
     {
         if (!isset($this->words)) {
             $words = explode(' ', $this->searchString);
@@ -90,7 +82,7 @@ class Search
             foreach ($words as $word) {
                 $word = trim($word);
                 if ($word != '') {
-                    if (class_exists('\Normalizer') 
+                    if (class_exists('\Normalizer', false)
                         && method_exists('\Normalizer', 'normalize')
                     ) {
                         $word = \Normalizer::normalize($word);
@@ -110,12 +102,8 @@ class Search
      *
      * @global array The content of the pages.
      * @global array The configuration of the core.
-     *
-     * @access protected
-     *
-     * @todo Declare visibility.
      */
-    function search()
+    public function search()
     {
         global $c, $cf;
 
@@ -150,29 +138,23 @@ class Search
      *
      * @return string
      */
-    protected function prepareContent($content, $pageIndex)
+    private function prepareContent($content, $pageIndex)
     {
-        global $cf, $s, $h;
+        global $s;
 
-        $s = $pageIndex;
-        // we have to add the page heading, if visible in content
-        if ($cf['headings']['show']) {
-            $content = $h[$s] . $content;
+        $vars = array('s', 'o', 'hjs', 'bjs', 'e', 'onload');
+        foreach ($vars as $var) {
+            $old[$var] = $GLOBALS[$var];
         }
+        $s = $pageIndex;
         $content = strip_tags(evaluate_plugincall($content));
-        $s = -1;
+        foreach ($vars as $var) {
+            $GLOBALS[$var] = $old[$var];
+        }
         if (method_exists('\Normalizer', 'normalize')) {
             $content = \Normalizer::normalize($content);
         }
-        // html_entity_decode() doesn't work for UTF-8 under PHP 4
-        $decode = array(
-            '&amp;' => '&',
-            '&quot;' => '"',
-            '&apos;' => '\'',
-            '&lt;' => '<',
-            '&gt;' => '>'
-        );
-        return strtr($content, $decode);
+        return html_entity_decode($content, ENT_QUOTES, 'UTF-8');
     }
 
     /**
@@ -184,7 +166,7 @@ class Search
      *
      * @global array The localization of the core.
      */
-    protected function foundMessage($count)
+    private function foundMessage($count)
     {
         global $tx;
 
@@ -211,13 +193,15 @@ class Search
      * @global array  The headings of the pages.
      * @global array  The URLs of the pages.
      * @global string The script name.
+     * @global array  The configuration of the core.
      * @global array  The localization of the core.
      * @global object The page data router.
      */
     public function render()
     {
-        global $h, $u, $sn, $tx, $pd_router;
+        global $h, $u, $sn, $cf, $tx, $pd_router;
 
+        $cf['meta']['robots'] = 'noindex, nofollow';
         $o = '<h1>' . $tx['search']['result'] . '</h1>';
         $words = $this->getWords();
         $pages = $this->search();
@@ -244,5 +228,3 @@ class Search
         return $o;
     }
 }
-
-?>

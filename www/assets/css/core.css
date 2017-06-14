@@ -45,7 +45,7 @@
     text-align: center;
     color: #d3d7cf;
     padding: 8px 0 0 0;
-    margin: 0;
+    margin: 2px 0 0 0;
 }
 
 #xh_adminmenu li a:hover,
@@ -58,8 +58,8 @@
 #xh_adminmenu span {
     display: block;
     color: #d3d7cf;
-    height: 26px;
-    padding: 2px 6px 0px 6px;
+    height: 28px;
+    padding: 0 6px 0 6px;
     text-decoration: none;
     font-style: normal;
 }
@@ -287,23 +287,6 @@
 
 li.xh_system_check_cat_start {
     margin-top: 1em;
-}
-
-/*
- * Pluginloader
- */
-
-div.pluginedit,
-div.plugintext {
-    border: 0px solid #828177;
-    padding: 4px 0;
-}
-
-div.plugineditcaption {
-    font-family: arial, sans-serif;
-    font-size: 15px;
-    font-weight: bold;
-    padding: 6px 0;
 }
 
 /*

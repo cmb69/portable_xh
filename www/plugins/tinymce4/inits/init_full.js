@@ -5,7 +5,7 @@
   toolbar_items_size: "small",
   menubar:false,
   plugins: [
-    "advlist anchor autolink autosave charmap code colorpicker contextmenu emoticons fullscreen hr",
+    "advlist anchor autolink autosave charmap code colorpicker contextmenu emoticons fullscreen  help hr",
     "image importcss insertdatetime link lists media nonbreaking paste",
     "save searchreplace table textcolor visualblocks visualchars wordcount"
   ],
@@ -21,11 +21,9 @@
 //inserted 30.11.2016  
   style_formats_autohide: true,
   importcss_selector_filter: /(?:([a-z0-9\-_]+))(\.[a-z0-9_\-\.]+)$/i,
-// %LANGUAGE% = language:"en" (fallback) or language_url = path to tinymce language file (in regard to the TinyMCE CDN Variant  
   %LANGUAGE%
   element_format: "%ELEMENT_FORMAT%",
-// %PAGEHEADERS% = h1...hx for new pages, %NAMED_PAGEHEADERS% =  1. Level pageheader=h1 ...hx, %HEADERS% = remaining hy...h6
-  block_formats: "%HEADERS%;p=p;div=div;%PAGEHEADERS%;code=code;pre=pre;dt=dt;dd=dd",
+  block_formats: "%HEADERS%;p=p;div=div;code=code;pre=pre;dt=dt;dd=dd",
   "insertdatetime_formats": ["%H:%M:%S", "%d.%m.%Y", "%I:%M:%S %p", "%D"],
   relative_urls: true,
   convert_urls: false,

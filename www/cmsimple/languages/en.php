@@ -31,7 +31,7 @@ $tx['action']['view']="view";
 
 $tx['editmenu']['backups']="Backups";
 $tx['editmenu']['change_password']="Password";
-$tx['editmenu']['configuration']="CMS";
+$tx['editmenu']['configuration']="Configuration";
 $tx['editmenu']['downloads']="Downloads";
 $tx['editmenu']['edit']="Edit mode";
 $tx['editmenu']['files']="Files";
@@ -87,8 +87,6 @@ $tx['filetype']['log']="log";
 $tx['filetype']['stylesheet']="stylesheet";
 $tx['filetype']['template']="template";
 
-$tx['heading']['error']="ERROR";
-
 $tx['help']['downloads_maxsize']="Maximum size of uploaded files in Byte. This must neither exceed the limit set for upload_max_filesize nor post_max_size in the PHP configuration.";
 $tx['help']['editmenu_scroll']="Whether the admin menu shall scroll with your webpage. Not checked = fixed admin menu.";
 $tx['help']['editmenu_external']="If you want to use an external admin menu, install it as a plugin and enter its function name here.";
@@ -137,6 +135,9 @@ $tx['help']['folders_downloads']="A subfolder of userfiles.";
 $tx['help']['folders_images']="A subfolder of userfiles.";
 $tx['help']['folders_media']="A subfolder of userfiles.";
 
+$tx['help']['format_date']="The date format if ext/intl is available; otherwise the date/time format falls back to <code>\$tx['lastupdate']['format']</code>.";
+$tx['help']['format_time']="The time format if ext/intl is available; otherwise the date/time format falls back to <code>\$tx['lastupdate']['format']</code>.";
+
 $tx['label']['empty']="- EMPTY -";
 
 $tx['languagemenu']['text']="select language: ";
@@ -177,6 +178,7 @@ $tx['log']['module']="module";
 $tx['log']['category']="category";
 $tx['log']['description']="description";
 
+$tx['login']['back']="Back";
 $tx['login']['failure']="You have entered a wrong password!";
 $tx['login']['loggedout']="You have been logged out";
 $tx['login']['warning']="Site administration. Please enter password.";
@@ -231,6 +233,7 @@ $tx['password']['invalid']="New password must consist of ASCII characters only."
 $tx['password']['mismatch']="New password and its confirmation do not match.";
 $tx['password']['new']="New password";
 $tx['password']['old']="Old password";
+$tx['password']['score']="Password score: %s";
 $tx['password']['wrong']="Old password is wrong.";
 
 $tx['password_forgotten']['email1_sent']="An email has been sent to the configured address with a link to reset the password. This link is valid for 1-2 hours.";
@@ -255,6 +258,7 @@ $tx['settings']['backupexplain1']="On logout content is backed up and the oldest
 $tx['settings']['backupexplain2']="Backup file names start with date and time of backup as: YYYYMMDD_HHMMSS";
 $tx['settings']['backupsuffix']="Enter a filename (only a-z, 0-9, minus and underscore; at most 20 characters):";
 $tx['settings']['ftp']="Use FTP for remote file management";
+$tx['settings']['more']="More";
 $tx['settings']['systemfiles']="System files";
 $tx['settings']['warning']="Only change settings when you understand the effect your changes will have!";
 
@@ -289,10 +293,12 @@ $tx['sysinfo']['version']="Installed CMSimple Version";
 $tx['sysinfo']['unknown']="Webserver could not be determined";
 $tx['sysinfo']['webserver']="Webserver";
 
+$tx['template']['active']="Active Template: ";
 $tx['template']['default']="default template";
 
 $tx['title']['bad_request']="Bad request";
 $tx['title']['change_password']="Change Password";
+$tx['title']['cms']="Content Management System";
 $tx['title']['downloads']="Downloads";
 $tx['title']['images']="Images";
 $tx['title']['log']="Log File";
@@ -301,10 +307,12 @@ $tx['title']['media']="Mediafiles";
 $tx['title']['xh_pagedata']="Page Data Cleanup";
 $tx['title']['password_forgotten']="Password forgotten";
 $tx['title']['phpinfo']="PHP Info";
+$tx['title']['plugins']="Plugins";
 $tx['title']['search']="Search";
 $tx['title']['settings']="Settings";
 $tx['title']['sitemap']="Sitemap";
 $tx['title']['sysinfo']="System Info";
+$tx['title']['templates']="Templates";
 $tx['title']['userfiles']="Userfiles";
 $tx['title']['validate']="Validate links";
 $tx['title']['xh_backups']="Backup";

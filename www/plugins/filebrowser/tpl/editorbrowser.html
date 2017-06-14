@@ -1,23 +1,17 @@
 <?php
-
-/**
- * @version $Id$
- */
-
 global $pth, $_XH_csrfProtection;
 ?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <title>Filebrowser</title>
-        <link rel="stylesheet" href="<?php echo $pth['file']['corestyle']?>" type="text/css">
-        <link rel="stylesheet" href="<?php echo $pth['folder']['plugin_css']?>stylesheet.css" type="text/css">
+        <link rel="stylesheet" href="<?php echo "{$pth['folder']['corestyle']}stylesheet.css"?>" type="text/css">
         <style type="text/css">body {padding: 0; margin: 0; overflow: auto;}</style>
 
         %SCRIPT%
 
 	<?php echo $this->renderJsConfig()?>
-        <script type="text/javascript" src="<?php echo $pth['folder']['plugin']?>js/filebrowser.js"></script>
+        <script type="text/javascript" src="<?php echo $pth['folder']['plugin']?>js/filebrowser.min.js"></script>
     </head>
     <body>
         <div id="xhFilebrowserMenu">

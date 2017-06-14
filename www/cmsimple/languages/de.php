@@ -31,7 +31,7 @@ $tx['action']['view']="ansehen";
 
 $tx['editmenu']['backups']="Sicherheitskopien";
 $tx['editmenu']['change_password']="Passwort";
-$tx['editmenu']['configuration']="CMS";
+$tx['editmenu']['configuration']="Konfiguration";
 $tx['editmenu']['downloads']="Downloads";
 $tx['editmenu']['edit']="Bearbeiten";
 $tx['editmenu']['files']="Dateien";
@@ -87,8 +87,6 @@ $tx['filetype']['log']="Log-Datei";
 $tx['filetype']['stylesheet']="CSS-Datei";
 $tx['filetype']['template']="Template-Datei";
 
-$tx['heading']['error']="FEHLER";
-
 $tx['help']['downloads_maxsize']="Maximale Größe für das Hochladen von Datein in Byte. Dieser Wert darf weder upload_max_filesize noch post_max_size in der PHP-Konfiguration überschreiten.";
 $tx['help']['editmenu_scroll']="Angeklickt = das Admin Menü scrollt mit";
 $tx['help']['editmenu_external']="Wenn Sie ein externes Admin-Menü nutzen wollen, installieren Sie es als Plugin und tragen Sie seinen Funktionsnamen hier ein.";
@@ -138,6 +136,9 @@ $tx['help']['folders_downloads']="Ein Unterordner der Benutzerdateien.";
 $tx['help']['folders_images']="Ein Unterordner der Benutzerdateien.";
 $tx['help']['folders_media']="Ein Unterordner der Benutzerdateien.";
 
+$tx['help']['format_date']="Das Datumsformat, wenn ext/intl verfügbar ist; andernfalls wird auf <code>\$tx['lastupdate']['format']</code> zurückgegriffen.";
+$tx['help']['format_time']="Das Zeitformat, wenn ext/intl verfügbar ist; andernfalls wird auf <code>\$tx['lastupdate']['format']</code> zurückgegriffen.";
+
 $tx['label']['empty']="- LEER -";
 
 $tx['languagemenu']['text']="Sprachauswahl: ";
@@ -178,6 +179,7 @@ $tx['log']['module']="Modul";
 $tx['log']['category']="Kategorie";
 $tx['log']['description']="Beschreibung";
 
+$tx['login']['back']="Zurück";
 $tx['login']['failure']="Sie haben ein falsches Passwort eingegeben!";
 $tx['login']['loggedout']="Sie wurden ausgeloggt";
 $tx['login']['warning']="Administrationsbereich. Bitte Passwort eingeben";
@@ -232,6 +234,7 @@ $tx['password']['invalid']="Das neue Passwort darf nur aus ASCII-Zeichen bestehe
 $tx['password']['mismatch']="Das neue Passwort stimmt nicht mit der Bestätigung überein.";
 $tx['password']['new']="Neues Passwort";
 $tx['password']['old']="Altes Passwort";
+$tx['password']['score']="Passwortstärke: %s";
 $tx['password']['wrong']="Das alte Passwort ist falsch.";
 
 $tx['password_forgotten']['email1_sent']="Eine E-Mail mit einem Link zum Zurücksetzen des Passworts wurde an die hinterlegte Adresse verschickt. Dieser Link ist für 1-2 Stunden gültig.";
@@ -256,6 +259,7 @@ $tx['settings']['backupexplain1']="Beim Logout wird eine Sicherheitskopie des In
 $tx['settings']['backupexplain2']="Sicherheitskopie-Namen beginnen mit Datum und Uhrzeit der Erstellung: YYYYMMDD_HHMMSS";
 $tx['settings']['backupsuffix']="Geben Sie einen Dateinamen ein (nur a-z, 0-9, Minus und Unterstrich; höchstens 20 Zeichen):";
 $tx['settings']['ftp']="Bitte FTP zur Dateiverwaltung benutzen.";
+$tx['settings']['more']="Mehr";
 $tx['settings']['systemfiles']="Systemdateien";
 $tx['settings']['warning']="Bitte hier nur solche Änderungen durchführen, bei denen Sie genau wissen, was diese bewirken!";
 
@@ -290,10 +294,12 @@ $tx['sysinfo']['version']="Installierte CMSimple Version";
 $tx['sysinfo']['unknown']="Webserver konnte nicht ermittelt werden";
 $tx['sysinfo']['webserver']="Webserver";
 
+$tx['template']['active']="Aktives Template: ";
 $tx['template']['default']="Standard Template";
 
 $tx['title']['bad_request']="Inkorrekte Anfrage";
 $tx['title']['change_password']="Passwort ändern";
+$tx['title']['cms']="Content Management System";
 $tx['title']['downloads']="Downloads";
 $tx['title']['images']="Bilder";
 $tx['title']['log']="Log-Datei";
@@ -302,10 +308,12 @@ $tx['title']['media']="Media-Dateien";
 $tx['title']['xh_pagedata']="Page-Data Bereinigung";
 $tx['title']['password_forgotten']="Passwort vergessen";
 $tx['title']['phpinfo']="PHP-Info";
+$tx['title']['plugins']="Plugins";
 $tx['title']['search']="Suchen";
 $tx['title']['settings']="Einstellungen";
 $tx['title']['sitemap']="Inhaltsverzeichnis";
 $tx['title']['sysinfo']="System-Info";
+$tx['title']['templates']="Templates";
 $tx['title']['userfiles']="Andere";
 $tx['title']['validate']="Links prüfen";
 $tx['title']['xh_backups']="Sicherheitskopien";
