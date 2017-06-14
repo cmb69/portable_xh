@@ -11,14 +11,16 @@ Update PHP
 ==========
 
 * do a custom build of PHP:
-  `configure --disable-all --disable-zts --enable-cli --enable-session --enable-json --with-gd --enable-mbstring --with-iconv --with-libxml --with-simplexml --with-xml --with-dom --enable-filter --with-sqlite3`
+  `configure --disable-all --disable-zts --enable-cli --enable-session --enable-json --with-iconv --with-libxml --with-simplexml --with-xml --with-dom --enable-filter --with-gd=shared --enable-mbstring=shared --with-sqlite3=shared`
 
-* put the compiled php.exe and php7.dll into php/
+* move relevant files from snapshot to php/
 
-* put LICENSE into php/
-
-* put php.ini-production into php/ as php.ini
+* move php.ini-production into php/ as php.ini
 
 * adjust php.ini
   * date.timezone = UTC
   * sendmail_path = ..\php\php.exe ..\storemail.php
+  * extension_dir = "ext"
+  * extension=php_gd2.dll
+  * extension=php_mbstring.dll
+  * extension=php_sqlite3.dll

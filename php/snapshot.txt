@@ -1,0 +1,71 @@
+This snapshot was automatically generated on
+Wed, 14 Jun 2017 11:06:26 +0000
+
+Version: 7.1.6
+Branch: HEAD
+Build: C:\Users\cmb\php\sdk\phpdev\vc14\x64\php-src\x64\Release
+
+Built-in Extensions
+===========================
+Core
+date
+filter
+iconv
+json
+pcre
+Reflection
+SPL
+session
+standard
+libxml
+dom
+SimpleXML
+xml
+
+
+Dependency information:
+Module: php.exe
+===========================
+	vcruntime140.dll
+	api-ms-win-crt-heap-l1-1-0.dll
+	api-ms-win-crt-runtime-l1-1-0.dll
+	api-ms-win-crt-stdio-l1-1-0.dll
+	api-ms-win-crt-environment-l1-1-0.dll
+	api-ms-win-crt-string-l1-1-0.dll
+	api-ms-win-crt-utility-l1-1-0.dll
+	api-ms-win-crt-convert-l1-1-0.dll
+	api-ms-win-crt-time-l1-1-0.dll
+	api-ms-win-crt-math-l1-1-0.dll
+	api-ms-win-crt-locale-l1-1-0.dll
+
+Module: php_gd2.dll
+===========================
+	vcruntime140.dll
+	api-ms-win-crt-heap-l1-1-0.dll
+	api-ms-win-crt-runtime-l1-1-0.dll
+	api-ms-win-crt-string-l1-1-0.dll
+	api-ms-win-crt-stdio-l1-1-0.dll
+	api-ms-win-crt-math-l1-1-0.dll
+	api-ms-win-crt-utility-l1-1-0.dll
+	api-ms-win-crt-environment-l1-1-0.dll
+	api-ms-win-crt-filesystem-l1-1-0.dll
+	api-ms-win-crt-convert-l1-1-0.dll
+
+Module: php_mbstring.dll
+===========================
+	vcruntime140.dll
+	api-ms-win-crt-heap-l1-1-0.dll
+	api-ms-win-crt-convert-l1-1-0.dll
+	api-ms-win-crt-string-l1-1-0.dll
+	api-ms-win-crt-runtime-l1-1-0.dll
+
+Module: php_sqlite3.dll
+===========================
+	vcruntime140.dll
+	api-ms-win-crt-heap-l1-1-0.dll
+	api-ms-win-crt-string-l1-1-0.dll
+	api-ms-win-crt-utility-l1-1-0.dll
+	api-ms-win-crt-time-l1-1-0.dll
+	api-ms-win-crt-math-l1-1-0.dll
+	api-ms-win-crt-runtime-l1-1-0.dll
+
