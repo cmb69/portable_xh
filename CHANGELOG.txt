@@ -1,3 +1,9 @@
+Version 2.0beta1 – released 2017-06-14
+* fixed bug where userfiles/media/ was missing
+* updated to CMSimple_XH 1.7.0rc1
+* updated to PHP 7.1.6
+* the shipped PHP build is now conforming to the official PHP builds for Windows
+
 Version 2.0dev6 – released 2017-03-23
 * updated to CMSimple_XH 1.7.0dev5
 
