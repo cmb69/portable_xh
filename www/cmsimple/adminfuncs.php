@@ -1,6 +1,8 @@
 <?php
 
 /**
+ * @file adminfuncs.php
+ *
  * Admin only functions.
  *
  * @category  CMSimple_XH
@@ -195,7 +197,7 @@ function XH_isAccessProtected($path)
 
     $url = preg_replace('/index\.php$/', '', CMSIMPLE_URL) . $path;
     $defaultContext = stream_context_set_default(
-        array('http' => array('method' => 'HEAD'))
+        array('http' => array('method' => 'HEAD', 'timeout' => 5))
     );
     $headers = get_headers($url);
     stream_context_set_default(stream_context_get_params($defaultContext));
@@ -315,6 +317,9 @@ HTML;
     );
     $checks['other'][] = array(
         ini_get('session.use_only_cookies'), false, $stx['use_only_cookies']
+    );
+    $checks['other'][] = array(
+        ini_get('session.cookie_lifetime') == 0, false, $stx['cookie_lifetime']
     );
     $checks['other'][] = array(
         strpos(ob_get_contents(), "\xEF\xBB\xBF") !== 0,

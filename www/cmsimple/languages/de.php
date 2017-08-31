@@ -91,7 +91,7 @@ $tx['help']['downloads_maxsize']="Maximale Größe für das Hochladen von Datein
 $tx['help']['editmenu_scroll']="Angeklickt = das Admin Menü scrollt mit";
 $tx['help']['editmenu_external']="Wenn Sie ein externes Admin-Menü nutzen wollen, installieren Sie es als Plugin und tragen Sie seinen Funktionsnamen hier ein.";
 $tx['help']['editor_height']="Integer oder JavaScript-Ausdruck, der einen Integer liefert für die Editorhöhe in Pixel.";
-$tx['help']['editor_external']="Hier den Namen in Kleinbuchstaben des zu benutzenden Editors eintragen. Dieser muss als Plugin installiert sein (einen internen Editor gibt es nicht mehr). Vorinstalliert ist \"tinymce\".";
+$tx['help']['editor_external']="Hier den Namen in Kleinbuchstaben des zu benutzenden Editors eintragen. Dieser muss als Plugin installiert sein (einen internen Editor gibt es nicht mehr).";
 $tx['help']['filebrowser_external']="Wenn Sie einen externen Datei-Browser verwenden möchten, z.B. hi_kcfinder, installieren Sie das Plugin und tragen Sie seinen Namen hier ein";
 $tx['help']['functions_file']="Bitte nicht ändern";
 $tx['help']['meta_author']="(Kann-Eingabe) Hier für Suchmaschinen den Autor der Texte Ihrer Site eintragen.";
@@ -267,6 +267,7 @@ $tx['submenu']['heading']="weiter zu:";
 
 $tx['syscheck']['access_protected']="'%s' zugriffsgeschützt ist";
 $tx['syscheck']['bom']="kein <a href=\"http://www.cmsimple-xh.org/wiki/doku.php/de:utf8#was_ist_ein_bom\" target=\"_blank\">BOM</a> vorhanden ist";
+$tx['syscheck']['cookie_lifetime']="session.cookie_lifetime 0 ist";
 $tx['syscheck']['extension']="die Erweiterung '%s' geladen ist";
 $tx['syscheck']['fail']="Fehler";
 $tx['syscheck']['fsockopen']="die Funktion fsockopen verfügbar ist";
@@ -332,5 +333,3 @@ $tx['validate']['intfilok']="INTERNE VERLINKUNG AUF DATEI OK";
 $tx['validate']['intok']="INTERNE VERLINKUNG OK";
 $tx['validate']['mailto']="MAILTO VERLINKUNG";
 $tx['validate']['notxt']="KEIN TEXT IN VERLINKUNG";
-
-?>

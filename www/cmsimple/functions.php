@@ -1,6 +1,8 @@
 <?php
 
 /**
+ * @file functions.php
+ *
  * General functions.
  *
  * @category  CMSimple_XH
@@ -16,8 +18,8 @@
 
 /*
   ======================================
-  CMSimple_XH 1.7.0rc1
-  2017-05-30
+  CMSimple_XH 1.7.0
+  2017-07-02
   based on CMSimple version 3.3 - December 31. 2009
   For changelog, downloads and information please see http://www.cmsimple-xh.org/
   ======================================
@@ -494,7 +496,7 @@ function XH_finalCleanUp($html)
             $id =' id="xh_adminmenu_fixed"';
         }
 
-        $adminMenu = call_user_func($adminMenuFunc, XH_plugins(true));
+        $adminMenu = $adminMenuFunc(XH_plugins(true));
         $replacement = '$0' . '<div' . $id . '>' . addcslashes($debugHint, '$\\')
             . addcslashes($adminMenu, '$\\')
             . '</div>' ."\n" . addcslashes($errorList, '$\\');
@@ -1054,7 +1056,7 @@ function XH_uenc($s, array $search, array $replace)
  *
  * Caveat: the result includes '.' and '..'.
  *
- * @param string $dir The directory path.
+ * @param string $dir An existing directory path.
  *
  * @return array
  */
@@ -1449,7 +1451,7 @@ function XH_plugins($admin = false)
         $admPlugins = array();
         $disabledPlugins = explode(',', $cf['plugins']['disabled']);
         $disabledPlugins = array_map('trim', $disabledPlugins);
-        if ($dh = opendir($pth['folder']['plugins'])) {
+        if (is_dir($pth['folder']['plugins']) && ($dh = opendir($pth['folder']['plugins']))) {
             while (($fn = readdir($dh)) !== false) {
                 if (strpos($fn, '.') !== 0
                     && is_dir($pth['folder']['plugins'] . $fn)
@@ -1657,7 +1659,7 @@ function XH_afterPluginLoading($callback = null)
         $callbacks[] = $callback;
     } else {
         foreach ($callbacks as $callback) {
-            call_user_func($callback);
+            $callback();
         }
     }
 }
@@ -1686,7 +1688,7 @@ function XH_afterFinalCleanUp($param)
         $callbacks[] = $param;
     } else {
         foreach ($callbacks as $callback) {
-            $param = call_user_func($callback, $param);
+            $param = $callback($param);
         }
         return $param;
     }
@@ -1892,7 +1894,7 @@ function XH_title($site, $subtitle)
  */
 function XH_builtinTemplate($bodyClass)
 {
-    global $sl, $_XH_csrfProtection;
+    global $sl, $_XH_csrfProtection, $bjs;
 
     echo '<!DOCTYPE html>', "\n", '<html',
         (strlen($sl) == 2 ? " lang=\"$sl\"" : ''), '>', "\n";
@@ -1900,7 +1902,7 @@ function XH_builtinTemplate($bodyClass)
     echo '<head>', "\n" . head(),
         '<meta name="robots" content="noindex">', "\n",
         '</head>', "\n", '<body class="', $bodyClass,'"', onload(), '>', "\n",
-        $content, '</body>', "\n", '</html>', "\n";
+        $content, $bjs, '</body>', "\n", '</html>', "\n";
     if (isset($_XH_csrfProtection)) {
         $_XH_csrfProtection->store();
     }
@@ -1964,7 +1966,7 @@ function XH_templates()
     global $pth;
 
     $templates = array();
-    if ($handle = opendir($pth['folder']['templates'])) {
+    if (is_dir($pth['folder']['templates']) && ($handle = opendir($pth['folder']['templates']))) {
         while (($file = readdir($handle)) !== false) {
             $dir = $pth['folder']['templates'] . $file;
             if ($file[0] != '.' && is_dir($dir)
@@ -1993,7 +1995,7 @@ function XH_availableLocalizations()
     global $pth;
 
     $languages = array();
-    if ($handle = opendir($pth['folder']['language'])) {
+    if (is_dir($pth['folder']['language']) && ($handle = opendir($pth['folder']['language']))) {
         while (($file = readdir($handle)) !== false) {
             if (preg_match('/^([a-z]{2})\.php$/i', $file, $m)) {
                 $languages[] = $m[1];
@@ -2023,7 +2025,7 @@ function XH_secondLanguages()
 
     if (!isset($langs)) {
         $langs = array();
-        if ($dir = opendir($pth['folder']['base'])) {
+        if (is_dir($pth['folder']['base']) && ($dir = opendir($pth['folder']['base']))) {
             while (($entry = readdir($dir)) !== false) {
                 if ($entry[0] != '.' && XH_isLanguageFolder($entry)) {
                     $langs[] = $entry;
@@ -2618,6 +2620,9 @@ function XH_autoload($className)
     $className = str_replace('_', '\\', $className);
     // set $package, $subpackages and $class
     $subpackages = explode('\\', $className);
+    if (count($subpackages) <= 1) {
+        return;
+    }
     $packages = array_splice($subpackages, 0, 1);
     $package = $packages[0];
     $classes = array_splice($subpackages, -1);

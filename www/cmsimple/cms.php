@@ -1,6 +1,8 @@
 <?php
 
 /**
+ * @file cms.php
+ *
  * The main file of CMSimple_XH.
  *
  * @category  CMSimple_XH
@@ -15,8 +17,8 @@
 
 /*
   ======================================
-  CMSimple_XH 1.7.0rc1, 2017053001
-  2017-05-30
+  CMSimple_XH 1.7.0, 2017070201
+  2017-07-02
   based on CMSimple version 3.3 - December 31. 2009
   For changelog, downloads and information please see http://www.cmsimple-xh.org/
   ======================================
@@ -91,7 +93,7 @@ define('XH_URICHAR_SEPARATOR', '|');
  * This <i>read-write</i> variable can be used to set the page title in the
  * plugin administration and for special extension pages.
  *
- * @global string $title
+ * @var string $title
  *
  * @access public
  */
@@ -204,40 +206,15 @@ $j = null;
 /**
  * The version in textual representation, e.g. CMSimple_XH 1.6
  */
-define('CMSIMPLE_XH_VERSION', 'CMSimple_XH 1.7.0rc1');
+define('CMSIMPLE_XH_VERSION', 'CMSimple_XH 1.7.0');
 /**
  * The build number as integer: YYYYMMDDBB
  */
-define('CMSIMPLE_XH_BUILD', '2017053001');
+define('CMSIMPLE_XH_BUILD', '2017070201');
 /**
  * The release date in ISO 8601 format: YYYY-MM-DD
  */
-define('CMSIMPLE_XH_DATE', '2017-05-30');
-
-if (!defined('E_STRICT')) {
-    /**
-     * Strict standards violation notice.
-     *
-     * @ignore
-     */
-    define('E_STRICT', 2048);
-}
-if (!defined('E_DEPRECATED')) {
-    /**
-     * Deprecation notice.
-     *
-     * @ignore
-     */
-    define('E_DEPRECATED', 8192);
-}
-if (!defined('E_USER_DEPRECATED')) {
-    /**
-     * User generated deprecation notice.
-     *
-     * @ignore
-     */
-    define('E_USER_DEPRECATED', E_USER_NOTICE);
-}
+define('CMSIMPLE_XH_DATE', '2017-07-02');
 
 /**
  * A two dimensional array that holds the paths of important files and folders.
