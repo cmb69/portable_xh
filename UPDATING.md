@@ -11,7 +11,7 @@ Update PHP
 ==========
 
 * do a custom build of PHP:
-  `configure --disable-all --disable-zts --enable-cli --enable-session --enable-json --with-iconv --with-libxml --with-simplexml --with-xml --with-dom --enable-filter --with-gd=shared --enable-mbstring=shared --with-sqlite3=shared`
+  `configure --disable-all --disable-zts --enable-cli --enable-session --enable-json --with-iconv --with-libxml --with-simplexml --with-dom --enable-filter --with-gd=shared --enable-mbstring=shared --with-sqlite3=shared`
 
 * move relevant files from snapshot to php/
 
