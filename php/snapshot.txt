@@ -1,26 +1,47 @@
 This snapshot was automatically generated on
-Wed, 14 Jun 2017 11:06:26 +0000
+Thu, 31 Aug 2017 16:22:30 +0000
 
-Version: 7.1.6
+Version: 7.2.0RC1
 Branch: HEAD
-Build: C:\Users\cmb\php\sdk\phpdev\vc14\x64\php-src\x64\Release
+Build: C:\php-sdk\phpmaster\vc15\x64\php-src\x64\Release
 
 Built-in Extensions
 ===========================
 Core
+bcmath
+calendar
+ctype
 date
 filter
+hash
 iconv
 json
-pcre
-Reflection
+mcrypt
 SPL
+pcre
+readline
+Reflection
 session
 standard
+mysqlnd
+tokenizer
+zip
+zlib
 libxml
 dom
+PDO
+openssl
 SimpleXML
 xml
+wddx
+xmlreader
+xmlwriter
+curl
+ftp
+sqlite3
+Phar
+mbstring
+mysqli
 
 
 Dependency information:
