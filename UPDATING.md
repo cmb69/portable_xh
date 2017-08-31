@@ -18,7 +18,7 @@ Update PHP
 * move php.ini-production into php/ as php.ini
 
 * adjust php.ini
-  * date.timezone = UTC
+  * date.timezone = Europe/London
   * sendmail_path = ..\php\php.exe ..\storemail.php
   * extension_dir = "ext"
   * extension=php_gd2.dll
