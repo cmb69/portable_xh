@@ -99,7 +99,7 @@ you need other extensions, download a binary distribution (Zip) from
 <http://windows.php.net/download/>, and put it in the php/ folder of
 Portable_XH. You may have to enable additional extensions in php/php.ini. Note
 that it doesn't matter which PHP version and variant you download, but for best
-compatibility VC14 x64 Non Thread Safe variants are recommended.
+compatibility VC14 or VC15 x64 Non Thread Safe variants are recommended.
 
 Some browsers (e.g. Opera 12.16) may not be able to navigate to
 <http://localhost:8080/> for whatever reasons.  You most likely can get around
