@@ -81,6 +81,21 @@ if (preg_match('/\/index\.(php|html)\/$/', $_SERVER['PHP_SELF'])) {
 }
 
 /*
+ * If uopz is loaded, it must not skip exit statements.
+ */
+if (function_exists('uopz_allow_exit')) {
+    uopz_allow_exit(true);
+}
+
+/*
+ * Let XH_isAccessProtected() return true, if uopz is loaded.  Otherwise,
+ * an unpatched XH_isAccessProtected() blocks on the built-in webserver.
+ */
+if (extension_loaded('uopz')) {
+    uopz_set_return('XH_isAccessProtected', true);
+}
+
+/*
  * Delivers a menu page, if the webroot is requested and there is neither
  * index.php nor index.html.
  */
