@@ -101,6 +101,14 @@ Portable_XH. You may have to enable additional extensions in php/php.ini. Note
 that it doesn't matter which PHP version and variant you download, but for best
 compatibility VC14 or VC15 x64 Non Thread Safe variants are recommended.
 
+PHP's built-in webserver, which is used by Portable_XH, is single-threaded. Thus
+it can't handle nested requests, and such requests will block. In CMSimple_XH
+currently the only such case is the check whether certain files can't be
+accessed directly via HTTP. Since this check is unnecessary for Portable_XH,
+this particular functionality is overriden (outside of the www/ directory), so
+no blocking will happen. However, some plugins may also utilize nested requests,
+i.e. they may block resulting in a timeout error.
+
 Some browsers (e.g. Opera 12.16) may not be able to navigate to
 <http://localhost:8080/> for whatever reasons.  You most likely can get around
 this issue by navigating to <http://[::1]:8080/> or <http://127.0.0.1:8080/>

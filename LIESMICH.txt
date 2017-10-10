@@ -110,6 +110,16 @@ in php/php.ini aktiviert werden. Es ist zu beachten, dass es keine Rolle spielt,
 welche PHP-Version und -Variante herunter geladen wird, aber für beste
 Kompatibilität werden VC14 oder VC15 x64 Non Thread Safe Varianten empfohlen.
 
+Der eingebaute Webserver von PHP, der von Portable_XH verwendet wird, ist
+single-threaded. Daher kann er keine verschachtelten Anfrage bearbeiten, und
+solche Anfrage werden blockieren. In CMSimple_XH ist derzeit der einzige
+entsprechende Fall die Prüfung, ob auf bestimmte Dateien direkt per HTTP
+zugegriffen werden kann. Da diese Prüfung für Portable_XH unnötig ist, wird
+diese spezielle Funktionalität übersteuert (außerhalb des www/ Verzeichnisses),
+so dass die Anwendung nicht blockiert. Allerdings können einige Plugins
+ebenfalls solch verschachtelte Anfragen ausführen, d.h. sie können blockieren,
+was in einem Timeout-Error resultiert.
+
 Manche Browser (z.B. Opera 12.16) können aus welchen Gründen auch immer
 möglicherweise <http://localhost:8080/> nicht anzeigen. Sie können das
 vermutlich aber umgehen, wenn Sie <http://[::1]:8080/> oder
