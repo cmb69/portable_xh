@@ -116,5 +116,3 @@ if (!file_exists("./www{$parts['path']}")) {
 } else {
     return false;
 }
-
-?>

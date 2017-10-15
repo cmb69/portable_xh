@@ -36,5 +36,3 @@ while (!feof(STDIN)) {
     fwrite($out, $line . PHP_EOL);
 }
 fclose($out);
-
-?>
