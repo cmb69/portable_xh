@@ -104,11 +104,14 @@ if (isRootRequestedButIndexIsMissing()) {
     exit;
 }
 
-/*
- * Adds a trailing slash to request URLs if appropriate.
- */
 $parts = parse_url($_SERVER['REQUEST_URI']);
-if (isDirWithoutTrailingSlash($parts['path'])) {
+if (!file_exists("./www{$parts['path']}")) {
+    // Non existent resources should respond with 404
+    // Work around PHP issue #75061
+    header('HTTP/1.1 404 Not found');
+    exit;
+} elseif (isDirWithoutTrailingSlash($parts['path'])) {
+    // Add trailing slash to requested folder
     header("Location: http://localhost:8080$parts[path]/");
 } else {
     return false;
