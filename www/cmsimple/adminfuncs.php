@@ -946,11 +946,11 @@ function XH_saveContents()
         preg_match("/(.*?)($hot(.+?)$hct)(.*)/isu", $i, $matches);
         $page = $matches[1] . $matches[2] . PHP_EOL . $pd_router->pageAsPHP($j)
             . $matches[4];
-        $cnts .= rmnl($page . "\n");
+        $cnts .= rtrim($page, "\r\n") . "\n";
     }
     $cnts .= '</body></html>';
     if (!file_exists($pth['folder']['content'])) {
-        mkdir($pth['folder']['content'], true);
+        mkdir($pth['folder']['content'], 0x755, true);
     }
     return XH_writeFile($pth['file']['content'], $cnts) !== false;
 }

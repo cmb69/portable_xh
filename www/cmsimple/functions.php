@@ -18,8 +18,8 @@
 
 /*
   ======================================
-  CMSimple_XH 1.7.0
-  2017-07-02
+  CMSimple_XH 1.7.1
+  2017-10-14
   based on CMSimple version 3.3 - December 31. 2009
   For changelog, downloads and information please see http://www.cmsimple-xh.org/
   ======================================
@@ -328,7 +328,7 @@ function newsbox($heading)
             $pattern = '/.*?<!--XH_ml[1-9]:.*?-->/isu';
             $body = preg_replace($pattern, "", $c[$i]);
             $pattern = '/#CMSimple (.*?)#/is';
-            return $edit
+            return XH_ADM && $edit
                 ? $body
                 : preg_replace($pattern, '', evaluate_scripting($body, false));
         }
@@ -1196,7 +1196,7 @@ function XH_debugmode()
     $dbglevel = '';
     $filename = $pth['folder']['downloads'] . '_XHdebug.txt';
     if (file_exists($filename)) {
-        ini_set('display_errors', 1);
+        ini_set('display_errors', 0);
         $dbglevel = file_get_contents($filename);
         if (strlen($dbglevel) == 1) {
             set_error_handler('XH_debug');
@@ -1205,14 +1205,14 @@ function XH_debugmode()
                     error_reporting(0);
                     break;
                 case 1:
-                    error_reporting(E_ERROR | E_USER_WARNING | E_PARSE);
+                    error_reporting(E_ERROR | E_USER_ERROR | E_USER_WARNING | E_PARSE);
                     break;
                 case 2:
-                    error_reporting(E_ERROR | E_WARNING | E_USER_WARNING | E_PARSE);
+                    error_reporting(E_ERROR | E_USER_ERROR | E_WARNING | E_USER_WARNING | E_PARSE);
                     break;
                 case 3:
                     error_reporting(
-                        E_ERROR | E_WARNING | E_USER_WARNING | E_PARSE | E_NOTICE
+                        E_ERROR | E_USER_ERROR | E_WARNING | E_USER_WARNING | E_PARSE | E_NOTICE
                     );
                     break;
                 case 4:
@@ -1225,10 +1225,10 @@ function XH_debugmode()
                     error_reporting(E_ALL);
                     break;
                 default:
-                    error_reporting(E_ERROR | E_USER_WARNING | E_PARSE);
+                    error_reporting(E_ERROR | E_USER_ERROR | E_USER_WARNING | E_PARSE);
             }
         } else {
-            error_reporting(E_ERROR | E_USER_WARNING | E_PARSE);
+            error_reporting(E_ERROR | E_USER_ERROR | E_USER_WARNING | E_PARSE);
         }
     } else {
         ini_set('display_errors', 0);
@@ -1274,6 +1274,9 @@ function XH_debug($errno, $errstr, $errfile, $errline)
             $errfile = $backtrace[2]['file'];
             $errline = $backtrace[2]['line'];
             break;
+        case E_RECOVERABLE_ERROR:
+            $errtype = 'ERROR';
+            break;
         case E_WARNING:
             $errtype = 'WARNING';
             break;
@@ -1287,14 +1290,14 @@ function XH_debug($errno, $errstr, $errfile, $errline)
             $errtype = 'DEPRECATED';
             break;
         default:
-            $errtype = "Unknow error type [$errno]";
+            $errtype = "Unknown error type [$errno]";
     }
 
     $errors[] = "<b>$errtype:</b> $errstr" . '<br>' . "$errfile:$errline"
         . '<br>' . "\n";
 
-    if ($errno === E_USER_ERROR) {
-        die($errors[count($errors) - 1]);
+    if (in_array($errno, [E_USER_ERROR, E_RECOVERABLE_ERROR])) {
+        XH_exit($errors[count($errors) - 1]);
     }
 
     /* Don't execute PHP internal error handler */
@@ -1555,7 +1558,7 @@ function XH_logMessage($type, $module, $category, $description)
  */
 function loginforms()
 {
-    global $cf, $tx, $onload, $f, $o, $s, $sn, $su;
+    global $cf, $tx, $onload, $f, $o, $s, $sn, $su, $u, $title, $xh_publisher;
 
     if ($f == 'login' || $f == 'xh_login_failed') {
         $cf['meta']['robots'] = "noindex";
@@ -1563,7 +1566,7 @@ function loginforms()
         $message = ($f == 'xh_login_failed')
             ? XH_message('fail', $tx['login']['failure'])
             : '';
-        $f = $tx['menu']['login'];
+        $title = $tx['menu']['login'];
         $o .= '<div class="xh_login">'
             . '<h1>' . $tx['menu']['login'] . '</h1>'
             . $message
@@ -1581,7 +1584,11 @@ function loginforms()
             $o .= '<a href="' . $sn . '?&function=forgotten">'
                 . $tx['title']['password_forgotten'] . '</a>';
         }
-        $o .= '<p><a href="' . "$sn?$su" . '">' . $tx['login']['back']
+        $query = $su === 'login' ? $u[$xh_publisher->getFirstPublishedPage()] : $su;
+        if ($query !== '') {
+            $query = "?$query";
+        }
+        $o .= '<p><a href="' . "$sn$query" . '">' . $tx['login']['back']
             . '</a></p>';
         $o .= ' </div>';
         $s = -1;
@@ -2159,7 +2166,8 @@ function XH_decodeJson($string)
  *
  * @param mixed $value A PHP value.
  *
- * @return string
+ * @return string or
+ *         bool false on JSON error
  *
  * @global object The JSON codec.
  *

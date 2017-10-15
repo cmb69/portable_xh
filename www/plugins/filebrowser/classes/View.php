@@ -173,14 +173,14 @@ class View
      */
     public function folderLink($folder, array $folders)
     {
-        // TODO: Do we need PHP_SELF here; might allow for XSS.
-        $link = str_replace('index.php', '', $_SERVER['PHP_SELF']);
+        global $sn;
+
         $class = 'folder';
         if (substr($this->currentDirectory, 0, strlen($folder)) == $folder) {
             $class = 'openFolder';
         }
         $temp = explode('/', $folder);
-        $html = '<li class="' . $class . '"><a href="' . $link . '?'
+        $html = '<li class="' . $class . '"><a href="' . $sn . '?'
             . XH_hsc($this->linkParams) . '&amp;subdir=' . $folder . '">'
             . end($temp) . '</a>';
         if (count($folders[$folder]['children']) > 0) {
@@ -235,20 +235,6 @@ class View
             $html .= '</ul>';
         }
         return $html;
-    }
-
-    /**
-     * Returns whether a file is an image file.
-     *
-     * @param string $filename A file name.
-     *
-     * @return bool
-     */
-    private function isImageFile($filename)
-    {
-        $ext = pathinfo($filename, PATHINFO_EXTENSION);
-        $exts = array('gif', 'jpg', 'jpeg', 'png', 'bmp', 'tiff', 'ico');
-        return in_array(strtolower($ext), $exts);
     }
 
     /**
@@ -317,7 +303,7 @@ class View
                 : '';
 
             $path = $this->basePath . $this->currentDirectory . $file;
-            if ($this->isImageFile($path) && ($image = getimagesize($path))) {
+            if (($image = getimagesize($path))) {
                 $html .= $this->renderImage($path, $file, $image, $usage);
             }
             $html .= '</a> (' .  $this->renderFileSize($path) . ')</li>';
@@ -355,7 +341,7 @@ class View
 
             $path = $dir . $file;
             if (strpos($this->linkParams, 'type=images') !== false
-                && $this->isImageFile($path) && ($image = getimagesize($path))
+                && ($image = getimagesize($path))
             ) {
                 $html .= $this->renderImage($path, $file, $image);
             }
