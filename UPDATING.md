@@ -18,7 +18,6 @@ Update PHP
 
 * adjust php.ini
   * date.timezone = Europe/London
-  * sendmail_path = ..\php\php.exe ..\storemail.php
   * extension_dir = "ext"
   * extension=php_gd2.dll
   * extension=php_mbstring.dll

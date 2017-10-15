@@ -28,7 +28,7 @@
 
 $timestamp = date('Ymd-His');
 $uniqid = uniqid();
-$filename = "../mails/$timestamp-$uniqid.eml";
+$filename = __DIR__ . "/mails/$timestamp-$uniqid.eml";
 
 $out = fopen($filename, 'w');
 while (!feof(STDIN)) {
