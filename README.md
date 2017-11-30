@@ -107,6 +107,10 @@ this particular functionality is overriden (outside of the `www/` directory), so
 no blocking will happen. However, some plugins may also utilize nested requests,
 i.e. they may block resulting in a timeout error.
 
+Due to a [bug in PHP's built-in webserver](https://bugs.php.net/bug.php?id=74061)
+folders with dots in the name are regarded as files, so subfolders of `www/` must
+not contain dots.
+
 Some browsers (e.g. Opera 12.16) may not be able to navigate to
 <http://localhost:8080/> for whatever reasons.  You most likely can get around
 this issue by navigating to <http://[::1]:8080/> or <http://127.0.0.1:8080/>

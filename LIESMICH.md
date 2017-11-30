@@ -117,6 +117,10 @@ so dass die Anwendung nicht blockiert. Allerdings können einige Plugins
 ebenfalls solch verschachtelte Anfragen ausführen, d.h. sie können blockieren,
 was in einem Timeout-Error resultiert.
 
+Aufgrund eines [Fehlers in eingebauten Webserver von PHP](https://bugs.php.net/bug.php?id=74061)
+werden Ordner mit Punkten im Namen als Dateien angesehen, so dass Unterordner von
+`www/` keine Punkte enthalten dürfen.
+
 Manche Browser (z.B. Opera 12.16) können aus welchen Gründen auch immer
 möglicherweise <http://localhost:8080/> nicht anzeigen. Sie können das
 vermutlich aber umgehen, wenn Sie <http://[::1]:8080/> oder
