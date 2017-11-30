@@ -7,6 +7,8 @@
         <exec command="git archive -o export.tar HEAD" checkreturn="true"/>
         <untar file="export.tar" todir="export"/>
         <delete file="export.tar"/>
+        <exec command="pandoc README.md -f markdown -t html -s -o README.htm" dir="export"/>
+        <exec command="pandoc LIESMICH.md -f markdown -t html -s -o LIESMICH.htm" dir="export"/>
         <move todir="dist">
             <fileset dir="export">
                 <include name="Portable_XH.bat"/>
@@ -23,7 +25,7 @@
                 <exclude name="composer.*"/>
                 <exclude name="pax_global_header"/>
                 <exclude name="portable.ico"/>
-                <exclude name="UPDATING.md"/>
+                <exclude name="*.md"/>
             </fileset>
         </move>
         <delete dir="export"/>
