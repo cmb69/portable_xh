@@ -27,4 +27,5 @@ rem THE SOFTWARE.
 rem
 
 start http://localhost:8080/
+if not exist www\router.php copy router.php www\router.php
 start "Portable_XH @PORTABLE_XH_VERSION@" php\php -d sendmail_path="%~dp0php\php.exe %~dp0storemail.php" -S localhost:8080 -t www router.php
