@@ -91,7 +91,7 @@ if (function_exists('uopz_allow_exit')) {
  * Let XH_isAccessProtected() return true, if uopz is loaded.  Otherwise,
  * an unpatched XH_isAccessProtected() blocks on the built-in webserver.
  */
-if (extension_loaded('uopz')) {
+if (function_exists('uopz_set_return')) {
     uopz_set_return('XH_isAccessProtected', true);
 }
 
