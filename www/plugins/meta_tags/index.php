@@ -6,13 +6,11 @@
  * Stores meta-tags (description, keywords, title and robots) per page.
  * index.php is called by pluginloader and returns HTML META ELEMENTS to template.
  *
- * @category  CMSimple_XH
- * @package   Metatags
  * @author    Martin Damken <kontakt@zeichenkombinat.de>
  * @author    The CMSimple_XH developers <devs@cmsimple-xh.org>
- * @copyright 2009-2017 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
+ * @copyright 2009-2019 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @link      http://cmsimple-xh.org/
+ * @see       http://cmsimple-xh.org/
  */
 
 /*
@@ -44,16 +42,16 @@ $pd_router->add_tab(
 /*
  * Set the meta tags contents.
  */
-if ($pd_current['title']) {
+if (isset($pd_current['title'])) {
     $cf['site']['title'] = $pd_current['title'];
     $cf['title']['format'] = "{SITE}";
 }
-if ($pd_current['description']) {
+if (isset($pd_current['description'])) {
     $tx['meta']['description'] = $pd_current['description'];
 }
-if ($pd_current['keywords']) {
+if (isset($pd_current['keywords'])) {
     $tx['meta']['keywords'] = $pd_current['keywords'];
 }
-if ($pd_current['robots']) {
+if (isset($pd_current['robots'])) {
     $cf['meta']['robots'] = $pd_current['robots'];
 }

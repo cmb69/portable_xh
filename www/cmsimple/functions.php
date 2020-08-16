@@ -5,21 +5,19 @@
  *
  * General functions.
  *
- * @category  CMSimple_XH
- * @package   XH
  * @author    Peter Harteg <peter@harteg.dk>
  * @author    The CMSimple_XH developers <devs@cmsimple-xh.org>
  * @copyright 1999-2009 Peter Harteg
- * @copyright 2009-2017 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
+ * @copyright 2009-2019 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @link      http://cmsimple-xh.org/
+ * @see       http://cmsimple-xh.org/
  */
 
 
 /*
   ======================================
-  CMSimple_XH 1.7.1
-  2017-10-14
+  CMSimple_XH 1.7.3
+  2020-07-28
   based on CMSimple version 3.3 - December 31. 2009
   For changelog, downloads and information please see http://www.cmsimple-xh.org/
   ======================================
@@ -125,8 +123,6 @@ function l($n)
  * @param string $__text   The text.
  * @param bool   $__compat Whether only last CMSimple script should be evaluated.
  *
- * @global string The output.
- *
  * @return string
  *
  * @since 1.5
@@ -178,8 +174,6 @@ function evaluate_cmsimple_scripting($__text, $__compat = true)
  * @param string $text The text.
  *
  * @return string
- *
- * @global array The localization of the core.
  *
  * @since 1.5
  */
@@ -235,7 +229,7 @@ function evaluate_plugincall($text)
  *
  * @param string $___expression The expression to evaluate.
  *
- * @return srting
+ * @return string
  *
  * @since 1.6
  */
@@ -296,7 +290,7 @@ function XH_spliceString(&$string, $offset, $length = 0, $replacement = '')
  * @param string $text   The text.
  * @param bool   $compat Whether only last CMSimple script will be evaluated.
  *
- * @return void
+ * @return string
  *
  * @since 1.5
  */
@@ -312,12 +306,7 @@ function evaluate_scripting($text, $compat = true)
  *
  * @param string $heading The page heading.
  *
- * @global array The content of the pages.
- * @global int   The number of pages.
- * @global array The headings of the pages.
- * @global bool  Whether edit mode is active.
- *
- * @return string HTML
+ * @return string|false
  */
 function newsbox($heading)
 {
@@ -342,12 +331,9 @@ function newsbox($heading)
  * @param array $elementClasses Elements with these classes will become an editor.
  * @param mixed $initFile       The init file or configuration.
  *
- * @global array The paths of system files and folders.
- * @global array The configuration of the core.
- *
  * @return bool
  *
- * @link http://www.cmsimple-xh.org/wiki/doku.php/plugin_interfaces
+ * @see http://www.cmsimple-xh.org/wiki/doku.php/plugin_interfaces
  *
  * @since 1.5
  */
@@ -374,12 +360,9 @@ function init_editor(array $elementClasses = array(), $initFile = false)
 /**
  * Calls include_*() of the configured editor. Returns whether that succeeded.
  *
- * @global array The paths of system files and folders.
- * @global array The configuration of the core.
- *
  * @return bool
  *
- * @link http://www.cmsimple-xh.org/wiki/doku.php/plugin_interfaces
+ * @see http://www.cmsimple-xh.org/wiki/doku.php/plugin_interfaces
  *
  * @since 1.5
  */
@@ -409,15 +392,12 @@ function include_editor()
  * Returns the result of calling *_replace() of the configured editor.
  * Returns false on failure.
  *
- * @param string $elementID The element with this ID will become an editor.
- * @param string $config    The configuration.
+ * @param string|false $elementID The element with this ID will become an editor.
+ * @param string       $config    The configuration.
  *
- * @global array The paths of system files and folders.
- * @global array The configuration of the core.
+ * @return string|false
  *
- * @return void
- *
- * @link http://www.cmsimple-xh.org/wiki/doku.php/plugin_interfaces
+ * @see http://www.cmsimple-xh.org/wiki/doku.php/plugin_interfaces
 
  * @since 1.5
  */
@@ -451,11 +431,6 @@ function editor_replace($elementID = false, $config = '')
  * and $bjs is appended to the body element.
  *
  * @param string $html The HTML generated so far.
- *
- * @global array
- * @global array  The configuration of the core.
- * @global array  The localization of the core.
- * @global string HTML to be preprended to the closing BODY tag.
  *
  * @return string
  *
@@ -605,7 +580,7 @@ function rmanl($t)
  */
 function stsl($t)
 {
-    return get_magic_quotes_gpc() ? stripslashes($t) : $t;
+    return (version_compare(PHP_VERSION, '5.4', '<') && get_magic_quotes_gpc()) ? stripslashes($t) : $t;
 }
 
 /**
@@ -614,9 +589,6 @@ function stsl($t)
  * If the file can't be downloaded, an HTTP 404 Not found response will be generated.
  *
  * @param string $fl The file name.
- *
- * @global string The script name.
- * @global string The file to download.
  *
  * @return void
  */
@@ -627,7 +599,7 @@ function download($fl)
     if (!is_readable($fl)
         || ($download != '' && !preg_match('/.+\..+$/', $fl))
     ) {
-        shead('404');
+        shead(404);
         $o .= '<p>File ' . XH_hsc($fl) . '</p>';
         return;
     } else {
@@ -647,9 +619,6 @@ function download($fl)
  * @param string $ft A key in $tx['filetype'].
  * @param string $fn The file name.
  *
- * @global string Error messages as HTML fragment consisting of LI Elements.
- * @global array  The localization of the core.
- *
  * @return void
  */
 function e($et, $ft, $fn)
@@ -662,19 +631,6 @@ function e($et, $ft, $fn)
 
 /**
  * Reads and parses the content file and sets global variables accordingly.
- *
- * @global bool   Whether we're in edit mode.
- * @global array  The contents of the pages.
- * @global int    The number of pages.
- * @global array  The headings of the pages.
- * @global array  The URLs of the pages.
- * @global array  The menu levels of the pages.
- * @global string The URL of the current page.
- * @global string The index of the current page.
- * @global array  The localization of the core.
- * @global string Error messages as HTML fragment consisting of LI Elements.
- * @global object The pagedata router.
- * @global object The publisher.
  *
  * @return void
  */
@@ -754,11 +710,7 @@ function rfc()
  * @param string $language The language to read.
  *                         <var>null</var> means the default language.
  *
- * @global array The paths of system files and folders.
- * @global array The configuration of the core.
- * @global bool  Whether edit mode is active.
- *
- * @return array
+ * @return array|false
  *
  * @since 1.6
  */
@@ -820,7 +772,7 @@ function XH_readContents($language = null)
         $ancestors[$l[$i] - 1] = XH_uenc($temp, $search, $replace);
         $ancestors = array_slice($ancestors, 0, $l[$i]);
         $url = implode($cf['uri']['seperator'], $ancestors);
-        $u[] = utf8_substr($url, 0, $cf['uri']['length']);
+        $u[] = utf8_substr($url, 0, (int) $cf['uri']['length']);
         $tooLong[] = utf8_strlen($url) > $cf['uri']['length'];
         $removed[] = false;
     }
@@ -876,9 +828,7 @@ function XH_readContents($language = null)
 /**
  * Finds the index of the previous page.
  *
- * @return int
- *
- * @global int   The index of the current page.
+ * @return int|false
  *
  * @since 1.6.3
  */
@@ -897,10 +847,7 @@ function XH_findPreviousPage()
 /**
  * Finds the index of the next page.
  *
- * @return int
- *
- * @global int The index of the current page.
- * @global int The number of pages.
+ * @return int|false
  *
  * @since 1.6.3
  */
@@ -922,24 +869,16 @@ function XH_findNextPage()
  * @param int    $i The page index.
  * @param string $x Arbitrary appendix of the URL.
  *
- * @global string The script name.
- * @global array  The URLs of the pages.
- * @global array  The configuration of the core.
- *
  * @return string HTML
  */
 function a($i, $x)
 {
-    global $sn, $u, $cf;
+    global $sn, $u, $xh_publisher;
 
-    if ($i == 0 && !XH_ADM) {
-        if ($x == '' && $cf['locator']['show_homepage'] == 'true') {
-            return '<a href="' . $sn . '?' . $u[0] . '">';
-        }
-    }
-    return isset($u[$i])
+    return isset($u[$i]) && (XH_ADM || $i !== $xh_publisher->getFirstPublishedPage())
         ? '<a href="' . $sn . '?' . $u[$i] . $x . '">'
-        : '<a href="' . $sn . '?' . $x . '">';
+        //: '<a href="' . $sn . ($x ? ($x[0] != '"' ? '?' . $x : $x) : '') . '">';
+        : '<a href="' . $sn . ($x ? ($x[$i] != '"' ? '?' . $x : $x) : '') . '">';
 }
 
 /**
@@ -947,10 +886,6 @@ function a($i, $x)
  * <var>null</var> otherwise.
  *
  * @param string $n The name attribute.
- *
- * @global array The configuration of the core.
- * @global array The localization of the core.
- * @global bool  Whether print mode is active.
  *
  * @return string HTML
  */
@@ -970,10 +905,6 @@ function meta($n)
  * Returns the link to a special CMSimple_XH page, e.g. sitemap.
  *
  * @param string $i A key of $tx['menu'].
- *
- * @global string The requested special function.
- * @global string The script name.
- * @global array  The localization of the core.
  *
  * @return string HTML
  */
@@ -999,8 +930,6 @@ function ml($i)
  * by their according character sequences in $tx['urichar']['new'].
  *
  * @param string $s The URL component.
- *
- * @global array The localization of the core.
  *
  * @return string
  *
@@ -1032,8 +961,6 @@ function uenc($s)
  * @param array  $replace Replacement strings.
  *
  * @return string
- *
- * @global array The configuration of the core.
  *
  * @see uenc()
  *
@@ -1092,9 +1019,6 @@ function cmscript($script, $text)
  *
  * @param int $i The page index.
  *
- * @global array The content of the pages.
- * @global bool  Whether edit mode is active.
- *
  * @return bool
  */
 function hide($i)
@@ -1117,8 +1041,6 @@ function hide($i)
  *
  * @return string HTML
  *
- * @global array The configuration of the core.
- *
  * @deprecated since 1.7
  *
  * @todo Add deprecation warning (XH 1.8?)
@@ -1132,12 +1054,6 @@ function tag($s)
  * Sends error header and sets $title and $o accordingly.
  *
  * @param int $s The HTTP status response code (401, 403, 404).
- *
- * @global bool   Whether the server is IIS.
- * @global bool   Whether the API is CGI.
- * @global array  The localization of the core.
- * @global string The page title.
- * @global string The HTML of the contents area.
  *
  * @return void.
  */
@@ -1180,8 +1096,6 @@ function shead($s)
  * - 4: All errors except notices and warnings
  * - 5: All errors except notices
  * - 6: All errors
- *
- * @global array The paths of system files and folders.
  *
  * @return boolean Whether error_reporting is enabled.
  *
@@ -1245,9 +1159,7 @@ function XH_debugmode()
  * @param string $errfile Filename where error was raised.
  * @param int    $errline Line number where error was raised.
  *
- * @global array The list of PHP errors formatted as HTML fragment.
- *
- * @return void
+ * @return bool
  */
 function XH_debug($errno, $errstr, $errfile, $errline)
 {
@@ -1255,7 +1167,7 @@ function XH_debug($errno, $errstr, $errfile, $errline)
 
     if (!(error_reporting() & $errno)) {
         // This error code is not included in error_reporting
-        return;
+        return false;
     }
 
     switch ($errno) {
@@ -1296,7 +1208,7 @@ function XH_debug($errno, $errstr, $errfile, $errline)
     $errors[] = "<b>$errtype:</b> $errstr" . '<br>' . "$errfile:$errline"
         . '<br>' . "\n";
 
-    if (in_array($errno, [E_USER_ERROR, E_RECOVERABLE_ERROR])) {
+    if (in_array($errno, array(E_USER_ERROR, E_RECOVERABLE_ERROR))) {
         XH_exit($errors[count($errors) - 1]);
     }
 
@@ -1313,8 +1225,6 @@ function XH_debug($errno, $errstr, $errfile, $errline)
  * @param array $arr Array to check.
  *
  * @return void
- *
- * @global array The localization of the core.
  *
  * @since 1.5.5
  */
@@ -1370,12 +1280,7 @@ function XH_createLanguageFile($dst)
  *
  * @param string $plugin The name of the plugin.
  *
- * @global array  The paths of system files and folders.
- * @global string The active language.
- *
  * @return void
- *
- * @staticvar array The help filename cache.
  */
 function pluginFiles($plugin)
 {
@@ -1430,12 +1335,6 @@ function pluginFiles($plugin)
  * @param bool $admin Whether to return only plugins with a admin.php
  *
  * @return array
- *
- * @global array The paths of system files and folders.
- * @global array The configuration of the core.
- *
- * @staticvar array The plugin name cache.
- * @staticvar array The admin plugin name cache.
  *
  * @since 1.6
  *
@@ -1494,8 +1393,6 @@ function gc($s)
 /**
  * Returns wether the user is logged in.
  *
- * @global array The configuration of the core.
- *
  * @return bool.
  */
 function logincheck()
@@ -1518,8 +1415,6 @@ function logincheck()
  * @param string $description A description.
  *
  * @return bool
- *
- * @global array The paths of system files and folders.
  *
  * @since 1.6
  */
@@ -1545,16 +1440,7 @@ function XH_logMessage($type, $module, $category, $description)
 /**
  * Returns the login form.
  *
- * @global array  The configuration of the core.
- * @global array  The localization of the core.
- * @global string JavaScript for the onload event of the BODY element.
- * @global string The requested special function.
- * @global string The HTML of the contents area.
- * @global int    The index of the requested page.
- * @global string The script name.
- * @global string The URL of the selected page.
- *
- * @return string HTML
+ * @return void
  */
 function loginforms()
 {
@@ -1574,15 +1460,14 @@ function loginforms()
             . '<form id="login" name="login" action="' . $sn . '?' . $su
             . '" method="post">'
             . '<input type="hidden" name="login" value="true">'
-            . '<input type="hidden" name="selected" value="' . $su . '">'
             . '<input type="password" name="keycut" id="passwd" value="">'
             . ' '
             . '<input type="submit" name="submit" id="submit" value="'
             . $tx['menu']['login'] . '">'
             . '</form>';
         if (!empty($cf['security']['email'])) {
-            $o .= '<a href="' . $sn . '?&function=forgotten">'
-                . $tx['title']['password_forgotten'] . '</a>';
+            $o .= '<p><a href="' . $sn . '?&function=forgotten">'
+                . $tx['title']['password_forgotten'] . '</a></p>';
         }
         $query = $su === 'login' ? $u[$xh_publisher->getFirstPublishedPage()] : $su;
         if ($query !== '') {
@@ -1654,8 +1539,6 @@ function XH_writeFile($filename, $contents)
  *
  * @return void
  *
- * @staticvar array The callbacks for later execution.
- *
  * @since 1.6
  */
 function XH_afterPluginLoading($callback = null)
@@ -1683,7 +1566,7 @@ function XH_afterPluginLoading($callback = null)
  *
  * @param mixed $param A parameter.
  *
- * @return void
+ * @return void|string
  *
  * @since 1.7
  */
@@ -1706,8 +1589,6 @@ function XH_afterFinalCleanUp($param)
  * If necessary, this stylesheet will be created/updated.
  *
  * @return string
- *
- * @global array  The paths of system files and folders.
  *
  * @since 1.6
  */
@@ -1826,8 +1707,6 @@ function XH_message($type, $message)
  *
  * @return string HTML
  *
- * @global array The paths of system files and folders.
- *
  * @since 1.6
  */
 function XH_backup()
@@ -1849,8 +1728,6 @@ function XH_backup()
  * @param string $name The name to check.
  *
  * @return bool
- *
- * @global array The paths of system files and folders.
  *
  * @since 1.6
  */
@@ -1896,8 +1773,6 @@ function XH_title($site, $subtitle)
  * @return string HTML
  *
  * @since 1.6
- *
- * @global XH_CSRFProtection The CSRF protector.
  */
 function XH_builtinTemplate($bodyClass)
 {
@@ -1922,9 +1797,6 @@ function XH_builtinTemplate($bodyClass)
  *
  * @return string HTML
  *
- * @global array The paths of system files and folders.
- * @global array The localization of the core.
- *
  * @since 1.6
  *
  * @todo Change the DIVs to SPANs and require the <var>$tooltip</var> to be an
@@ -1947,7 +1819,7 @@ function XH_helpIcon($tooltip)
  * Returns whether a file is a content backup by checking the filename.
  *
  * @param string $filename    A filename.
- * @param string $regularOnly Whether to check for regalur backup names only.
+ * @param bool   $regularOnly Whether to check for regalur backup names only.
  *
  * @return bool
  *
@@ -1963,8 +1835,6 @@ function XH_isContentBackup($filename, $regularOnly = true)
  * Returns an array of installed templates.
  *
  * @return array
- *
- * @global array The paths of system files and folders.
  *
  * @since 1.6
  */
@@ -1993,8 +1863,6 @@ function XH_templates()
  *
  * @return array
  *
- * @global array The paths of system files and folders.
- *
  * @since 1.6
  */
 function XH_availableLocalizations()
@@ -2018,10 +1886,6 @@ function XH_availableLocalizations()
  * Returns the installed second languages in alphabetic order.
  *
  * @return array
- *
- * @global array The paths of system files and folders.
- *
- * @staticvar array The language names cache.
  *
  * @since 1.6
  */
@@ -2049,7 +1913,7 @@ function XH_secondLanguages()
  *
  * @param string $path A relative path.
  *
- * @return string
+ * @return bool
  *
  * @since 1.6
  */
@@ -2150,8 +2014,6 @@ function XH_convertPrintUrls($pageContent)
  *
  * @return mixed
  *
- * @global object The JSON codec.
- *
  * @since 1.6
  *
  * @todo Deprecate starting with 1.8.
@@ -2169,8 +2031,6 @@ function XH_decodeJson($string)
  * @return string or
  *         bool false on JSON error
  *
- * @global object The JSON codec.
- *
  * @since 1.6
  *
  * @todo Deprecate starting with 1.8.
@@ -2186,15 +2046,13 @@ function XH_encodeJson($value)
  *
  * @return bool
  *
- * @global object The JSON codec.
- *
  * @since 1.6
  *
  * @todo Deprecate starting with 1.8.
  */
 function XH_lastJsonError()
 {
-    return json_last_error();
+    return (bool) json_last_error();
 }
 
 /**
@@ -2228,8 +2086,6 @@ function XH_hsc($string)
  *
  * @return string HTML
  *
- * @global array The configuration of the core.
- *
  * @since 1.6
  */
 function XH_mailform($subject = null)
@@ -2237,7 +2093,7 @@ function XH_mailform($subject = null)
     global $cf;
 
     if ($cf['mailform']['email'] == '') {
-        return false;
+        return '';
     }
 
     $mailform = new XH\Mailform(true, $subject);
@@ -2304,8 +2160,6 @@ function XH_numberSuffix($count)
  * @param bool $language Whether to return the language array (opposed to config).
  *
  * @return array
- *
- * @global array The paths of system files and folders.
  *
  * @since 1.6
  */
@@ -2416,9 +2270,6 @@ function XH_exit($status = 0)
  *
  * @return string
  *
- * @global string The script name.
- * @global string The current language.
- *
  * @since 1.6.2
  */
 function XH_getRootFolder()
@@ -2441,8 +2292,6 @@ function XH_getRootFolder()
  * @param string $plugin A plugin name or <var>null</var>.
  *
  * @return mixed
- *
- * @staticvar array The registered plugins.
  *
  * @since 1.6.2
  */
@@ -2521,8 +2370,6 @@ function XH_registeredEditmenuPlugins()
  *
  * @return void
  *
- * @global array The localization of the core.
- *
  * @since 1.6.3
  */
 function XH_onShutdown()
@@ -2533,22 +2380,27 @@ function XH_onShutdown()
         unset($_SESSION['xh_password']);
     }
 
-    if (error_reporting() <= 0) {
-        $lastError = error_get_last();
-        if (in_array($lastError['type'], array(E_ERROR, E_PARSE))) {
+    $lastError = error_get_last();
+    if (isset($lastError) && in_array($lastError['type'], array(E_ERROR, E_PARSE))) {
+        if (error_reporting() <= 0) {
             echo $tx['error']['fatal'];
+        } else {
+            printf(
+                '%s in <b>%s</b> on line <b>%d</b>',
+                nl2br($lastError['message']),
+                $lastError['file'],
+                $lastError['line']
+            );
         }
     }
 }
+
 /**
  * Returns a timestamp formatted according to config and lang.
  *
  * @param int $timestamp A UNIX timestamp.
  *
  * @return string
- *
- * @global array The configuration of the core.
- * @global array The localization of the core.
  *
  * @since 1.6.3
  */
@@ -2604,10 +2456,20 @@ function XH_highlightSearchWords(array $words, $text)
     foreach ($words as $word) {
         $word = trim($word);
         if ($word != '') {
-            $patterns[] = '/' . preg_quote($word, '/') . '(?![^<]*>)/isuU';
+            $patterns[] = '/(?:<(?:"[^"]*?"|[^>]*?)*>|(' . preg_quote($word, '/') . ')|&[^;]*;)/isu';
         }
     }
-    return preg_replace($patterns, '<span class="xh_find">$0</span>', $text);
+    return preg_replace_callback(
+        $patterns,
+        function ($matches) {
+            if (!isset($matches[1])) {
+                return $matches[0];
+            } else {
+                return "<span class=\"xh_find\">{$matches[1]}</span>";
+            }
+        },
+        $text
+    );
 }
 
 /**
@@ -2616,8 +2478,6 @@ function XH_highlightSearchWords(array $words, $text)
  * @param string $className A class name.
  *
  * @return void
- *
- * @global array The paths of system files and folders.
  *
  * @since 1.7
  */
@@ -2680,98 +2540,6 @@ function XH_startSession()
 }
 
 /**
- * Returns The content of the generated page "Site/CMS Info".
- *
- * One of the 3 functions to show "Site/CMS Info".
- *
- * @return The HTML.
- *
- * @global array The configuration of the core.
- * @global array The language localization of the core.
- * @global array The paths of system files and folders.
- *
- * @since 1.7
- */
-function XH_poweredBy()
-{
-    global $cf, $tx, $pth;
-
-    $o = '<h5>' . $tx['title']['cms'] . '</h5>'
-        . '<ul><li><a href="http://cmsimple-xh.org">CMSimple_XH</a></li></ul>';
-    $defaulttpl = $tx['subsite']['template'] == ''
-        ? $cf['site']['template']
-        : $tx['subsite']['template'];
-
-    $tpltext = '';
-    foreach (XH_templates() as $template) {
-        $tpltext .= $defaulttpl == $template
-            ? '<dt>' . $tx['template']['active'] . ucfirst($template) . '</dt>'
-            : '<dt>' . ucfirst($template) . '</dt>';
-        $infoPath = $pth['folder']['templates'] . '/' . $template . '/templateinfo.htm';
-        if (is_file($infoPath)) {
-            $tplinfo = utf8_substr(
-                strip_tags(file_get_contents($infoPath), '<a><br><br/>'),
-                0,
-                400
-            );
-            $tpltext .= '<dd>';
-            if ($tplinfo) {
-                $tpltext .= $tplinfo;
-            }
-            $tpltext .= '</dd>';
-        }
-    }
-
-    $o .= '<h5>' . $tx['title']['templates'] . '</h5><dl>' . $tpltext . '</dl>';
-    $t = '';
-    foreach (XH_plugins() as $plugin) {
-        $url = XH_pluginURL($plugin);
-        if ($url) {
-            $t .= '<li><a href="' . $url . '">' . ucfirst($plugin)
-                . '</a></li>';
-        }
-    }
-    $o .= $t? '<h5>' . $tx['title']['plugins'] . '</h5><ul>' . $t . '</ul>' : '';
-    return $o;
-}
-
-/**
- * Returns The link to a plugin download site.
- *
- * One of the 3 functions to show "Site/CMS Info".
- *
- * @param string $plugin The plugin name.
- *
- * @return string The URL
- *
- * @global array The paths of system files and folders.
- *
- * @since 1.7
- */
-function XH_pluginURL($plugin)
-{
-    global $pth;
-
-    $standardPlugins = array(
-        'fa', 'filebrowser', 'meta_tags', 'page_params', 'pagemanager' , 'tinymce',
-        'jquery', 'hi_updatecheck',
-    );
-    if (in_array($plugin, $standardPlugins)) {
-        $url = false;
-    } else {
-        $filename = $pth['folder']['plugins'] . $plugin . '/version.nfo';
-        if (is_readable($filename)) {
-            $contents = file_get_contents($filename);
-            $contents = explode(',', $contents);
-            $url = $contents[5];
-        } else {
-            $url = false;
-        }
-    }
-    return $url;
-}
-
-/**
  * Returns the locator (breadcrumb navigation) model.
  *
  * The locator model is an ordered list of breadcrumb items, where each item is
@@ -2779,15 +2547,6 @@ function XH_pluginURL($plugin)
  * element is null.
  *
  * @return array
- *
- * @global string The title of the page.
- * @global array  The headings of the pages.
- * @global int    The index of the current page.
- * @global string The requested special function.
- * @global array  The menu levels of the pages.
- * @global array  The localization of the core.
- * @global array  The configuration of the core.
- * @global object The publisher.
  *
  * @since 1.7
  */
@@ -2846,24 +2605,23 @@ function XH_getLocatorModel()
  *
  * @return string
  *
- * @global string The script name.
- * @global array  The page URLs.
- *
  * @since 1.7
  */
 function XH_getPageURL($index)
 {
-    global $sn, $u;
+    global $sn, $u, $xh_publisher;
 
-    return $sn . '?' . $u[$index];
+    if ($index === $xh_publisher->getFirstPublishedPage()) {
+        return $sn;
+    } else {
+        return $sn . '?' . $u[$index];
+    }
 }
 
 /**
  * Returns the URL where to redirect `selected` GEt requests.
  *
  * @return string
- *
- * @global string The value of the `selected` GP parameter.
  *
  * @since 1.7.0
  */

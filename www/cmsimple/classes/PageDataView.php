@@ -1,28 +1,18 @@
 <?php
-/**
- * The page data view.
- *
- * @category  CMSimple_XH
- * @package   XH
- * @author    Martin Damken <kontakt@zeichenkombinat.de>
- * @author    The CMSimple_XH developers <devs@cmsimple-xh.org>
- * @copyright 1999-2009 Peter Harteg
- * @copyright 2009-2017 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
- * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @link      http://cmsimple-xh.org/
- */
 
 namespace XH;
 
 /**
+ * The page data view.
+ *
  * Provides an interface for plugins to handle the page_data.
  *
- * @category CMSimple_XH
- * @package  XH
- * @author   Martin Damken <kontakt@zeichenkombinat.de>
- * @author   The CMSimple_XH developers <devs@cmsimple-xh.org>
- * @license  http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @link     http://cmsimple-xh.org/
+ * @author    Martin Damken <kontakt@zeichenkombinat.de>
+ * @author    The CMSimple_XH developers <devs@cmsimple-xh.org>
+ * @copyright 1999-2009 Peter Harteg
+ * @copyright 2009-2019 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
+ * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
+ * @see       http://cmsimple-xh.org/
  */
 class PageDataView
 {
@@ -43,8 +33,8 @@ class PageDataView
     /**
      * Constructs an instance.
      *
-     * @param array $page Data of the page.
-     * @param array $tabs The filenames of the views of page data tabs.
+     * @param array  $page Data of the page.
+     * @param ?array $tabs The filenames of the views of page data tabs.
      */
     public function __construct(array $page, array $tabs = null)
     {
@@ -93,9 +83,6 @@ class PageDataView
      * @param string $filename Name of the view file.
      *
      * @return string HTML
-     *
-     * @global array          The paths of system files and folders.
-     * @global CSRFProtection The CSRF protector.
      */
     public function view($filename)
     {

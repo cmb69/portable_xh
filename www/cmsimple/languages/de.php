@@ -12,8 +12,8 @@ $tx['template']['text1']="Text 1 für entsprechend vorbereitete Templates";
 $tx['template']['text2']="Text 2 für entsprechend vorbereitete Templates";
 $tx['template']['text3']="Text 3 für entsprechend vorbereitete Templates";
 
-$tx['urichar']['new']="ae|oe|ue|ss|Ae|Oe|Ue";
-$tx['urichar']['org']="ä|ö|ü|ß|Ä|Ö|Ü";
+$tx['urichar']['new']="-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|ae|oe|ue|ss|Ae|Oe|Ue";
+$tx['urichar']['org']="&amp;|'|§|%|:|/|?|#|[|]|@|!|$|&|'|(|)|*|+|,|;|=|\"|ä|ö|ü|ß|Ä|Ö|Ü";
 
 $tx['action']['advanced_hide']="Weniger &hellip;";
 $tx['action']['advanced_show']="Mehr &hellip;";
@@ -49,7 +49,6 @@ $tx['editmenu']['settings']="Einstellungen";
 $tx['editmenu']['stylesheet']="Stylesheet";
 $tx['editmenu']['sysinfo']="Info";
 $tx['editmenu']['template']="Template";
-$tx['editmenu']['userfiles']="Andere";
 $tx['editmenu']['validate']="Links prüfen";
 
 $tx['error']['401']="Fehler 401: Nicht erlaubt";
@@ -78,7 +77,7 @@ $tx['error']['undefined']="Undefiniert";
 
 $tx['filetype']['backup']="Sicherung";
 $tx['filetype']['config']="Konfiguration";
-$tx['filetype']['content']="Content-Datei";
+$tx['filetype']['content']="Inhaltsdatei";
 $tx['filetype']['execute']="Ausführen";
 $tx['filetype']['file']="Datei";
 $tx['filetype']['folder']="Ordner";
@@ -105,7 +104,7 @@ $tx['help']['show_hidden_pages_toc']="Angeklickt = Wenn versteckte Seiten aufger
 
 $tx['help']['images_maxsize']="Maximale Größe für das Hochladen von Bildern in Byte. Dieser Wert darf weder upload_max_filesize noch post_max_size in der PHP-Konfiguration überschreiten.";
 $tx['help']['language_default']="Die Hauptsprache der Website";
-$tx['help']['locator_show_homepage']="Angeklickt = Der Locator ('Sie sind hier') beginnt mit einen Link zur Startseite.";
+$tx['help']['locator_show_homepage']="Angeklickt = Der Locator ('Sie sind hier') beginnt mit einem Link zur Startseite.";
 $tx['help']['mailform_captcha']="Angeklickt = CAPTCHA-Spamschutz im Kontakt-Formular aktiviert";
 $tx['help']['mailform_email']="Erst wenn eine E-Mail-Adresse eingegeben wird, ist das Kontakt-Formular verfügbar.";
 $tx['help']['mailform_lf_only']="Wenn der Mailversand nicht ordnungsgemäß funktioniert, versuchen Sie diese Option zu aktivieren.";
@@ -113,7 +112,7 @@ $tx['help']['menu_color']="Nicht von CMSimple_XH Systemfunktionen genutzt";
 $tx['help']['menu_highlightcolor']="Nicht von CMSimple_XH Systemfunktionen genutzt";
 $tx['help']['menu_sdoc']="Leer lassen oder \"parent\" einstellen, wodurch Oberseiten der aktuellen Seite die Stil-Klasse \"sdocs\" erhalten.";
 
-$tx['help']['meta_robots']="Standarteinstellung für alle Seiten. \"index,follow\" weist Suchroboter an, die Seite in den Suchindex aufzunehmen und allen Links zu folgen. \"noindex,nofollow\" weist das Gegenteil an.";
+$tx['help']['meta_robots']="Standardeinstellung für alle Seiten. \"index,follow\" weist Suchroboter an, die Seite in den Suchindex aufzunehmen und allen Links zu folgen. \"noindex,nofollow\" weist das Gegenteil an.";
 
 $tx['help']['pagemanager_external']="Wenn Sie einen externen Seiten-Manager verwenden möchten, installieren Sie das Plugin und tragen Sie seinen Namen hier ein";
 $tx['help']['plugins_disabled']="Eine durch Kommata getrennte Liste von Plugins, die nicht geladen werden sollen. <strong>Vorsicht: wenn eines dieser Plugins auf der Website verwendet wird, kann es sein, dass Sie auf die Website nicht mehr zugreifen können, und diese Option per FTP korrigieren müssen!</strong>";
@@ -130,6 +129,7 @@ $tx['help']['uri_seperator']="Das Zeichen, das die Namen von Seiten und Untersei
 $tx['help']['uri_word_separator']="Das Zeichen, das Wörter in der URL trennt.";
 $tx['help']['uri_length']="Die URLs der Seiten werden ab dieser Länge abgeschnitten. Das könnte sich in einer zukünftigen Version ändern, so dass es das Beste ist, kürzere Seitenüberschriften zu verwenden (z.B. durch die Verwendung von Seite&rarr;Andere Seitenüberschrift).";
 
+$tx['help']['folders_content']="Der Ordner, in dem die Inhalte gespeichert werden (content.htm etc.)";
 $tx['help']['folders_userfiles']="Der Basisordner aller Benutzerdateien.";
 $tx['help']['folders_downloads']="Ein Unterordner der Benutzerdateien.";
 $tx['help']['folders_images']="Ein Unterordner der Benutzerdateien.";
@@ -197,6 +197,9 @@ $tx['mailform']['senderphone']="Telefon-Nr.: ";
 $tx['mailform']['subject']="Betreff (erforderlich): ";
 $tx['mailform']['subject_default']="Kontaktformular auf %s";
 
+$tx['mailform']['sendermail']="E-Mail-Adresse: ";
+$tx['mailform']['reset_pw_error']="Fehler, das Passwort wurde nicht geändert.";
+
 $tx['menu']['login']="Login";
 $tx['menu']['mailform']="Kontakt-Formular";
 $tx['menu']['print']="Druckansicht";
@@ -253,7 +256,7 @@ $tx['search']['label']="Suchbegriffe";
 $tx['search']['notfound']="\"%s\" wurde nicht gefunden.";
 $tx['search']['result']="Suchergebnis";
 
-$tx['settings']['backup']="Sicherheitskopien";
+$tx['settings']['backup']="Inhaltsdatei";
 $tx['settings']['backupexplain1']="Beim Logout wird eine Sicherheitskopie des Inhalts angelegt. Die älteste Kopie wird gelöscht.";
 $tx['settings']['backupexplain2']="Sicherheitskopie-Namen beginnen mit Datum und Uhrzeit der Erstellung: YYYYMMDD_HHMMSS";
 $tx['settings']['backupsuffix']="Geben Sie einen Dateinamen ein (nur a-z, 0-9, Minus und Unterstrich; höchstens 20 Zeichen):";
@@ -280,7 +283,7 @@ $tx['syscheck']['safe_mode']="safe_mode deaktiviert ist";
 $tx['syscheck']['success']="OK";
 $tx['syscheck']['timezone']="die Zeitzone gültig ist";
 $tx['syscheck']['title']="System-Prüfung";
-$tx['syscheck']['use_only_cookies']="session.use_only_cookies deaktiviert ist";
+$tx['syscheck']['use_only_cookies']="session.use_only_cookies aktiviert ist";
 $tx['syscheck']['use_trans_sid']="session.use_trans_sid deaktiviert ist";
 $tx['syscheck']['warning']="Warnung";
 $tx['syscheck']['writable']="'%s' schreibbar ist";
@@ -314,13 +317,14 @@ $tx['title']['settings']="Einstellungen";
 $tx['title']['sitemap']="Inhaltsverzeichnis";
 $tx['title']['sysinfo']="System-Info";
 $tx['title']['templates']="Templates";
-$tx['title']['userfiles']="Andere";
+$tx['title']['userfiles']="Benutzer-Dateien";
 $tx['title']['validate']="Links prüfen";
-$tx['title']['xh_backups']="Sicherheitskopien";
+$tx['title']['xh_backups']="Inhaltsdatei";
+$tx['h2']['xh_backups']="Sicherheitskopien";
 
-$tx['toc']['dupl']="DOPPELTE ÜBERSCHRIFT";
-$tx['toc']['empty']="LEERE ÜBERSCHRIFT";
-$tx['toc']['missing']="FEHLENDE ÜBERSCHRIFT";
+$tx['toc']['dupl']="DOPPELTER SEITENAME";
+$tx['toc']['empty']="LEERER SEITENAME";
+$tx['toc']['missing']="FEHLENDER SEITENAME";
 $tx['toc']['newpage']="NEUE SEITE";
 
 $tx['uri']['toolong']="Gemäß Einstellungen&rarr;CMS&rarr;Uri&rarr;Length ist die URL zu lang:";

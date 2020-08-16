@@ -1,27 +1,15 @@
 <?php
 
-/**
- * Handling of password forgotten functionality.
- *
- * @category  CMSimple_XH
- * @package   XH
- * @author    The CMSimple_XH developers <devs@cmsimple-xh.org>
- * @copyright 2013-2017 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
- * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @link      http://cmsimple-xh.org/
- */
-
 namespace XH;
 
 /**
- * The password forgotten handling class.
+ * Handling of password forgotten functionality.
  *
- * @category CMSimple_XH
- * @package  XH
- * @author   The CMSimple_XH developers <devs@cmsimple-xh.org>
- * @license  http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @link     http://cmsimple-xh.org/
- * @since    1.6
+ * @author    The CMSimple_XH developers <devs@cmsimple-xh.org>
+ * @copyright 2013-2019 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
+ * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
+ * @see       http://cmsimple-xh.org/
+ * @since     1.6
  */
 class PasswordForgotten
 {
@@ -51,19 +39,14 @@ class PasswordForgotten
      * Renders the view.
      *
      * @return void
-     *
-     * @global string The page title.
-     * @global string The generated HTML.
-     * @global string The script name.
-     * @global array  The localization of the core.
-     * @global string JS for the onload attribute of the BODY element.
      */
     private function render()
     {
         global $title, $o, $sn, $tx, $onload;
 
         $title = $tx['title']['password_forgotten'];
-        $o .= '<h1>' . $title . '</h1>';
+        $o .= '<div class="xh_login">'
+            . '<h1>' . $title . '</h1>';
         switch ($this->status) {
             case 'sent':
                 $o .= '<p>' . $tx['password_forgotten']['email1_sent'] . '</p>';
@@ -81,6 +64,7 @@ class PasswordForgotten
                 $onload .= 'document.forms[\'xh_forgotten\'].elements[\'xh_email\']'
                     . '.focus();';
         }
+        $o .= '</div>';
     }
 
     /**
@@ -89,8 +73,6 @@ class PasswordForgotten
      * @param bool $previous Whether to generate the MAC for the previous hour.
      *
      * @return string
-     *
-     * @global array The configuration of the core.
      */
     public function mac($previous = false)
     {
@@ -121,10 +103,6 @@ class PasswordForgotten
      * with a link to reset the password.
      *
      * @return void
-     *
-     * @global array  The configuration of the core.
-     * @global array  The localization of the core.
-     * @global string LI elements to be emitted as error messages.
      */
     private function submit()
     {
@@ -157,32 +135,33 @@ class PasswordForgotten
      * info email.
      *
      * @return void.
-     *
-     * @global array  The paths of system files and folders.
-     * @global array  The configuration of the core.
-     * @global array  The localization of the core.
      */
     private function reset()
     {
-        global $pth, $cf, $tx;
+        global $pth, $cf, $tx, $e;
 
         $password = bin2hex(random_bytes(8));
         $hash = password_hash($password, PASSWORD_BCRYPT);
-        $to = $cf['security']['email'];
-        $message = $tx['password_forgotten']['email2_text'] . ' ' . $password;
-        $mail = new Mail();
-        $mail->setTo($to);
-        $mail->setSubject($tx['title']['password_forgotten']);
-        $mail->setMessage($message);
-        $mail->addHeader('From', $to);
-        $sent = $mail->send();
-        if ($sent) {
-            if (!$this->saveNewPassword($hash)) {
-                e('cntsave', 'config', $pth['file']['config']);
+        if (($hash !== false) && ($password != '')) {
+            $to = $cf['security']['email'];
+            $message = $tx['password_forgotten']['email2_text'] . ' ' . $password;
+            $mail = new Mail();
+            $mail->setTo($to);
+            $mail->setSubject($tx['title']['password_forgotten']);
+            $mail->setMessage($message);
+            $mail->addHeader('From', $to);
+            $sent = $mail->send();
+            if ($sent) {
+                if (!$this->saveNewPassword($hash)) {
+                    e('cntsave', 'config', $pth['file']['config']);
+                }
+                $this->status = 'reset';
+            } else {
+                $this->status = '';
+                $e .= '<li>' . $tx['mailform']['notsend'] . '</li>';
             }
-            $this->status = 'reset';
         } else {
-            $this->status = '';
+            $e .= XH_message('fail', $tx['mailform']['reset_pw_error']);
         }
     }
 
@@ -193,8 +172,6 @@ class PasswordForgotten
      * @param string $hash A password hash.
      *
      * @return bool
-     *
-     * @global array The paths of system files and folders.
      */
     private function saveNewPassword($hash)
     {
@@ -210,6 +187,6 @@ class PasswordForgotten
             }
         }
         $o .= PHP_EOL . '?>' . PHP_EOL;
-        return XH_writeFile($pth['file']['config'], $o);
+        return (bool) XH_writeFile($pth['file']['config'], $o);
     }
 }

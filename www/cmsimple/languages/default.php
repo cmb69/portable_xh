@@ -12,8 +12,8 @@ $tx['template']['text1']="Text 1 for templates requiring this text";
 $tx['template']['text2']="Text 2 for templates requiring this text";
 $tx['template']['text3']="Text 3 for templates requiring this text";
 
-$tx['urichar']['new']="";
-$tx['urichar']['org']="";
+$tx['urichar']['new']="-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-";
+$tx['urichar']['org']="&amp;|'|§|%|:|/|?|#|[|]|@|!|$|&|'|(|)|*|+|,|;|=|\"";
 
 $tx['action']['advanced_hide']="Less &hellip;";
 $tx['action']['advanced_show']="More &hellip;";
@@ -49,7 +49,6 @@ $tx['editmenu']['settings']="Settings";
 $tx['editmenu']['stylesheet']="Stylesheet";
 $tx['editmenu']['sysinfo']="Info";
 $tx['editmenu']['template']="Template";
-$tx['editmenu']['userfiles']="Userfiles";
 $tx['editmenu']['validate']="Validate links";
 
 $tx['error']['401']="Error 401: Unauthorized";
@@ -129,6 +128,7 @@ $tx['help']['uri_seperator']="The character which separates names of pages and s
 $tx['help']['uri_word_separator']="The character which separates words in the URL.";
 $tx['help']['uri_length']="The URLs of the pages will be truncated at this length. This might change in a future release, so it's best to use shorter page headings (e.g. by using Page&rarr;Alternative heading).";
 
+$tx['help']['folders_content']="The folder where the contents are stored (content.htm etc.)";
 $tx['help']['folders_userfiles']="The base folder of all userfiles.";
 $tx['help']['folders_downloads']="A subfolder of userfiles.";
 $tx['help']['folders_images']="A subfolder of userfiles.";
@@ -196,6 +196,9 @@ $tx['mailform']['senderphone']="Your phone number: ";
 $tx['mailform']['subject']="Subject (required): ";
 $tx['mailform']['subject_default']="Mailform on %s";
 
+$tx['mailform']['sendermail']="e-mail address: ";
+$tx['mailform']['reset_pw_error']="Error, the password was not changed.";
+
 $tx['menu']['login']="Login";
 $tx['menu']['mailform']="Mailform";
 $tx['menu']['print']="Print view";
@@ -252,7 +255,7 @@ $tx['search']['label']="Search terms";
 $tx['search']['notfound']="\"%s\" was not found.";
 $tx['search']['result']="Result of your search";
 
-$tx['settings']['backup']="Backup";
+$tx['settings']['backup']="Content file";
 $tx['settings']['backupexplain1']="On logout content is backed up and the oldest backup file will be deleted.";
 $tx['settings']['backupexplain2']="Backup file names start with date and time of backup as: YYYYMMDD_HHMMSS";
 $tx['settings']['backupsuffix']="Enter a filename (only a-z, 0-9, minus and underscore; at most 20 characters):";
@@ -279,7 +282,7 @@ $tx['syscheck']['safe_mode']="safe_mode is off";
 $tx['syscheck']['success']="okay";
 $tx['syscheck']['timezone']="time zone is valid";
 $tx['syscheck']['title']="System check";
-$tx['syscheck']['use_only_cookies']="session.use_only_cookies is off";
+$tx['syscheck']['use_only_cookies']="session.use_only_cookies is on";
 $tx['syscheck']['use_trans_sid']="session.use_trans_sid is off";
 $tx['syscheck']['warning']="warning";
 $tx['syscheck']['writable']="'%s' is writable";
@@ -315,11 +318,12 @@ $tx['title']['sysinfo']="System Info";
 $tx['title']['templates']="Templates";
 $tx['title']['userfiles']="Userfiles";
 $tx['title']['validate']="Validate links";
-$tx['title']['xh_backups']="Backup";
+$tx['title']['xh_backups']="Content file";
+$tx['h2']['xh_backups']="Backups";
 
-$tx['toc']['dupl']="DUPLICATE HEADING";
-$tx['toc']['empty']="EMPTY HEADING";
-$tx['toc']['missing']="MISSING HEADING";
+$tx['toc']['dupl']="DUPLICATE PAGE NAME";
+$tx['toc']['empty']="EMPTY PAGE NAME";
+$tx['toc']['missing']="MISSING PAGE NAME";
 $tx['toc']['newpage']="NEW PAGE";
 
 $tx['uri']['toolong']="According to Settings&rarr;CMS&rarr;Uri&rarr;Length the URL is too long:";

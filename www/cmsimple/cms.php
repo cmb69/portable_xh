@@ -5,20 +5,18 @@
  *
  * The main file of CMSimple_XH.
  *
- * @category  CMSimple_XH
- * @package   XH
  * @author    Peter Harteg <peter@harteg.dk>
  * @author    The CMSimple_XH developers <devs@cmsimple-xh.org>
  * @copyright 1999-2009 Peter Harteg
- * @copyright 2009-2017 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
+ * @copyright 2009-2019 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
  * @link      http://cmsimple-xh.org/
  */
 
 /*
   ======================================
-  CMSimple_XH 1.7.1, 2017101401
-  2017-10-14
+  CMSimple_XH 1.7.3, 2020072801
+  2020-07-28
   based on CMSimple version 3.3 - December 31. 2009
   For changelog, downloads and information please see http://www.cmsimple-xh.org/
   ======================================
@@ -76,7 +74,7 @@
  */
 
 // prevent direct access
-if (preg_match('/cms.php/i', $_SERVER['PHP_SELF'])) {
+if (preg_match('/cms\.php/i', $_SERVER['PHP_SELF'])) {
     die('Access Denied');
 }
 
@@ -206,15 +204,15 @@ $j = null;
 /**
  * The version in textual representation, e.g. CMSimple_XH 1.6
  */
-define('CMSIMPLE_XH_VERSION', 'CMSimple_XH 1.7.1');
+define('CMSIMPLE_XH_VERSION', 'CMSimple_XH 1.7.3');
 /**
  * The build number as integer: YYYYMMDDBB
  */
-define('CMSIMPLE_XH_BUILD', '2017101401');
+define('CMSIMPLE_XH_BUILD', '2020072801');
 /**
  * The release date in ISO 8601 format: YYYY-MM-DD
  */
-define('CMSIMPLE_XH_DATE', '2017-10-14');
+define('CMSIMPLE_XH_DATE', '2020-07-28');
 
 /**
  * A two dimensional array that holds the paths of important files and folders.
@@ -248,6 +246,7 @@ require_once $pth['folder']['cmsimple'] . 'utf8.php';
 if (!function_exists('password_hash') || !function_exists('random_bytes')) {
     include_once $pth['folder']['cmsimple'] . 'password.php';
 }
+require_once $pth['folder']['cmsimple'] . 'seofuncs.php';
 
 /**
  * The controller.
@@ -591,7 +590,7 @@ $userfiles = null;
  *
  * This <i>read-only</i> variable is initialized from a <var>edit</var>
  * GET/POST parameter or the <var>mode</var> cookie. If you want to switch to
- * edit or view mode, you should set the <var>edit</var> GET parameter.
+ * edit mode, set the <var>edit</var> GET parameter.
  *
  * @global string $edit
  *
@@ -602,11 +601,12 @@ $userfiles = null;
 $edit = null;
 
 /**
- * Whether normal mode is requested.
+ * Whether normal (aka view) mode is requested.
  *
  * This <i>read-only</i> variable is initialized from a <var>normal</var>
- * GET/POST parameter or the <var>mode</var> cookie. If you want to switch to
- * edit or view mode, you should set the <var>normal</var> GET parameter.
+ * GET/POST parameter, but not from the <var>mode</var> cookie. If you want to
+ * detect normal mode, check for <code>!$edit</code>. If you want to switch to
+ * normal mode, set the <var>normal</var> GET parameter.
  *
  * @global string $normal
  *
@@ -1006,6 +1006,13 @@ $l = null;
 
 rfc(); // Here content is loaded
 
+/*
+ * Remove $su from FirstPublicPage
+ * Remove empty path segments in an URL - https://github.com/cmsimple-xh/cmsimple-xh/issues/282
+ * Integration of the ADC-Core_XH plugin with extended functions (optional)
+*/
+XH_URI_Cleaning();
+
 $_XH_controller->setFrontendF();
 
 if (is_readable($pth['folder']['cmsimple'] . 'userfuncs.php')) {
@@ -1170,22 +1177,6 @@ $si = -1;
 
 XH_buildHc();
 
-/*
- * Enables the automatic creation of a "Site/CMS Info" page.
- * To generate a link to this page add <?php echo poweredbylink()?>
- * to the template plus a template.nfo file containing a description
- * of the template in plain text with link to the designer site.
- *
- * Newsbox text titled 'Site/CMS Info' will appear at the beginning
- * of the generated page.
- */
-if ($su == uenc('site/cms info')) {
-    $f = $title = 'Site/CMS Info';
-    $s = -1;
-    $o .= '<h1>' . $title . '</h1>';
-    $o .= newsbox('Site/CMS Info') . XH_poweredBy();
-}
-
 if (XH_ADM) {
     $_XH_controller->setBackendF();
 
@@ -1304,7 +1295,7 @@ if (!($edit && XH_ADM) && $s > -1) {
 
 
 if ($s == -1 && !$f && $o == '') {
-    shead('404');
+    shead(404);
 }
 
 loginforms();
@@ -1328,7 +1319,7 @@ if ($print) {
 }
 
 if (XH_ADM) {
-    $bjs .= '<script type="text/javascript" src="' . $pth['file']['adminjs']
+    $bjs .= '<script src="' . $pth['file']['adminjs']
         . '"></script>' . PHP_EOL
         . XH_adminJSLocalization();
 }

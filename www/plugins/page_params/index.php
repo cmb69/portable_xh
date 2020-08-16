@@ -7,14 +7,12 @@
  * visibility of the page.
  * index.php is called by pluginloader and manipulates the respective CMSimple-data.
  *
- * @category  CMSimple_XH
- * @package   Pageparams
  * @author    Martin Damken <kontakt@zeichenkombinat.de>
  * @author    Jerry Jakobsfeld <mail@simplesolutions.dk>
  * @author    The CMSimple_XH developers <devs@cmsimple-xh.org>
- * @copyright 2009-2017 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
+ * @copyright 2009-2019 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @link      http://cmsimple-xh.org/
+ * @see       http://cmsimple-xh.org/
  */
 
 /*
@@ -35,8 +33,6 @@ if (!defined('PLUGINLOADER_VERSION')) {
  *
  * @return void
  *
- * @global array  The content of the pages.
- *
  * @since 1.6
  */
 function Pageparams_handleRelocation($index, array $data)
@@ -47,7 +43,7 @@ function Pageparams_handleRelocation($index, array $data)
     if ((int) $data['use_header_location'] > 0 && trim($location) !== '') {
         $components = parse_url($location);
         if (!$components || !isset($components['scheme'])) {
-            $location = CMSIMPLE_URL . $location;
+            $location = CMSIMPLE_URL . str_replace('#', '\x23', $location);
         }
         $c[$index] = '#CMSimple header("Location:'. $location .'"); exit; #';
     }
@@ -60,10 +56,6 @@ function Pageparams_handleRelocation($index, array $data)
  * @param int $n Index of the current page.
  *
  * @return void
- *
- * @global array  The paths of system files and folders.
- * @global array  The configuration of the core.
- * @global object The page data router.
  *
  * @since 1.6
  */

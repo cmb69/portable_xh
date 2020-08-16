@@ -5,14 +5,12 @@
  *
  * Template functions.
  *
- * @category  CMSimple_XH
- * @package   XH
  * @author    Peter Harteg <peter@harteg.dk>
  * @author    The CMSimple_XH developers <devs@cmsimple-xh.org>
  * @copyright 1999-2009 Peter Harteg
- * @copyright 2009-2017 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
+ * @copyright 2009-2019 The CMSimple_XH developers <http://cmsimple-xh.org/?The_Team>
  * @license   http://www.gnu.org/licenses/gpl-3.0.en.html GNU GPLv3
- * @link      http://cmsimple-xh.org/
+ * @see       http://cmsimple-xh.org/
  */
 
 /**
@@ -20,18 +18,13 @@
  *
  * @return string HTML
  *
- * @global string The script name.
- * @global array  The page URLs.
- *
  * @since 1.6.3
  */
 function XH_renderPrevLink()
 {
-    global $sn, $u;
-
     $index = XH_findPreviousPage();
     if ($index !== false) {
-        return '<link rel="prev" href="' . $sn . '?' . $u[$index] . '">';
+        return '<link rel="prev" href="' . XH_getPageURL($index) . '">';
     } else {
         return '';
     }
@@ -42,18 +35,13 @@ function XH_renderPrevLink()
  *
  * @return string HTML
  *
- * @global string The script name.
- * @global array  The page URLs.
- *
  * @since 1.6.3
  */
 function XH_renderNextLink()
 {
-    global $sn, $u;
-
     $index = XH_findNextPage();
     if ($index !== false) {
-        return '<link rel="next" href="' . $sn . '?' . $u[$index] . '">';
+        return '<link rel="next" href="' . XH_getPageURL($index) . '">';
     } else {
         return '';
     }
@@ -63,12 +51,6 @@ function XH_renderNextLink()
  * Returns the complete HEAD element.
  *
  * @return string HTML
- *
- * @global string The page title.
- * @global array  The configuration of the core.
- * @global array  The paths of system files and folders.
- * @global array  The localization of the core.
- * @global string HTML to be inserted to the HEAD Element.
  */
 function head()
 {
@@ -102,8 +84,6 @@ function head()
  * Returns the language dependend site title.
  *
  * @return string HTML
- *
- * @global array The localization of the core.
  */
 function sitename()
 {
@@ -117,8 +97,6 @@ function sitename()
  * Returns the global site title.
  *
  * @return string HTML
- *
- * @global array The configuration of the core.
  */
 function pagename()
 {
@@ -132,8 +110,6 @@ function pagename()
  * Returns the onload attribute for the body element.
  *
  * @return string HTML
- *
- * @global string JavaScript for the onload attribute of the BODY element.
  */
 function onload()
 {
@@ -151,11 +127,6 @@ function onload()
  * @param callable $li    A callback that actually creates the view.
  *
  * @return string HTML
- *
- * @global int   The number of pages.
- * @global int   The index of the current page.
- * @global array The menu levels of the pages.
- * @global array The configuration of the core.
  */
 function toc($start = null, $end = null, $li = 'li')
 {
@@ -231,13 +202,6 @@ function li(array $ta, $st)
  *
  * @return void
  *
- * @global int   The number of pages.
- * @global int   The current page index.
- * @global array The configuration of the core.
- * @global int   The index of the current page in {@link $hc}.
- * @global array The page indexes of the visible menu items.
- * @global int   The length of {@link $hc}.
- *
  * @since 1.6.2
  */
 function XH_buildHc()
@@ -265,9 +229,6 @@ function XH_buildHc()
  * Returns the search form.
  *
  * @return string HTML
- *
- * @global string The script name.
- * @global array  The localization of the core.
  */
 function searchbox()
 {
@@ -299,8 +260,6 @@ function sitemaplink()
  * Returns the link for the print view.
  *
  * @return string HTML
- *
- * @global array  The localization of the core.
  */
 function printlink()
 {
@@ -314,11 +273,6 @@ function printlink()
  * Returns the URL of the print view.
  *
  * @return string
- *
- * @global string The requested special function.
- * @global string The current search string.
- * @global string The requested special file.
- * @global string The script name.
  *
  * @since 1.6
  */
@@ -344,8 +298,6 @@ function XH_printUrl()
  * Returns the link to the mail form.
  *
  * @return string HTML
- *
- * @global array The configuration of the core.
  */
 function mailformlink()
 {
@@ -359,17 +311,16 @@ function mailformlink()
 /**
  * Returns the link to the login form.
  *
- * @global int    The index of the requested page.
- * @global array  The localization of the core.
- *
  * @return string HTML
  */
 function loginlink()
 {
-    global $s, $tx;
+    global $s, $tx, $xh_publisher, $u;
 
     if (!XH_ADM) {
-        return a($s > -1 ? $s : 0, '&amp;login" rel="nofollow')
+        $index = $s > -1 ? $s : 0;
+        $extra = ($index === $xh_publisher->getFirstPublishedPage() ? $u[$index] : '');
+        return a($index, $extra . '&amp;login" rel="nofollow')
             . $tx['menu']['login'] . '</a>';
     }
 }
@@ -382,9 +333,6 @@ function loginlink()
  * @param int  $hour The time correction in hours.
  *
  * @return string HTML
- *
- * @global array The localization of the core.
- * @global array The paths of system files and folders.
  */
 function lastupdate($br = null, $hour = null)
 {
@@ -405,28 +353,30 @@ function lastupdate($br = null, $hour = null)
 /**
  * Returns the locator (breadcrumb navigation).
  *
+ * @param string $separator The separator between the breadcrumb links.
+ *
  * @return string HTML
  */
-function locator()
+function locator($separator = '&gt;')
 {
     $breadcrumbs = XH_getLocatorModel();
     $last = count($breadcrumbs) - 1;
-    $html = '<span vocab="http://schema.org/" typeof="BreadcrumbList">';
+    $html = '<span itemscope itemtype="https://schema.org/BreadcrumbList">';
     foreach ($breadcrumbs as $i => $breadcrumb) {
         list($title, $url) = $breadcrumb;
         if ($i > 0) {
-            $html .= ' &gt; ';
+            $html .= ' ' . $separator . ' ';
         }
-        $html .= '<span property="itemListElement" typeof="ListItem">';
-        $inner = '<span property="name">' . $title
-            . '</span><meta property="position" content="'. ($i + 1) . '">';
+        $html .= '<span itemprop="itemListElement" '
+                . 'itemscope itemtype="https://schema.org/ListItem">';
+        $inner = '<span itemprop="name">' . $title . '</span>';
         if (isset($url) && $i < $last) {
-            $html .= '<a property="item" typeof="WebPage" href="' . $url . '">'
-                . $inner . '</a>';
+            $html .= '<a itemprop="item" href="' . $url . '">'
+                    . $inner . '</a>';
         } else {
             $html .= $inner;
         }
-        $html .= '</span>';
+        $html .= '<meta itemprop="position" content="'. ($i + 1) . '"></span>';
     }
     $html .= '</span>';
     return $html;
@@ -455,11 +405,6 @@ function editmenu()
  * Returns the contents area.
  *
  * @return string HTML
- *
- * @global int    The index of the current page.
- * @global string The output of the contents area.
- * @global array  The content of the pages.
- * @global bool   Whether edit mode is active.
  */
 function content()
 {
@@ -467,7 +412,7 @@ function content()
 
     if (!($edit && XH_ADM) && $s > -1) {
         if (isset($_GET['search'])) {
-            $search = XH_hsc(stsl($_GET['search']));
+            $search = XH_hsc(trim(preg_replace('/\s+/u', ' ', (stsl($_GET['search'])))));
             $words = explode(' ', $search);
             $c[$s] = XH_highlightSearchWords($words, $c[$s]);
         }
@@ -483,12 +428,6 @@ function content()
  * @param string $html Optional markup to wrap the heading.
  *
  * @return string HTML
- *
- * @global int   The index of the current page.
- * @global int   The number of pages.
- * @global array The menu levels of the pages.
- * @global array The localization of the core.
- * @global array The configuration of the core.
  */
 function submenu($html = '')
 {
@@ -529,8 +468,6 @@ function submenu($html = '')
  *
  * @return string HTML
  *
- * @global array The localization of the core.
- *
  * @see nextpage()
  */
 function previouspage()
@@ -539,7 +476,7 @@ function previouspage()
 
     $index = XH_findPreviousPage();
     if ($index !== false) {
-        return a($index, '" rel="prev') . $tx['navigator']['previous'] . '</a>';
+        return '<a href="' . XH_getPageURL($index) . '" rel="prev">' . $tx['navigator']['previous'] . '</a>';
     }
 }
 
@@ -547,8 +484,6 @@ function previouspage()
  * Returns a link to the next page
  *
  * @return string HTML
- *
- * @global array The localization of the core.
  *
  * @see previouspage()
  */
@@ -558,7 +493,7 @@ function nextpage()
 
     $index = XH_findNextPage();
     if ($index !== false) {
-        return a($index, '" rel="next') . $tx['navigator']['next'] . '</a>';
+        return '<a href="' . XH_getPageURL($index) . '" rel="next">' . $tx['navigator']['next'] . '</a>';
     }
 }
 
@@ -568,10 +503,6 @@ function nextpage()
  * To work, an appropriate ID has to be defined in the template.
  *
  * @param string $id An (X)HTML ID.
- *
- * @return string HTML
- *
- * @global array The localization of the core.
  */
 function top($id = 'TOP')
 {
@@ -585,10 +516,6 @@ function top($id = 'TOP')
  * Returns the language menu.
  *
  * @return string HTML
- *
- * @global array  The paths of system files and folders.
- * @global array  The configuration of the core.
- * @global string The current language.
  */
 function languagemenu()
 {
@@ -652,23 +579,17 @@ function XH_emergencyTemplate()
 }
 
 /**
- * Creates the link to the generated page "Site/CMS Info".
+ * Returns a powered by CMSimple_XH link.
  *
- * One of the 3 functions to create "Site/CMS Info".
+ * @param string $linktext
  *
- * @param string $linktext The text to be displayed as the link in the template.
- *
- * @return string The link.
- *
- * @global string The site (script) name.
+ * @return string
  *
  * @since 1.7
  */
 function poweredByLink($linktext = '')
 {
-    global $sn;
-
-    $linktext = $linktext ? $linktext : 'Site/CMS Info';
-    return '<a href="' . $sn . '?' . uenc('site/cms info') . '">'
+    $linktext = $linktext ? $linktext : 'Powered by CMSimple_XH';
+    return '<a href="https://cmsimple-xh.org/" target="_blank">'
         . $linktext . '</a>';
 }
