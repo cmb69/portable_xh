@@ -18,9 +18,9 @@ any other of the major distributions.
 Requirements
 ------------
 
-64bit Windows Vista SP 2 or higher, with the 
-[Visual C++ Redistributable for Visual Studio 2015 RC](https://www.microsoft.com/en-us/download/details.aspx?id=48145)
-installed (you need the x64 version!)
+64bit Windows 7 or higher, with the 
+[Visual C++ Redistributable for Visual Studio 2015-2019](https://aka.ms/vs/16/release/VC_redist.x64.exe)
+installed.
 
 Installation
 ------------
