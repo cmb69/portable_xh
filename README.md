@@ -77,7 +77,7 @@ folders contain independent software which is licensed separately as such.
     Website: <http://3-magi.net/?CMSimple_XH/Portable_XH>
 
 * `php/` (incl. subfolders)  
-    Copyright (c) 1997-2017 The PHP Group  
+    Copyright (c) 1997-2020 The PHP Group  
     Licensed under [PHP License 3.01](http://www.php.net/license/3_01.txt)  
     Website: <http://www.php.net/>
 

@@ -81,18 +81,15 @@ if (preg_match('/\/index\.(php|html)\/$/', $_SERVER['PHP_SELF'])) {
 }
 
 /*
- * If uopz is loaded, it must not skip exit statements.
+ * Per-define a fake XH_isAccessProtected(), if the portable_xh_helper extension
+ * is available, because the function defined in adminfuncs.php blocks on the
+ * built-in webserver.
  */
-if (function_exists('uopz_allow_exit')) {
-    uopz_allow_exit(true);
-}
-
-/*
- * Let XH_isAccessProtected() return true, if uopz is loaded.  Otherwise,
- * an unpatched XH_isAccessProtected() blocks on the built-in webserver.
- */
-if (function_exists('uopz_set_return')) {
-    uopz_set_return('XH_isAccessProtected', true);
+if (extension_loaded('portable_xh_helper')) {
+    function XH_isAccessProtected()
+    {
+        return true;
+    }
 }
 
 /*

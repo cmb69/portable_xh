@@ -74,7 +74,7 @@ class Li
         }
         $this->b = 0;
         if ($this->st > 0) {
-            $this->b = $this->st - 1;
+            $this->b = (int) $this->st - 1;
             $this->st = 'menulevel';
         }
         $this->lf = array();
