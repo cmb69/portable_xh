@@ -1,0 +1,7 @@
+ARG_ENABLE('portable_xh_helper', 'portable_xh_helper support', 'no');
+
+if (PHP_PORTABLE_XH_HELPER != 'no') {
+	AC_DEFINE('HAVE_PORTABLE_XH_HELPER', 1, 'portable_xh_helper support enabled');
+
+	EXTENSION('portable_xh_helper', 'portable_xh_helper.c', null, '/DZEND_ENABLE_STATIC_TSRMLS_CACHE=1');
+}

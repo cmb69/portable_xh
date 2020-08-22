@@ -23,6 +23,7 @@
             <fileset dir="export">
                 <exclude name="build.xml"/>
                 <exclude name="composer.*"/>
+                <exclude name="portable_xh_helper/**"/>
                 <exclude name="pax_global_header"/>
                 <exclude name="portable.ico"/>
                 <exclude name="*.md"/>
