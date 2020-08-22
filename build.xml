@@ -4,9 +4,9 @@
 
     <target name="build">
         <fail unless="version" message="version is not defined!"/>
-        <exec command="git archive -o export.tar HEAD" checkreturn="true"/>
-        <untar file="export.tar" todir="export"/>
-        <delete file="export.tar"/>
+        <exec command="git archive -o export.zip HEAD" checkreturn="true"/>
+        <unzip file="export.zip" todir="export"/>
+        <delete file="export.zip"/>
         <exec command="pandoc README.md -f markdown -t html -s -o README.htm" dir="export"/>
         <exec command="pandoc LIESMICH.md -f markdown -t html -s -o LIESMICH.htm" dir="export"/>
         <move todir="dist">
