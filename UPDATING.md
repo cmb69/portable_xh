@@ -23,3 +23,4 @@ Update PHP
   * extension=php_sqlite3.dll
   * extension=php_uopz.dll
   * zend_extension=php_opcache.dll
+  * opcache.optimization_level=0
