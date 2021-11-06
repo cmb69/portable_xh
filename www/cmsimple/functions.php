@@ -16,8 +16,8 @@
 
 /*
   ======================================
-  CMSimple_XH 1.7.3
-  2020-07-28
+  CMSimple_XH 1.7.5
+  2021-10-03
   based on CMSimple version 3.3 - December 31. 2009
   For changelog, downloads and information please see http://www.cmsimple-xh.org/
   ======================================
@@ -737,7 +737,9 @@ function XH_readContents($language = null)
     $l = array();
     $empty = 0;
     $search = explode(XH_URICHAR_SEPARATOR, $tx['urichar']['org']);
+    array_unshift($search, "\xC2\xAD");
     $replace = explode(XH_URICHAR_SEPARATOR, $tx['urichar']['new']);
+    array_unshift($replace, "");
 
     if (($content = XH_readFile($contentFile)) === false) {
         return false;
@@ -873,12 +875,11 @@ function XH_findNextPage()
  */
 function a($i, $x)
 {
-    global $sn, $u, $xh_publisher;
-
-    return isset($u[$i]) && (XH_ADM || $i !== $xh_publisher->getFirstPublishedPage())
-        ? '<a href="' . $sn . '?' . $u[$i] . $x . '">'
-        //: '<a href="' . $sn . ($x ? ($x[0] != '"' ? '?' . $x : $x) : '') . '">';
-        : '<a href="' . $sn . ($x ? ($x[$i] != '"' ? '?' . $x : $x) : '') . '">';
+    $a_href = XH_getPageURL($i);
+    if (stripos($a_href, '?') === false) {
+        ($x ? $x = '?' . $x : '');
+    }
+    return '<a href="' . $a_href . $x . '">';
 }
 
 /**
@@ -941,7 +942,9 @@ function uenc($s)
 
     if (isset($tx['urichar']['org']) && isset($tx['urichar']['new'])) {
         $search = explode(XH_URICHAR_SEPARATOR, $tx['urichar']['org']);
+        array_unshift($search, "\xC2\xAD");
         $replace = explode(XH_URICHAR_SEPARATOR, $tx['urichar']['new']);
+        array_unshift($replace, "");
     } else {
         $search = $replace = array();
     }
@@ -1486,7 +1489,7 @@ function loginforms()
  *
  * @param string $filename A file path.
  *
- * @return string
+ * @return string|false
  *
  * @since 1.6
  */
@@ -1598,33 +1601,38 @@ function XH_pluginStylesheet()
 
     $plugins = XH_plugins();
 
-    $ofn = $pth['folder']['corestyle'] . 'xhstyles.css';
-    $expired = !file_exists($ofn) || filemtime($pth['file']['corestyle']) > filemtime($ofn);
+    // create array of pluginname => hash of CSS file contents
+    $hashes = array('core' => sha1_file($pth['file']['corestyle']));
+    foreach ($plugins as $plugin) {
+        $fn = $pth['folder']['plugins'] . $plugin . '/css/stylesheet.css';
+        if (is_file($fn)) {
+            $hashes[$plugin] = sha1_file($fn);
+        } else {
+            $hashes[$plugin] = '';
+        }
+    }
 
-    // check for newly (un)installed plugins
+    $ofn = $pth['folder']['corestyle'] . 'xhstyles.css';
+    $expired = !file_exists($ofn);
+
+    // check for newly (un)installed plugins and changes in the individual plugin stylesheets
     if (!$expired) {
         if (($ofp = fopen($ofn, 'r')) !== false
-            && fgets($ofp, 4096) && fgets($ofp, 4096)
-            && ($oldPlugins = fgets($ofp, 4096))
+            && fgets($ofp) && fgets($ofp)
+            && ($oldPlugins = fgets($ofp))
         ) {
             $oldPlugins = explode(',', trim($oldPlugins, " *\r\n"));
-            $expired = $plugins != $oldPlugins;
+            $oldhashes = array();
+            foreach ($oldPlugins as $oldPlugin) {
+                list($plugin, $hash) = explode(':', $oldPlugin);
+                $oldhashes[$plugin] = $hash;
+            }
+            $expired = $hashes != $oldhashes;
         } else {
             $expired = true;
         }
         if ($ofp !== false) {
             fclose($ofp);
-        }
-    }
-
-    // check for changes in the individual plugin stylesheets
-    if (!$expired) {
-        foreach ($plugins as $plugin) {
-            $fn = $pth['folder']['plugins'] . $plugin . '/css/stylesheet.css';
-            if (file_exists($fn) && filemtime($fn) > filemtime($ofn)) {
-                $expired = true;
-                break;
-            }
         }
     }
 
@@ -1648,9 +1656,16 @@ function XH_pluginStylesheet()
                 $o[] = $css;
             }
         }
+        $pluginline = '';
+        foreach ($hashes as $plugin => $hash) {
+            if ($pluginline) {
+                $pluginline .= ',';
+            }
+            $pluginline .= "$plugin:$hash";
+        }
         $o = '/*' . PHP_EOL
             . ' * Automatically created by CMSimple_XH. DO NOT MODIFY!' . PHP_EOL
-            . ' * ' . implode(',', $plugins) . PHP_EOL
+            . ' * ' . $pluginline . PHP_EOL
             . ' */' . PHP_EOL . PHP_EOL
             . implode(PHP_EOL . PHP_EOL, $o);
         if (!XH_writeFile($ofn, $o)) {
@@ -2611,7 +2626,7 @@ function XH_getPageURL($index)
 {
     global $sn, $u, $xh_publisher;
 
-    if ($index === $xh_publisher->getFirstPublishedPage()) {
+    if ($index === $xh_publisher->getFirstPublishedPage() && !(XH_ADM)) {
         return $sn;
     } else {
         return $sn . '?' . $u[$index];

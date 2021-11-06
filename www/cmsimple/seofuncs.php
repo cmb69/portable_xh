@@ -15,6 +15,18 @@
  * @link      http://cmsimple-xh.org/
  */
 
+/**
+ * SEO functionality
+ *
+ * Integration of the ADC-Core_XH plugin with extended functions (optional)
+ *
+ * Remove empty path segments in an URL
+ * Remove $su from FirstPublicPage
+ *
+ * @return void
+ *
+ * @since 1.7.3
+ */
 function XH_URI_Cleaning()
 {
     global $su, $s, $xh_publisher, $pth;
@@ -22,12 +34,19 @@ function XH_URI_Cleaning()
     $parts = parse_url(CMSIMPLE_URL);
     $scheme = $parts['scheme'];
     $host = $parts['host'];
+    $port = '';
+    if (!empty($parts['port'])) {
+        $port = ':' . $parts['port'];
+    }
     $path = $parts['path'];
-    $query_str = $_SERVER['QUERY_STRING'];
+    $query_str = '';
+    if (isset($_SERVER['QUERY_STRING'])) {
+        $query_str = $_SERVER['QUERY_STRING'];
+    }
 
     $redir = false;
 
-// Integration of the ADC-Core_XH plugin with extended functions (optional)
+//Integration of the ADC-Core_XH plugin with extended functions (optional)
     if (is_readable($pth['folder']['plugins'] . 'adc_core/seofuncs.php')) {
         include_once $pth['folder']['plugins'] . 'adc_core/seofuncs.php';
     }
@@ -56,6 +75,7 @@ function XH_URI_Cleaning()
                    . '/', '', $query_str, -1, $fpp_count);
         if ($fpp_count > 0) {
             $redir = true;
+            header("Cache-Control: no-cache, no-store, must-revalidate");
         }
     }
 
@@ -67,7 +87,7 @@ function XH_URI_Cleaning()
         } else {
             $protocol = 'HTTP/1.1';
         }
-        $url = $scheme . '://' . $host . $path;
+        $url = $scheme . '://' . $host . $port . $path;
         if ($query_str != '') {
             $url .= '?' . XH_uenc_redir($query_str);
         }

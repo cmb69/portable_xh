@@ -627,43 +627,9 @@ a.xh_view_toggle {
 #xh_mailform div {
 }
 #xh_mailform .text,
-#xh_mailform .xh_mailform textarea {
+.xh_mailform textarea {
 	width: 100%;
 }
-/*#xh_mailform .text,
-#xh_mailform .xh_mailform textarea {
-	font: inherit;
-	color: inherit;
-	padding: 4px;
-	margin: 0 0 4px 0;
-	box-sizing: border-box;
-	width: 100%;
-}
-.xh_captcha_code {
-	float: left;
-	font: inherit;
-	color: #fff;
-	border: 1px solid #333;
-	background-color: #333;
-	padding:2px 4px;
-	margin: 4px 0 4px 4px;
-	box-sizing: border-box;
-	width: 5em;
-	text-align: center;
-	height: auto !important;
-}
-.xh_captcha_input {
-	font: inherit;
-	color: #333;
-	float: left;
-	width: 5em;
-	border: 1px solid #333;
-	padding:2px 4px;
-	margin: 4px 0;
-	text-align: center;
-	box-sizing: border-box;
-	height: auto !important;
-}*/
 /* modal dialogs */
 div.xh_modal_dialog_overlay {
 	position: fixed;
@@ -1601,25 +1567,24 @@ div.xh_field input[type="checkbox"] {
 	margin: .2em 0 !important;
 }
 div.xh_field input[type="checkbox"]::after {
-	content: '\f10c' !important;
-	font-family: "FontAwesome";
+	content: "";
 	color: #fff;
 	position: absolute !important;
 	top: -1px !important;
 	left: -1px !important;
 	width: 1.75em !important;
 	height: 1.5em !important;
-	background: #666 !important;
 	transition: left 0.1s cubic-bezier(0.785, 0.135, 0.15, 0.86) !important;
 	text-align: center;
 	line-height: 1.5;
+	background: #666 url(xh-check-off.svg) no-repeat center center;
+	background-size: contain;
 }
 div.xh_field input[type="checkbox"]:checked::after {
-	content: '\f00c' !important;
-	font-family: "FontAwesome";
+	background-image: url(xh-check-on.svg);
 }
 div.xh_field input[type="checkbox"]:checked {
-	background:#3c0 !important;
+	background-color: #3c0 !important;
 	border-color:#ccc !important;
 }
 div.xh_field input[type="checkbox"]:checked:after {

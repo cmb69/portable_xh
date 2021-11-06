@@ -96,7 +96,6 @@ $tx['help']['functions_file']="Bitte nicht ändern";
 $tx['help']['meta_author']="(Kann-Eingabe) Hier für Suchmaschinen den Autor der Texte Ihrer Site eintragen.";
 $tx['help']['backup_numberoffiles']="Nach jedem Ausloggen erzeugt das System eine Sicherungskopie der Content-Datei. Hier die Anzahl solcher Dateien eintragen, die das System automatisch aufbewahrt.";
 
-
 $tx['help']['show_hidden_path_locator']="Angeklickt = Der Locator ('Sie sind hier'-Anzeige) zeigt auch den Pfad einer versteckten Seite.";
 $tx['help']['show_hidden_pages_search']="Angeklickt = Auch versteckte Seiten werden in den Ergebnissen der internen Suchfunktion angegeben.";
 $tx['help']['show_hidden_pages_sitemap']="Angecklickt = Auch versteckte Seiten erscheinen im Inhaltsverzeichnis (Sitemap).";
@@ -122,7 +121,7 @@ $tx['help']['security_password']="Passwort für die Website einschließlich alle
 $tx['help']['security_email']="Die E-Mail-Adresse für die 'Kennwort vergessen'-Funktionalität. Am besten verwenden Sie eine Adresse, die nicht öffentlich bekannt ist.";
 $tx['help']['security_frame_options']="Ob Seiten Ihrer Website in Frames angezeigt werden dürfen: \"DENY\" bedeutet niemals, \"SAMEORIGIN\" bedeutet nur auf Seiten der selben Domain. Lassen sie die Einstellung leer, um die Darstellung in Frames zu erlauben; das ist allerdings aus Sicherheitsgründen nicht zu empfehlen.";
 $tx['help']['site_template']="Standard-Template für die Website";
-$tx['help']['site_timezone']="Normalerweise keine Einstellung erforderlich. Ab PHP 5.1 kann eine vom Server abweichende <a href=\"http://www.php.net/manual/de/timezones.php\">Zeitzone</a> eingeben werden (siehe http://php.net/manual/de/timezones.php).";
+$tx['help']['site_timezone']="Normalerweise keine Einstellung erforderlich; es kann eine vom Server abweichende <a href=\"http://www.php.net/manual/de/timezones.php\">Zeitzone</a> eingeben werden (siehe http://php.net/manual/de/timezones.php).";
 $tx['help']['site_compat']="Benötigt die Website Funktionen, die in CMSimple_XH 1.7 entfernt wurden?";
 $tx['help']['title_format']="Das Format des Seitentitels (&lt;title&gt;) wie er normalerweise oben in den Seitenreitern des Browsers angezeigt wird.";
 $tx['help']['uri_seperator']="Das Zeichen, das die Namen von Seiten und Unterseiten in der URL trennt.";
@@ -137,6 +136,10 @@ $tx['help']['folders_media']="Ein Unterordner der Benutzerdateien.";
 
 $tx['help']['format_date']="Das Datumsformat, wenn ext/intl verfügbar ist; andernfalls wird auf <code>\$tx['lastupdate']['format']</code> zurückgegriffen.";
 $tx['help']['format_time']="Das Zeitformat, wenn ext/intl verfügbar ist; andernfalls wird auf <code>\$tx['lastupdate']['format']</code> zurückgegriffen.";
+
+$tx['help']['link_mailto'] = "Hinweis zu mailto-Links beim LinkCheck ausgeben?";
+$tx['help']['link_tel'] = "Hinweis zu tel-Links beim LinkCheck ausgeben?";
+$tx['help']['link_redir'] = "Max. Anzahl von Weiterleitungen, denen LinkCheck folgen soll.";
 
 $tx['label']['empty']="- LEER -";
 
@@ -153,6 +156,7 @@ $tx['link']['checked_2_4']="%d Links wurden geprüft. ";
 $tx['link']['checked_5']="%d Links wurden geprüft. ";
 $tx['link']['checking']="Link-Check läuft...";
 $tx['link']['email']="Ist diese E-Mail-Adresse noch aktuell?";
+$tx['link']['tel']="Ist diese Telefonnummer noch aktuell?";
 $tx['link']['error']="Fehler: ";
 $tx['link']['errors']="Fehler: ";
 $tx['link']['ext_error_domain']="Fehlerhafter externer Link, Domain nicht erreichbar.";
@@ -181,7 +185,7 @@ $tx['log']['description']="Beschreibung";
 $tx['login']['back']="Zurück";
 $tx['login']['failure']="Sie haben ein falsches Passwort eingegeben!";
 $tx['login']['loggedout']="Sie wurden ausgeloggt";
-$tx['login']['warning']="Administrationsbereich. Bitte Passwort eingeben";
+$tx['login']['warning']="Administrationsbereich. Bitte Passwort eingeben.";
 
 $tx['mailform']['captcha']="Bitte diese Zahl eingeben (Spamschutz)";
 $tx['mailform']['captchafalse']="Bitte Zahl zum Schutz vor Spam eingeben";

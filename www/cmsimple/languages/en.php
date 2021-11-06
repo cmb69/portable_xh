@@ -121,7 +121,7 @@ $tx['help']['security_password']="Password of the site and all secondary languag
 $tx['help']['security_email']="The email address for the password forgotten functionality. It is preferable to use an address that is not publicly known.";
 $tx['help']['security_frame_options']="Whether pages of your site are allowed to be displayed in frames: \"DENY\" means never, \"SAMEORIGIN\" means only on pages from the same domain. Leave empty to allow framing, what is, however, not recommended for security reasons.";
 $tx['help']['site_template']="Default template of the site";
-$tx['help']['site_timezone']="Usually no entry necessary. Starting from PHP 5.1.0  a <a href=\"http://www.php.net/manual/en/timezones.php\">time zone</a> can be entered to override your server's setting (see http://www.php.net/manual/en/timezones.php).";
+$tx['help']['site_timezone']="Usually no entry necessary; a <a href=\"http://www.php.net/manual/en/timezones.php\">time zone</a> can be entered to override your server's setting (see http://www.php.net/manual/en/timezones.php).";
 $tx['help']['site_compat']="Whether the website needs functions that have been removed in CMSimple_XH 1.7.";
 $tx['help']['title_format']="The way the title of a page of your site (&lt;title&gt;) is shown in the tab of your browser.";
 $tx['help']['uri_seperator']="The character which separates names of pages and sub pages in the URL.";
@@ -136,6 +136,10 @@ $tx['help']['folders_media']="A subfolder of userfiles.";
 
 $tx['help']['format_date']="The date format if ext/intl is available; otherwise the date/time format falls back to <code>\$tx['lastupdate']['format']</code>.";
 $tx['help']['format_time']="The time format if ext/intl is available; otherwise the date/time format falls back to <code>\$tx['lastupdate']['format']</code>.";
+
+$tx['help']['link_mailto'] = "Output note about mailto links when checking links?";
+$tx['help']['link_tel'] = "Output note about tel links when checking links?";
+$tx['help']['link_redir'] = "Max. Number of redirects LinkCheck should follow.";
 
 $tx['label']['empty']="- EMPTY -";
 
@@ -152,6 +156,7 @@ $tx['link']['checked_2_4']="%d links have been checked. ";
 $tx['link']['checked_5']="%d links have been checked. ";
 $tx['link']['checking']="Link check in progress...";
 $tx['link']['email']="Is this email address valid and still in use?";
+$tx['link']['tel']="Is this telephone number still up to date?";
 $tx['link']['error']="Error: ";
 $tx['link']['errors']="Errors: ";
 $tx['link']['ext_error_domain']="faulty external Link, domain not reachable.";

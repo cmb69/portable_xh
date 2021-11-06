@@ -33,8 +33,11 @@
   noneditable_noneditable_class: 'fa',
   extended_valid_elements: 'span[*]',
   codemirror:{
-    config: {
-      theme: 'zenburn'
+    width: 1200,
+    height: 800,
+    fullscreen: false,
+    config:{
+      theme: '%CODEMIRROR_THEME%'
     }
   }
 }
