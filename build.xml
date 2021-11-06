@@ -24,7 +24,7 @@
             </fileset>
         </move>
         <delete dir="export"/>
-        <zip destfile="Portable_XH-3.0.zip" basedir="dist" prefix="Portable_XH/"/>
+        <zip destfile="Portable_XH-3.1-dev.zip" basedir="dist" prefix="Portable_XH/"/>
         <delete dir="dist"/>
     </target>
 

@@ -27,4 +27,4 @@ rem THE SOFTWARE.
 rem
 
 start http://localhost:8080/
-start "Portable_XH 3.0" /d %~dp0 php\php -d sendmail_path="%~dp0php\php.exe %~dp0storemail.php" -S localhost:8080 -t www %~dp0router.php
+start "Portable_XH 3.1-dev" /d %~dp0 php\php -d sendmail_path="%~dp0php\php.exe %~dp0storemail.php" -S localhost:8080 -t www %~dp0router.php
