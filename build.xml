@@ -3,11 +3,17 @@
 <project name="Portable_XH" default="default">
 
     <target name="build">
-        <exec command="git archive -o export.zip HEAD" checkreturn="true"/>
+        <exec executable="git" checkreturn="true">
+            <arg line="archive -o export.zip HEAD"/>
+        </exec>
         <unzip file="export.zip" todir="export"/>
         <delete file="export.zip"/>
-        <exec command="pandoc README.md -f markdown -t html -s -o README.htm" dir="export"/>
-        <exec command="pandoc LIESMICH.md -f markdown -t html -s -o LIESMICH.htm" dir="export"/>
+        <exec executable="pandoc" dir="export">
+            <arg line="README.md -f markdown -t html -s -o README.htm"/>
+        </exec>
+        <exec executable="pandoc" dir="export">
+            <arg line="LIESMICH.md -f markdown -t html -s -o LIESMICH.htm"/>
+        </exec>
         <move todir="dist">
             <fileset dir="export">
                 <exclude name="build.xml"/>
