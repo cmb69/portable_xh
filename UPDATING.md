@@ -8,10 +8,9 @@ Update CMSimple_XH
 Update PHP
 ==========
 
-* do a custom build of PHP:
-  `configure --disable-all --disable-zts --enable-cli --enable-opcache --enable-session --with-iconv --with-libxml --with-simplexml --with-dom --enable-filter --enable-bcmath --enable-calendar --enable-zip --enable-zlib --with-gd=shared --enable-mbstring=shared --with-sqlite3=shared --enable-portable_xh_helper=shared`
+* replace the files in php/ with the new PHP version (use x64 NTS builds)
 
-* move relevant files from snapshot to php/
+* do a phpize build of portable_xh_helper, and move the DLL into php/ext
 
 * move php.ini-production into php/ as php.ini
 
