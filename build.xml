@@ -3,22 +3,11 @@
 <project name="Portable_XH" default="default">
 
     <target name="build">
-        <fail unless="version" message="version is not defined!"/>
         <exec command="git archive -o export.zip HEAD" checkreturn="true"/>
         <unzip file="export.zip" todir="export"/>
         <delete file="export.zip"/>
         <exec command="pandoc README.md -f markdown -t html -s -o README.htm" dir="export"/>
         <exec command="pandoc LIESMICH.md -f markdown -t html -s -o LIESMICH.htm" dir="export"/>
-        <move todir="dist">
-            <fileset dir="export">
-                <include name="Portable_XH.bat"/>
-            </fileset>
-            <filterchain>
-                <replacetokens>
-                    <token key="PORTABLE_XH_VERSION" value="${version}"/>
-                </replacetokens>
-            </filterchain>
-        </move>
         <move todir="dist">
             <fileset dir="export">
                 <exclude name="build.xml"/>
@@ -30,7 +19,7 @@
             </fileset>
         </move>
         <delete dir="export"/>
-        <zip destfile="Portable_XH-${version}.zip" basedir="dist" prefix="Portable_XH/"/>
+        <zip destfile="Portable_XH-3.0.zip" basedir="dist" prefix="Portable_XH/"/>
         <delete dir="dist"/>
     </target>
 
