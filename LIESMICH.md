@@ -79,12 +79,12 @@ Da diese Distribution eine Aggregation verschiedener Programme ist, enthalten
 die Ordner unabhängige Software, die als solche getrennt lizensiert ist.
 
 * `/` (ohne Unterordner)  
-    Copyright (c) 2020 Christoph M. Becker  
+    Copyright (c) 2012-2021 Christoph M. Becker  
     Lizensiert unter der [MIT Lizenz](http://opensource.org/licenses/MIT)  
     Website: <http://3-magi.net/?CMSimple_XH/Portable_XH>
 
 * `php/` (inkl. Unterordnern)
-    Copyright (c) 1997-2015 The PHP Group  
+    Copyright (c) 1997-2021 The PHP Group  
     Lizensiert unter der [PHP License 3.01](http://www.php.net/license/3_01.txt)  
     Website: <http://www.php.net/>
 

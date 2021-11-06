@@ -5,7 +5,7 @@
  *
  * Replacement for sendmail to store emails as .eml files.
  *
- * Copyright (c) 2020 Christoph M. Becker <http://3-magi.net/>
+ * Copyright (c) 2012-2021 Christoph M. Becker <http://3-magi.net/>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
