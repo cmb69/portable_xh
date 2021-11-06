@@ -1,0 +1,49 @@
+name: Build portable_xh_helper
+
+on:
+  push:
+    paths:
+      - 'portable_xh_helper/**'
+
+jobs:
+  build:
+    defaults:
+      run:
+        shell: cmd
+    strategy:
+      matrix:
+          version: ['7.3', '7.4', '8.0', '8.1']
+          arch: [x64]
+          ts: [nts]
+    runs-on: windows-2019
+    steps:
+      - name: Checkout Portable_XH
+        uses: actions/checkout@v2
+      - name: Setup PHP
+        id: setup-php
+        uses: cmb69/setup-php-sdk@v0.2
+        with:
+          version: ${{matrix.version}}
+          arch: ${{matrix.arch}}
+          ts: ${{matrix.ts}}
+      - name: Enable Developer Command Prompt
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: ${{matrix.arch}}
+          toolset: ${{steps.setup-php.outputs.toolset}}
+      - name: phpize
+        run: cd portable_xh_helper && phpize
+      - name: configure
+        run: cd portable_xh_helper && configure --enable-portable_xh_helper --with-prefix=${{steps.setup-php.outputs.prefix}}
+      - name: make
+        run: cd portable_xh_helper && nmake
+      - name: test
+        run: cd portable_xh_helper && nmake test TESTS=tests
+      - name: package
+        run: |
+          xcopy portable_xh_helper\${{matrix.arch}}\Release\php_portable_xh_helper.dll install\*
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: portable_xh_helper-${{matrix.version}}
+          path: install
