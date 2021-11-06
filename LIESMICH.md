@@ -104,8 +104,10 @@ halten. Werden weitere Extensions benötigt, kann eine Binärdistribution (Zip)
 von <http://windows.php.net/download/> herunter geladen, und in den `php/` Ordner
 von Portable_XH entpackt werden. Unter Umständen müssen zusätzliche Erweiterung
 in `php/php.ini` aktiviert werden. Es ist zu beachten, dass es keine Rolle spielt,
-welche PHP-Version und -Variante herunter geladen wird, aber für beste
-Kompatibilität werden VC14 oder VC15 x64 Non Thread Safe Varianten empfohlen.
+welche PHP-Version herunter geladen wird, aber für beste
+Kompatibilität werden VC15 oder VS16 x64 Non Thread Safe Varianten empfohlen.
+Weiterhin sollte `php/ext/php_portable_xh_helper.dll` mit einer Kopie der DLL
+für die gewählte PHP-Version überschrieben werden.
 
 Der eingebaute Webserver von PHP, der von Portable_XH verwendet wird, ist
 single-threaded. Daher kann er keine verschachtelten Anfrage bearbeiten, und

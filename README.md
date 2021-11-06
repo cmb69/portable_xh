@@ -96,8 +96,10 @@ never needed for CMSimple_XH websites, and too keep the download size small. If
 you need other extensions, download a binary distribution (Zip) from
 <http://windows.php.net/download/>, and put it in the `php/` folder of
 Portable_XH. You may have to enable additional extensions in `php/php.ini`. Note
-that it doesn't matter which PHP version and variant you download, but for best
-compatibility VC14 or VC15 x64 Non Thread Safe variants are recommended.
+that it doesn't matter which PHP version download, but for best
+compatibility VC15 or VS16 x64 Non Thread Safe variants are recommended.
+Also overwrite `php/ext/php_portable_xh_helper.dll` with a copy of the DLL for
+the chosen PHP version.
 
 PHP's built-in webserver, which is used by Portable_XH, is single-threaded. Thus
 it can't handle nested requests, and such requests will block. In CMSimple_XH
