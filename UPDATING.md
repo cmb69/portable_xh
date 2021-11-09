@@ -18,6 +18,7 @@ Update PHP
   * date.timezone = Europe/London
   * extension_dir = "ext"
   * extension=gd.dll
+  * extension=intl
   * extension=mbstring
   * extension=sqlite3
   * extension=portable_xh_helper
